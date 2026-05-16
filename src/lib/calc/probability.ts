@@ -22,7 +22,8 @@ type ModelConfig = {
   incomeTail: (minHkd: number) => number;
 };
 
-const FEMALE_BASE_POOL = 1_950_000;
+/** Exported for result “filtration debt” walkthrough */
+export const FEMALE_BASE_POOL = 1_950_000;
 
 function femaleAgeWindowFactor(ageMin: number, ageMax: number): number {
   const min = Math.max(18, Math.min(65, ageMin));

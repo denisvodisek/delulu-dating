@@ -2,37 +2,35 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 
+const navLink =
+  "font-lab-mono text-lab-mono px-4 py-2 text-xs font-semibold uppercase tracking-[0.1em] transition-colors duration-200 hover:bg-lab-primary hover:text-lab-on-primary";
+
 export function SiteHeader() {
   const t = useTranslations("nav");
+
   return (
-    <header className="sticky top-0 z-20 border-b border-white/40 bg-white/55 backdrop-blur-md">
-      <div className="page-shell flex max-w-full items-center justify-between gap-2 py-3">
-        <Link
-          href="/"
-          className={cn(
-            buttonVariants({ variant: "ghost", size: "sm" }),
-            "shrink-0 text-sm font-extrabold tracking-tight text-primary sm:text-base",
-          )}
-        >
+    <header className="border-lab-outline bg-lab-surface fixed top-0 z-50 flex h-20 w-full items-center justify-between border-b px-4 md:px-16">
+      <Link href="/" className="flex items-center gap-2">
+        <span className="material-symbols-outlined text-lab-primary text-2xl leading-none">biotech</span>
+        <span className="font-lab-display text-lab-primary text-xl uppercase tracking-tighter md:text-2xl">
           {t("brand")}
+        </span>
+      </Link>
+      <nav className="hidden items-center gap-4 md:flex md:gap-6 lg:gap-8">
+        <Link href="/quiz" className={cn(navLink, "text-lab-primary")}>
+          {t("analysis")}
         </Link>
-        <div className="flex items-center gap-1 sm:gap-2">
-          <LocaleSwitcher />
-          <Link
-            href="/methodology"
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "sm" }),
-              "text-xs font-semibold sm:text-sm",
-            )}
-          >
-            {t("howShort")}
-          </Link>
-        </div>
-      </div>
+        <Link href="/methodology" className={cn(navLink, "text-lab-on-surface-variant")}>
+          {t("methodology")}
+        </Link>
+        <a href="#specimens" className={cn(navLink, "text-lab-on-surface-variant")}>
+          {t("archive")}
+        </a>
+      </nav>
+      <LocaleSwitcher variant="lab" />
     </header>
   );
 }

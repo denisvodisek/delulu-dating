@@ -35,10 +35,7 @@ export default async function SharedResultPage({
       <Card className="overflow-visible rounded-3xl border-white/55 bg-white/88 p-7 text-center shadow-[0_24px_55px_-28px_rgba(90,60,140,0.45)] backdrop-blur-md sm:p-10">
         <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">delulu.dating</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">{tier}</h1>
-        <p
-          className="mt-6 text-5xl font-black tracking-tight text-primary sm:text-6xl"
-          style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
-        >
+        <p className="font-lab-display mt-6 text-5xl font-black tracking-tight text-primary sm:text-6xl">
           {oddsPastUiCeil ? t("oneInCapped", { n }) : t("oneIn", { n })}
         </p>
         <p className="mt-3 text-sm text-muted-foreground">{t("heroChanceLine", { pct: pctLabel })}</p>

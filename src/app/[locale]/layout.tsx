@@ -3,22 +3,34 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Fraunces, Noto_Sans_HK } from "next/font/google";
+import {
+  Hanken_Grotesk,
+  JetBrains_Mono,
+  Libre_Caslon_Text,
+} from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { ClientAnalytics } from "@/components/analytics/ClientAnalytics";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LocaleHtmlLang } from "@/components/i18n/LocaleHtmlLang";
-import { KawaiiBg } from "@/components/webgl/KawaiiBg";
 
-const notoHK = Noto_Sans_HK({
+const libreDisplay = Libre_Caslon_Text({
+  weight: ["400", "700"],
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-lab-display",
   display: "swap",
 });
 
-const fraunces = Fraunces({
+const jetbrainsMono = JetBrains_Mono({
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  variable: "--font-lab-mono",
+  display: "swap",
+});
+
+const hanken = Hanken_Grotesk({
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+  variable: "--font-lab-sans",
   display: "swap",
 });
 
@@ -65,9 +77,8 @@ export default async function LocaleLayout({
       <LocaleHtmlLang locale={locale} />
       <div
         lang={locale === "zh" ? "zh-HK" : "en"}
-        className={`${notoHK.className} ${fraunces.variable} flex min-h-full flex-1 flex-col`}
+        className={`${hanken.className} ${libreDisplay.variable} ${jetbrainsMono.variable} ${hanken.variable} lab-noise-bg text-lab-on-surface selection:bg-lab-primary-container selection:text-lab-on-primary-container flex min-h-full flex-1 flex-col overflow-x-hidden font-lab-body`}
       >
-        <KawaiiBg />
         <NextIntlClientProvider messages={messages}>
           <SiteHeader />
           <div className="flex min-h-full flex-1 flex-col">{children}</div>
