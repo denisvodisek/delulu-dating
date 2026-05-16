@@ -97,7 +97,7 @@ export function LandingLiveCounter() {
     let timer: number | null = null;
 
     const schedule = () => {
-      const delay = 3400 + Math.floor(Math.random() * 3000);
+      const delay = 3000 + Math.floor(Math.random() * 7001);
       timer = window.setTimeout(() => {
         setTarget((prev) => {
           if (prev == null) return prev;

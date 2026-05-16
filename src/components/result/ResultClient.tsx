@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
@@ -15,16 +14,7 @@ import type { CalculationResult, Seeker } from "@/lib/types/quiz";
 import { buildSharedResultPath, encodeSharedResult } from "@/lib/share-payload";
 import { trackEvent } from "@/lib/analytics/events";
 import { pushRun } from "@/lib/run-history";
-import {
-  basePoolForSeeker,
-  buildFiltrationDebt,
-  formatOneInCompact,
-} from "@/lib/result-filtration";
-
-const ResultHeroBackdrop = dynamic(
-  () => import("@/components/result/ResultHeroBackdrop").then((m) => m.ResultHeroBackdrop),
-  { ssr: false },
-);
+import { basePoolForSeeker, buildFiltrationDebt, formatOneInCompact } from "@/lib/result-filtration";
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
 
@@ -237,9 +227,6 @@ export default function ResultClient({
     <main className="flex flex-1 flex-col pt-20">
       <section className="relative w-full overflow-hidden border-b border-pink-200/45 bg-gradient-to-b from-pink-100/70 via-white to-violet-50/50 px-4 pb-20 pt-8 md:px-16">
         <div className="pointer-events-none absolute -top-24 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-pink-300/35 via-fuchsia-200/25 to-violet-300/35 blur-3xl" />
-        <div className="absolute inset-0 hidden md:block">
-          <ResultHeroBackdrop />
-        </div>
         <motion.div
           className="relative mx-auto max-w-7xl text-center"
           initial={{ opacity: 0, y: 28 }}
@@ -348,8 +335,8 @@ export default function ResultClient({
           )}
         </div>
 
-        <div className="flex flex-col gap-8 py-12 md:col-span-5 md:self-start md:py-16 md:pl-12">
-          <div className="sticky top-24 z-20 md:top-28">
+        <div className="flex flex-col gap-8 py-12 md:col-span-5 md:py-16 md:pl-12">
+          <div className="sticky top-24 z-20 self-start md:top-28">
             <div className="mb-10 overflow-hidden rounded-3xl border-2 border-pink-200/55 bg-white/90 shadow-[0_20px_50px_-12px_rgba(236,72,153,0.2)] backdrop-blur-sm">
               <div className="border-b border-pink-200/50 bg-gradient-to-r from-pink-400 via-fuchsia-400 to-violet-400 px-6 py-3">
                 <p className="font-lab-mono text-xs font-semibold tracking-wide text-white uppercase drop-shadow-sm">
@@ -469,12 +456,6 @@ export default function ResultClient({
           </div>
         </div>
       </section>
-
-      {children ? (
-        <div className="mx-4 my-10 rounded-2xl border-2 border-pink-200/50 bg-white/75 p-6 shadow-sm backdrop-blur-sm md:mx-16">
-          {children}
-        </div>
-      ) : null}
 
       <footer
         ref={footerRef}
