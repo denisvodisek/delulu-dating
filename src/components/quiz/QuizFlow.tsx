@@ -15,6 +15,15 @@ import { LAB_STEP_TITLE_KEYS, quizRoastKey } from "@/lib/quiz-roast";
 
 const STEPS = 9;
 
+const choiceActive =
+  "bg-gradient-to-br from-pink-200 via-fuchsia-100 to-violet-100 text-fuchsia-950 ring-2 ring-pink-400/60 shadow-sm";
+
+const choiceInactive =
+  "bg-white/85 text-slate-600 hover:bg-pink-50/95";
+
+const choiceInactiveMuted =
+  "bg-white/80 text-slate-600 hover:bg-gradient-to-br hover:from-pink-50/80 hover:to-violet-50/60";
+
 function formatPoolPercent(prob: number): string {
   if (!Number.isFinite(prob) || prob <= 0) return "0%";
   if (prob < 0.0005) return "<0.1%";
@@ -46,7 +55,12 @@ function PoolBlockStrip({ redCount }: { redCount: number }) {
       {Array.from({ length: 10 }, (_, i) => (
         <div
           key={i}
-          className={cn(i < safe ? "bg-lab-primary" : "bg-lab-outline-variant/30")}
+          className={cn(
+            "rounded-sm",
+            i < safe
+              ? "bg-gradient-to-t from-pink-400 to-violet-400 shadow-sm"
+              : "bg-pink-100/50",
+          )}
         />
       ))}
     </div>
@@ -69,15 +83,13 @@ function SegmentedTwo({
   onPickB: () => void;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-0 border border-lab-outline">
+    <div className="grid grid-cols-2 gap-0 overflow-hidden rounded-2xl border-2 border-pink-200/65 shadow-inner">
       <button
         type="button"
         onClick={onPickA}
         className={cn(
-          "font-lab-mono text-lab-mono border-r border-lab-outline py-4 text-xs font-semibold uppercase tracking-wide transition-colors",
-          aActive
-            ? "bg-lab-inverse text-lab-on-inverse"
-            : "text-lab-on-surface-variant hover:bg-lab-surface-container bg-lab-surface/80",
+          "font-lab-mono text-lab-mono border-r-2 border-pink-200/55 py-4 text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+          aActive ? choiceActive : choiceInactiveMuted,
         )}
       >
         {aLabel}
@@ -86,10 +98,8 @@ function SegmentedTwo({
         type="button"
         onClick={onPickB}
         className={cn(
-          "font-lab-mono text-lab-mono py-4 text-xs font-semibold uppercase tracking-wide transition-colors",
-          bActive
-            ? "bg-lab-inverse text-lab-on-inverse"
-            : "text-lab-on-surface-variant hover:bg-lab-surface-container bg-lab-surface/80",
+          "font-lab-mono text-lab-mono py-4 text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+          bActive ? choiceActive : choiceInactiveMuted,
         )}
       >
         {bLabel}
@@ -203,19 +213,19 @@ export default function QuizFlow() {
   return (
     <div className="quiz-flow-root relative min-h-[calc(100dvh-5rem)] pb-36">
       <div
-        className="bg-lab-outline-variant fixed top-20 right-0 left-0 z-40 h-1 w-full"
+        className="fixed top-20 right-0 left-0 z-40 h-1.5 w-full bg-pink-100/80"
         aria-hidden
       >
         <div
-          className="bg-lab-primary h-full transition-[width] duration-300 ease-out"
+          className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-violet-400 transition-[width] duration-300 ease-out shadow-[0_0_12px_rgba(244,114,182,0.45)]"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <main className="flex min-h-[calc(100dvh-5rem-4px)] items-center justify-center px-4 pt-3 pb-28 md:px-16">
-        <div className="border-lab-outline bg-lab-surface grid w-full max-w-6xl grid-cols-1 border md:grid-cols-12">
+      <main className="flex min-h-[calc(100dvh-5rem-4px)] items-center justify-center px-4 pt-4 pb-28 md:px-16">
+        <div className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border-2 border-pink-200/55 bg-white/70 shadow-[0_24px_60px_-12px_rgba(236,72,153,0.22)] backdrop-blur-xl md:grid-cols-12">
           {/* Left: question + roast + stats */}
-          <div className="border-lab-outline flex flex-col justify-center gap-8 border-b p-8 md:col-span-5 md:border-r md:border-b-0 md:p-12">
+          <div className="flex flex-col justify-center gap-8 border-b border-pink-200/40 bg-gradient-to-br from-pink-50/70 via-white to-violet-50/35 p-8 md:col-span-5 md:border-r md:border-b-0 md:p-12">
             <div className="space-y-2">
               <span className="font-lab-mono text-lab-mono text-lab-primary text-xs font-semibold uppercase tracking-[0.14em]">
                 {t("labQuestionKicker")}{" "}
@@ -230,7 +240,7 @@ export default function QuizFlow() {
               </h1>
             </div>
 
-            <div className="bg-lab-surface-container-high border-lab-primary border-l-4 p-6">
+            <div className="rounded-2xl border border-pink-200/70 bg-gradient-to-r from-pink-50 via-white to-violet-50/80 p-6 shadow-sm">
               <div className="flex gap-3">
                 <span className="material-symbols-outlined text-lab-primary shrink-0">monitoring</span>
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs leading-relaxed font-medium uppercase">
@@ -266,7 +276,7 @@ export default function QuizFlow() {
           </div>
 
           {/* Right: controls */}
-          <div className="flex flex-col justify-center gap-10 bg-white/50 p-8 md:col-span-7 md:p-12">
+          <div className="flex flex-col justify-center gap-10 bg-gradient-to-b from-white/90 via-pink-50/25 to-violet-50/40 p-8 md:col-span-7 md:p-12">
             {step === 0 && (
               <div className="space-y-8">
                 <div className="flex items-end justify-between border-b border-lab-on-surface pb-2">
@@ -362,7 +372,7 @@ export default function QuizFlow() {
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labMaritalPick")}
                 </p>
-                <div className="flex flex-col border border-lab-outline">
+                <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-pink-200/60">
                   {(
                     [
                       ["never", t("maritalNever")],
@@ -375,11 +385,9 @@ export default function QuizFlow() {
                       type="button"
                       onClick={() => setQ((p) => ({ ...p, marital: key }))}
                       className={cn(
-                        "font-lab-mono text-lab-mono border-lab-outline px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide transition-colors",
-                        idx < arr.length - 1 && "border-b",
-                        q.marital === key
-                          ? "bg-lab-inverse text-lab-on-inverse"
-                          : "text-lab-on-surface-variant hover:bg-lab-surface-container",
+                        "font-lab-mono text-lab-mono px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+                        idx < arr.length - 1 && "border-b border-pink-100",
+                        q.marital === key ? choiceActive : choiceInactive,
                       )}
                     >
                       {label}
@@ -395,7 +403,7 @@ export default function QuizFlow() {
                   {t("labDistrictPick")}
                 </p>
                 <p className="text-lab-on-surface-variant font-lab-body text-sm">{t("districtNone")}</p>
-                <div className="grid max-h-[min(50vh,22rem)] grid-cols-2 gap-0 overflow-y-auto overscroll-contain border border-lab-outline sm:grid-cols-3">
+                <div className="grid max-h-[min(50vh,22rem)] grid-cols-2 gap-0 overflow-y-auto overscroll-contain rounded-2xl border-2 border-pink-200/60 sm:grid-cols-3">
                   {districtKeys.map((key) => {
                     const on = q.districts.includes(key);
                     return (
@@ -404,10 +412,10 @@ export default function QuizFlow() {
                         type="button"
                         onClick={() => toggleDistrict(key)}
                         className={cn(
-                          "font-lab-mono text-lab-mono border-lab-outline min-h-11 border-b border-r px-2 py-2.5 text-left text-[11px] font-semibold uppercase leading-tight transition-colors sm:text-xs",
+                          "font-lab-mono text-lab-mono min-h-11 border-b border-r border-pink-100 px-2 py-2.5 text-left text-[11px] font-semibold uppercase leading-tight transition-all duration-200 sm:text-xs",
                           on
-                            ? "bg-lab-primary text-lab-on-primary"
-                            : "text-lab-on-surface-variant hover:bg-lab-surface-container bg-white/60",
+                            ? "bg-gradient-to-br from-pink-300/90 via-fuchsia-200 to-violet-200 text-violet-950 shadow-inner ring-2 ring-white/90 ring-inset"
+                            : "bg-white/75 text-slate-600 hover:bg-pink-50",
                         )}
                       >
                         {td(key)}
@@ -423,7 +431,7 @@ export default function QuizFlow() {
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labEducationPick")}
                 </p>
-                <div className="flex flex-col border border-lab-outline">
+                <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-pink-200/60">
                   {(
                     [
                       ["any", t("eduAny")],
@@ -436,11 +444,9 @@ export default function QuizFlow() {
                       type="button"
                       onClick={() => setQ((p) => ({ ...p, educationMin: key }))}
                       className={cn(
-                        "font-lab-mono text-lab-mono border-lab-outline px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide transition-colors",
-                        idx < arr.length - 1 && "border-b",
-                        q.educationMin === key
-                          ? "bg-lab-inverse text-lab-on-inverse"
-                          : "text-lab-on-surface-variant hover:bg-lab-surface-container",
+                        "font-lab-mono text-lab-mono px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+                        idx < arr.length - 1 && "border-b border-pink-100",
+                        q.educationMin === key ? choiceActive : choiceInactive,
                       )}
                     >
                       {label}
@@ -528,13 +534,13 @@ export default function QuizFlow() {
         </div>
       </main>
 
-      <footer className="border-lab-outline bg-lab-surface fixed bottom-0 left-0 z-50 flex w-full flex-col items-center gap-4 border-t px-4 py-6 md:flex-row md:justify-between md:px-16">
+      <footer className="fixed bottom-0 left-0 z-50 flex w-full flex-col items-center gap-4 border-t border-pink-200/50 bg-white/85 px-4 py-6 shadow-[0_-8px_40px_rgba(236,72,153,0.08)] backdrop-blur-xl md:flex-row md:justify-between md:px-16">
         <div className="flex flex-wrap items-center justify-center gap-6 md:justify-start">
           <button
             type="button"
             onClick={back}
             disabled={step === 0 || isRevealing}
-            className="font-lab-mono text-lab-mono text-lab-on-surface-variant hover:text-lab-primary flex items-center gap-2 text-xs font-semibold uppercase tracking-wide transition-colors disabled:opacity-40"
+            className="font-lab-mono text-fuchsia-700/80 hover:text-fuchsia-600 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide transition-colors disabled:opacity-40"
           >
             <span className="material-symbols-outlined text-lg">arrow_back</span>
             {t("back")}
@@ -543,7 +549,7 @@ export default function QuizFlow() {
             type="button"
             onClick={() => setQ(DEFAULT_QUIZ)}
             disabled={isRevealing}
-            className="font-lab-mono text-lab-on-surface-variant hover:text-lab-primary text-[10px] font-semibold uppercase tracking-wide underline-offset-4 hover:underline disabled:opacity-40"
+            className="font-lab-mono text-fuchsia-700/70 hover:text-fuchsia-600 text-[10px] font-semibold uppercase tracking-wide underline-offset-4 hover:underline disabled:opacity-40"
           >
             {t("skip")}
           </button>
@@ -556,7 +562,7 @@ export default function QuizFlow() {
           type="button"
           onClick={next}
           disabled={isRevealing}
-          className="font-lab-mono text-lab-mono bg-lab-primary text-lab-on-primary flex w-full items-center justify-center gap-2 py-4 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-lab-inverse disabled:opacity-50 md:w-auto md:px-12"
+          className="font-lab-mono text-lab-mono flex w-full items-center justify-center gap-2 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 text-xs font-bold uppercase tracking-wide text-white shadow-lg shadow-pink-300/40 transition-all hover:brightness-105 disabled:opacity-50 md:w-auto md:px-12"
         >
           {step === STEPS - 1 ? t("calculate") : t("labNextCriterion")}
           <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -564,15 +570,15 @@ export default function QuizFlow() {
       </footer>
 
       {isRevealing ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-6 backdrop-blur-sm">
-          <div className="border-lab-outline bg-lab-inverse text-lab-on-inverse w-full max-w-md border p-8 shadow-2xl sm:max-w-lg">
-            <div className="font-lab-mono text-lab-on-inverse/80 mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
-              <CircleNotch className="animate-spin" size={18} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-fuchsia-950/35 px-6 backdrop-blur-md">
+          <div className="w-full max-w-md rounded-3xl border-2 border-pink-200/80 bg-gradient-to-br from-pink-50 via-white to-violet-100 p-8 shadow-[0_24px_80px_rgba(192,132,252,0.35)] sm:max-w-lg">
+            <div className="font-lab-mono mb-4 flex items-center gap-2 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase">
+              <CircleNotch className="animate-spin text-fuchsia-500" size={18} />
               {t("labRevealTitle")}
             </div>
             <div className="font-lab-mono space-y-2 text-xs leading-relaxed">
               {revealLines.slice(0, revealIndex + 1).map((line, i) => (
-                <p key={`${line}-${i}`} className="text-lab-on-inverse/90 uppercase">
+                <p key={`${line}-${i}`} className="text-fuchsia-900/90 uppercase">
                   {line}
                 </p>
               ))}

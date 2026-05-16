@@ -15,7 +15,7 @@ export default async function MethodologyPage({
   const t = await getTranslations("methodology");
 
   return (
-    <main className="page-shell flex flex-1 flex-col gap-8 py-12 sm:gap-10 sm:py-16">
+    <main className="page-shell flex flex-1 flex-col gap-8 pt-24 pb-12 sm:gap-10 sm:pb-16">
       <h1 className="text-4xl font-extrabold tracking-tight">{t("title")}</h1>
       <p className="text-lg text-muted-foreground">{t("intro")}</p>
 

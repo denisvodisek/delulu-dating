@@ -31,7 +31,7 @@ export default async function SharedResultPage({
     1 / data.p > MAX_ONE_IN_DISPLAY;
 
   return (
-    <main className="page-shell flex flex-1 flex-col gap-7 py-10 sm:py-12">
+    <main className="page-shell flex flex-1 flex-col gap-7 pt-24 pb-10 sm:pb-12">
       <Card className="overflow-visible rounded-3xl border-white/55 bg-white/88 p-7 text-center shadow-[0_24px_55px_-28px_rgba(90,60,140,0.45)] backdrop-blur-md sm:p-10">
         <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">delulu.dating</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">{tier}</h1>

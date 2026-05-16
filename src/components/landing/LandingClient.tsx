@@ -113,16 +113,16 @@ export default function LandingClient() {
   return (
     <main className="pt-20">
       {/* Hero */}
-      <section className="border-lab-outline flex min-h-[calc(100vh-80px)] flex-col border-b md:flex-row">
-        <div className="border-lab-outline flex flex-1 flex-col justify-between border-b p-4 md:border-r md:border-b-0 md:p-16">
+      <section className="flex min-h-[calc(100vh-80px)] flex-col overflow-hidden rounded-b-3xl border-b border-pink-200/50 shadow-[0_12px_40px_rgba(236,72,153,0.08)] md:flex-row">
+        <div className="flex flex-1 flex-col justify-between border-b border-pink-200/45 p-4 md:border-r md:border-b-0 md:p-16">
           <div className="mt-8 md:mt-12">
             <span className="font-lab-mono text-lab-mono text-lab-primary mb-4 block text-xs font-semibold tracking-[0.2em]">
               {t("heroKicker")}
             </span>
-            <h1 className="font-lab-display mb-10 text-5xl leading-none font-bold uppercase tracking-tight md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
+            <h1 className="font-lab-display mb-10 bg-gradient-to-br from-fuchsia-700 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold tracking-tight text-transparent uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
               {t("heroTitle1")}
               <br />
-              <span className="opacity-50">{t("heroTitle2")}</span>
+              <span className="from-pink-400 to-violet-500 bg-gradient-to-r bg-clip-text opacity-95">{t("heroTitle2")}</span>
             </h1>
             <div className="max-w-md space-y-8">
               <p className="text-lab-on-surface-variant font-lab-body text-xl leading-relaxed md:text-[20px] md:leading-[30px]">
@@ -130,20 +130,20 @@ export default function LandingClient() {
               </p>
               <Link
                 href="/quiz"
-                className="font-lab-mono text-lab-mono bg-lab-primary text-lab-on-primary inline-block py-6 px-12 text-xs font-semibold uppercase tracking-widest transition-colors duration-300 hover:bg-lab-inverse hover:text-lab-on-inverse"
+                className="font-lab-mono text-lab-mono inline-block rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-12 py-6 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/40 transition-all hover:brightness-105"
               >
                 {t("heroCta")}
               </Link>
-              <div className="border-lab-outline-variant bg-lab-surface/80 text-lab-on-surface-variant space-y-2 border border-dashed p-4 text-center text-xs">
+              <div className="space-y-2 rounded-2xl border border-dashed border-pink-200/70 bg-gradient-to-br from-pink-50/90 to-violet-50/60 p-4 text-center text-xs">
                 <p className="text-lab-on-surface font-semibold">{t("findGirlfriend")}</p>
-                <span className="font-lab-mono bg-lab-surface-container inline-block rounded-full border border-lab-outline/40 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
+                <span className="font-lab-mono inline-block rounded-full border border-pink-200/60 bg-white/80 px-3 py-1 text-[10px] font-bold tracking-wider text-fuchsia-900 uppercase">
                   {t("comingSoon")}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="text-lab-on-primary bg-lab-primary -mx-4 overflow-hidden py-4 whitespace-nowrap md:-mx-16">
+          <div className="text-white -mx-4 overflow-hidden bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 whitespace-nowrap shadow-inner md:-mx-16">
             <div className="inline-flex animate-[marquee_20s_linear_infinite]">
               <span className="font-lab-mono text-lab-mono px-8 text-xs font-semibold uppercase">
                 {marqueeLine}
@@ -160,24 +160,25 @@ export default function LandingClient() {
           )}
         </div>
 
-        <div className="bg-lab-inverse relative min-h-[500px] flex-1 overflow-hidden md:min-h-0">
+        <div className="relative min-h-[500px] flex-1 overflow-hidden rounded-2xl bg-gradient-to-br from-pink-200/30 via-fuchsia-100/40 to-violet-200/35 md:min-h-0 md:m-4 md:rounded-3xl">
           <Image
             src={HERO_IMAGE}
             alt={t("heroImageAlt")}
             fill
-            className="object-cover opacity-70 mix-blend-luminosity grayscale"
+            className="object-cover opacity-95 saturate-[1.05]"
             sizes="(min-width: 768px) 50vw, 100vw"
             priority
           />
-          <div className="from-lab-inverse pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent opacity-40" />
-          <div className="font-lab-mono text-lab-mono text-lab-on-inverse border-lab-outline-variant/30 absolute top-0 right-0 border-l border-b p-6 text-right text-sm whitespace-pre-line backdrop-blur-sm">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pink-300/50 via-fuchsia-200/25 to-violet-200/35 mix-blend-soft-light" />
+          <div className="from-fuchsia-950/55 pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent" />
+          <div className="font-lab-mono text-lab-mono absolute top-0 right-0 border-b border-l border-white/25 bg-white/15 p-6 text-right text-sm text-white whitespace-pre-line backdrop-blur-md">
             {t("heroCoords")}
           </div>
         </div>
       </section>
 
       {/* Process */}
-      <section className="border-lab-outline grid grid-cols-1 divide-y border-b md:grid-cols-3 md:divide-x md:divide-y-0">
+      <section className="grid grid-cols-1 divide-y divide-pink-200/45 border-b border-pink-200/45 md:grid-cols-3 md:divide-x md:divide-y-0">
         {(
           [
             { step: "01", icon: "input", titleKey: "process1Title", bodyKey: "process1Body" },
@@ -187,7 +188,7 @@ export default function LandingClient() {
         ).map(({ step, icon, titleKey, bodyKey }) => (
           <div
             key={step}
-            className="group hover:bg-lab-surface-container flex flex-col gap-6 p-4 transition-colors duration-300 md:p-16"
+            className="group flex flex-col gap-6 bg-gradient-to-b from-white/80 to-pink-50/40 p-4 transition-all duration-300 hover:from-pink-50 hover:to-violet-50/50 md:p-16"
           >
             <div className="flex items-start justify-between">
               <span className="font-lab-display text-6xl leading-none opacity-20 transition-opacity group-hover:opacity-100">
@@ -220,7 +221,7 @@ export default function LandingClient() {
             <p className="text-lab-on-surface-variant font-lab-body mb-10 text-base leading-relaxed">
               {t("specimensSub")}
             </p>
-            <div className="border-lab-primary bg-lab-surface-container p-6 border-l-4">
+            <div className="rounded-2xl border border-pink-200/55 bg-gradient-to-br from-pink-50 to-violet-50/70 p-6">
               <p className="font-lab-mono text-lab-mono text-sm italic">{t("specimenQuote")}</p>
             </div>
           </div>
@@ -242,7 +243,7 @@ export default function LandingClient() {
                     key={run.id}
                     type="button"
                     onClick={() => openRun(run)}
-                    className="border-lab-outline group flex w-full cursor-pointer flex-col overflow-hidden border text-left transition-colors hover:bg-lab-surface-container/50 md:flex-row"
+                    className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl border-2 border-pink-200/50 bg-white/70 text-left shadow-sm transition-all hover:border-fuchsia-300/70 hover:shadow-md md:flex-row"
                   >
                     <div
                       className={cn(
@@ -278,7 +279,7 @@ export default function LandingClient() {
       </section>
 
       {/* CTA */}
-      <section className="bg-lab-inverse text-lab-on-inverse px-4 py-16 text-center md:py-[var(--spacing-lab-section)]">
+      <section className="bg-gradient-to-br from-fuchsia-950 via-pink-900 to-violet-950 px-4 py-16 text-center text-white md:py-[var(--spacing-lab-section)]">
         <h2 className="font-lab-display mb-6 text-5xl uppercase md:text-7xl lg:text-[84px] lg:leading-[90px]">
           {t("ctaClosingTitle")}
         </h2>
@@ -287,14 +288,14 @@ export default function LandingClient() {
         </p>
         <Link
           href="/quiz"
-          className="font-lab-mono text-lab-mono bg-lab-on-inverse text-lab-inverse inline-block py-6 px-16 text-xs font-semibold uppercase tracking-widest transition-colors duration-300 hover:bg-lab-primary hover:text-lab-on-primary"
+          className="font-lab-mono text-lab-mono inline-block rounded-full bg-gradient-to-r from-pink-300 to-violet-300 px-16 py-6 text-xs font-bold tracking-widest text-fuchsia-950 uppercase shadow-lg transition-all hover:brightness-110"
         >
           {t("ctaEnterLab")}
         </Link>
       </section>
 
       {/* Footer */}
-      <footer className="border-lab-outline bg-lab-surface flex w-full flex-col items-center gap-6 border-t px-4 py-12 md:flex-row md:justify-between md:px-16">
+      <footer className="flex w-full flex-col items-center gap-6 border-t border-pink-200/40 bg-white/75 px-4 py-12 backdrop-blur-sm md:flex-row md:justify-between md:px-16">
         <div className="flex flex-col gap-2 text-center md:text-left">
           <span className="font-lab-mono text-lab-mono text-sm font-bold uppercase tracking-wide text-lab-on-surface">
             {t("footerBrand")}

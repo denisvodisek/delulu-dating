@@ -19,19 +19,21 @@ export function LocaleSwitcher({ variant = "default" }: LocaleSwitcherProps) {
   if (variant === "lab") {
     return (
       <div
-        className="font-lab-mono text-lab-mono flex shrink-0 items-center gap-2 text-xs font-semibold tracking-wide text-lab-primary"
+        className="font-lab-mono text-lab-mono flex shrink-0 items-center gap-1 text-xs font-semibold tracking-wide"
         role="group"
         aria-label={t("language")}
       >
         {LOCALES.map((code, i) => (
-          <span key={code} className="flex items-center gap-2">
-            {i > 0 ? <span className="text-lab-outline-variant font-normal">|</span> : null}
+          <span key={code} className="flex items-center gap-1">
+            {i > 0 ? <span className="text-pink-300">|</span> : null}
             <button
               type="button"
               onClick={() => router.replace(pathname, { locale: code })}
               className={cn(
-                "cursor-pointer uppercase transition-colors hover:underline",
-                locale === code ? "text-lab-primary" : "text-lab-on-surface-variant hover:text-lab-primary",
+                "cursor-pointer rounded-full px-3 py-1.5 uppercase transition-all",
+                locale === code
+                  ? "bg-gradient-to-r from-pink-200 to-violet-200 font-bold text-fuchsia-950 shadow-sm ring-2 ring-pink-300/60"
+                  : "text-fuchsia-900/70 hover:bg-pink-50 hover:text-fuchsia-900",
               )}
             >
               {code === "en" ? t("langEn") : t("langZh")}

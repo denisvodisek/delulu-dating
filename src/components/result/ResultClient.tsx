@@ -159,13 +159,13 @@ export default function ResultClient({
     .sort((a, b) => a.factor - b.factor)[0];
 
   return (
-    <main className="flex flex-1 flex-col">
-      <section className="border-lab-ink bg-lab-surface-container-lowest w-full border-b px-4 pt-10 pb-20 md:px-16">
+    <main className="flex flex-1 flex-col pt-20">
+      <section className="w-full border-b border-pink-200/45 bg-gradient-to-b from-pink-100/70 via-white to-violet-50/50 px-4 pb-20 pt-6 md:px-16">
         <div className="mx-auto max-w-7xl text-center">
           <span className="font-lab-mono text-lab-on-surface-variant mb-8 block text-xs font-semibold uppercase tracking-[0.2em]">
             {t("labHeroKicker")}
           </span>
-          <h1 className="font-lab-display text-lab-primary mb-4 text-5xl leading-none font-bold md:text-7xl lg:text-[84px] lg:leading-[90px]">
+          <h1 className="font-lab-display mb-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold text-transparent md:text-7xl lg:text-[84px] lg:leading-[90px]">
             <span className="mr-2 text-[0.45em] font-semibold tracking-tight md:text-[0.5em]">
               {t("labHeroInPrefix")}
             </span>
@@ -183,8 +183,8 @@ export default function ResultClient({
         </div>
       </section>
 
-      <section className="border-lab-ink grid min-h-[600px] w-full grid-cols-1 px-4 md:grid-cols-12 md:px-16">
-        <div className="border-lab-ink border-b py-12 md:col-span-7 md:border-r md:border-b-0 md:py-16 md:pr-12">
+      <section className="grid min-h-[600px] w-full grid-cols-1 border-pink-200/35 bg-gradient-to-b from-white via-pink-50/20 to-violet-50/30 px-4 md:grid-cols-12 md:px-16">
+        <div className="border-b border-pink-200/40 py-12 md:col-span-7 md:border-r md:border-b-0 md:py-16 md:pr-12">
           <div className="mb-12">
             <h2 className="font-lab-display mb-2 text-3xl uppercase md:text-5xl md:leading-[52px]">
               {t("labDebtTitle")}
@@ -194,11 +194,11 @@ export default function ResultClient({
             </p>
           </div>
 
-          <div className="border-lab-ink flex flex-col border-t">
+          <div className="flex flex-col border-t border-pink-200/45">
             {debtRows.map((row, idx) => (
               <div
                 key={row.key}
-                className="border-lab-ink grid grid-cols-12 items-center gap-y-3 border-b py-6"
+                className="grid grid-cols-12 items-center gap-y-3 border-b border-pink-200/35 py-6"
               >
                 <div className="font-lab-display text-lab-primary col-span-12 text-2xl opacity-30 md:col-span-1">
                   {String(idx + 1).padStart(2, "0")}
@@ -237,7 +237,7 @@ export default function ResultClient({
           </div>
 
           {tightest ? (
-            <div className="bg-lab-surface-container mt-10 border border-lab-ink p-6">
+            <div className="mt-10 rounded-2xl border border-pink-200/60 bg-gradient-to-br from-pink-50/80 to-violet-50/60 p-6 shadow-sm">
               <p className="font-lab-mono text-lab-on-surface-variant mb-2 text-xs font-semibold uppercase">
                 {t("tips")}
               </p>
@@ -248,11 +248,11 @@ export default function ResultClient({
           ) : null}
 
           {(calc.tier === "delulu" || calc.tier === "god") && (
-            <div className="border-lab-ink bg-lab-error-container mt-8 border p-8">
-              <p className="font-lab-mono text-lab-on-error-container mb-2 text-xs font-semibold uppercase">
+            <div className="mt-8 rounded-2xl border-2 border-rose-300/70 bg-gradient-to-br from-rose-100 via-pink-50 to-white p-8 shadow-sm">
+              <p className="font-lab-mono mb-2 text-xs font-semibold text-rose-900 uppercase">
                 {t("labSystemAlert_title")}
               </p>
-              <p className="font-lab-body text-lab-on-error-container text-sm leading-relaxed">
+              <p className="font-lab-body text-sm leading-relaxed text-rose-950/90">
                 {calc.tier === "god" ? t("labSystemAlert_god") : t("labSystemAlert_delulu")}
               </p>
             </div>
@@ -260,14 +260,14 @@ export default function ResultClient({
         </div>
 
         <div className="flex flex-col py-12 md:col-span-5 md:py-16 md:pl-12">
-          <div className="md:top-28 sticky">
-            <div className="border-lab-ink mb-10 border">
-              <div className="border-lab-ink bg-lab-primary border-b px-6 py-3">
-                <p className="font-lab-mono text-lab-on-primary text-xs font-semibold uppercase tracking-wide">
+            <div className="md:top-28 sticky">
+            <div className="mb-10 overflow-hidden rounded-3xl border-2 border-pink-200/55 bg-white/90 shadow-[0_20px_50px_-12px_rgba(236,72,153,0.2)] backdrop-blur-sm">
+              <div className="border-b border-pink-200/50 bg-gradient-to-r from-pink-400 via-fuchsia-400 to-violet-400 px-6 py-3">
+                <p className="font-lab-mono text-xs font-semibold tracking-wide text-white uppercase drop-shadow-sm">
                   {t("labClinicalLabel")}
                 </p>
               </div>
-              <div className="bg-white p-8">
+                <div className="p-8">
                 <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase">
                   {tierLabel}
                 </p>
@@ -278,7 +278,7 @@ export default function ResultClient({
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="font-lab-mono border-lab-ink bg-lab-surface-container px-3 py-1 text-[10px] font-semibold uppercase tracking-wide"
+                      className="font-lab-mono rounded-full border border-pink-200/60 bg-gradient-to-r from-pink-100/80 to-violet-100/80 px-3 py-1 text-[10px] font-semibold tracking-wide text-fuchsia-900 uppercase"
                     >
                       {tag}
                     </span>
@@ -293,26 +293,26 @@ export default function ResultClient({
                 </p>
                 <div
                   className={cn(
-                    "border-lab-ink relative h-10 w-full overflow-hidden border",
-                    alarming && "ring-2 ring-lab-error ring-offset-2 ring-offset-white",
+                    "relative h-10 w-full overflow-hidden rounded-full border-2 border-pink-200/50 bg-pink-50/50",
+                    alarming && "ring-2 ring-rose-400 ring-offset-2 ring-offset-white",
                   )}
                 >
                   <div
                     className={cn(
-                      "absolute inset-y-0 left-0 transition-all duration-700 ease-out",
-                      alarming ? "animate-pulse bg-lab-error" : "bg-lab-primary",
+                      "absolute inset-y-0 left-0 transition-all duration-700 ease-out rounded-full",
+                      alarming
+                        ? "animate-pulse bg-gradient-to-r from-rose-500 to-red-600"
+                        : "bg-gradient-to-r from-pink-400 via-fuchsia-500 to-violet-500",
                     )}
                     style={{ width: `${sev}%` }}
                   />
                   <div className="absolute inset-0 flex items-center justify-end px-4">
                     <span
                       className={cn(
-                        "font-lab-mono text-sm font-bold tabular-nums",
-                        alarming
-                          ? "text-white drop-shadow-sm"
-                          : sev > 52
-                            ? "text-lab-on-primary"
-                            : "text-lab-inverse",
+                        "font-lab-mono text-sm font-bold tabular-nums drop-shadow-sm",
+                        alarming || sev > 40
+                          ? "text-white"
+                          : "text-fuchsia-950",
                       )}
                     >
                       {sev}%
@@ -335,7 +335,7 @@ export default function ResultClient({
                 <button
                   type="button"
                   onClick={wa}
-                  className="font-lab-mono border-lab-ink text-lab-on-surface flex flex-1 items-center justify-center gap-2 border py-4 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-lab-inverse hover:text-lab-on-inverse"
+                  className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
                 >
                   <span className="material-symbols-outlined text-base">share</span>
                   {ts("whatsapp")}
@@ -343,7 +343,7 @@ export default function ResultClient({
                 <button
                   type="button"
                   onClick={() => void copy()}
-                  className="font-lab-mono border-lab-ink text-lab-on-surface flex flex-1 items-center justify-center gap-2 border py-4 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-lab-inverse hover:text-lab-on-inverse"
+                  className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
                 >
                   <span className="material-symbols-outlined text-base">content_copy</span>
                   {ts("copy")}
@@ -354,7 +354,7 @@ export default function ResultClient({
         </div>
       </section>
 
-      <section className="border-lab-ink bg-lab-surface-container-high w-full border-t px-4 py-16 md:px-16 md:py-24">
+      <section className="w-full border-t border-pink-200/45 bg-gradient-to-r from-violet-100/40 via-pink-50/60 to-sky-50/40 px-4 py-16 md:px-16 md:py-24">
         <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-8 md:flex-row">
           <div className="text-center md:text-left">
             <h4 className="font-lab-display mb-2 text-2xl uppercase md:text-4xl md:leading-[52px]">
@@ -369,13 +369,13 @@ export default function ResultClient({
                 clearQuiz();
                 router.push("/quiz");
               }}
-              className="font-lab-mono bg-lab-primary text-lab-on-primary border border-lab-primary px-8 py-5 text-xs font-semibold uppercase tracking-widest transition-colors hover:bg-white hover:text-lab-primary"
+              className="font-lab-mono rounded-2xl bg-gradient-to-r from-pink-500 to-fuchsia-600 px-8 py-5 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/35 transition-all hover:brightness-105"
             >
               {t("labRedoCalc")}
             </button>
             <Link
               href="/methodology"
-              className="font-lab-mono border-lab-ink text-lab-on-surface flex items-center justify-center border px-8 py-5 text-xs font-semibold uppercase tracking-widest transition-colors hover:bg-lab-inverse hover:text-lab-on-inverse"
+              className="font-lab-mono flex items-center justify-center rounded-2xl border-2 border-pink-200/70 bg-white px-8 py-5 text-xs font-semibold tracking-widest text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
             >
               {t("labReadMethod")}
             </Link>
@@ -384,17 +384,19 @@ export default function ResultClient({
       </section>
 
       {children ? (
-        <div className="border-lab-ink mx-4 my-10 border bg-white/60 p-6 md:mx-16">{children}</div>
+        <div className="mx-4 my-10 rounded-2xl border-2 border-pink-200/50 bg-white/75 p-6 shadow-sm backdrop-blur-sm md:mx-16">
+          {children}
+        </div>
       ) : null}
 
-      <div className="border-lab-ink flex h-20 w-full overflow-hidden border-t">
-        <div className="bg-lab-primary-fixed border-lab-ink w-1/4 flex-none border-r" />
-        <div className="bg-lab-secondary-fixed border-lab-ink w-1/4 flex-none border-r" />
-        <div className="bg-lab-tertiary-fixed border-lab-ink w-1/4 flex-none border-r" />
-        <div className="bg-lab-surface-variant w-1/4 flex-none" />
+      <div className="flex h-20 w-full overflow-hidden border-t border-pink-200/40">
+        <div className="w-1/4 flex-none bg-gradient-to-br from-pink-400 to-fuchsia-500" />
+        <div className="w-1/4 flex-none bg-gradient-to-br from-fuchsia-400 to-violet-500" />
+        <div className="w-1/4 flex-none bg-gradient-to-br from-violet-400 to-sky-400" />
+        <div className="w-1/4 flex-none bg-gradient-to-br from-sky-300 to-pink-300" />
       </div>
 
-      <footer className="bg-lab-surface border-lab-outline flex w-full flex-col items-center gap-8 border-t px-4 py-12 md:flex-row md:justify-between md:px-16">
+      <footer className="flex w-full flex-col items-center gap-8 border-t border-pink-200/40 bg-white/80 px-4 py-12 backdrop-blur-sm md:flex-row md:justify-between md:px-16">
         <div className="flex flex-col items-center gap-3 text-center md:flex-row md:gap-8 md:text-left">
           <span className="font-lab-mono text-sm font-bold uppercase tracking-wide text-lab-on-surface">
             {t("labFooterBrand")}
