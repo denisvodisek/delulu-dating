@@ -111,6 +111,11 @@ export function calculateDelulu(answers: QuizAnswersV1): CalculationResult {
   return calculateForSeeker(answers);
 }
 
+/**
+ * Joint match probability ≈ Π(filter factors) × CORRELATION_BOOST, clamped to
+ * [1/basePool, 1]. `estimatedMatches` is round(p × basePool), clamped for display —
+ * “1 in N” uses round(1/p) separately so the two headlines can differ slightly after rounding.
+ */
 export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
   const model = getModel(answers.seeker);
 

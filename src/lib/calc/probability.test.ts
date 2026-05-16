@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { calculateDelulu, calculateForSeeker } from "@/lib/calc/probability";
+import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
+import { MAX_POOL_COUNT_DISPLAY } from "@/lib/format-one-in";
+import { calculateDelulu, calculateForSeeker, FEMALE_BASE_POOL } from "@/lib/calc/probability";
 import type { QuizAnswersV1 } from "@/lib/types/quiz";
 
 const base: QuizAnswersV1 = {
@@ -23,6 +25,24 @@ describe("calculateDelulu", () => {
     const r = calculateDelulu(base);
     expect(r.probability).toBeGreaterThan(0);
     expect(r.probability).toBeLessThanOrEqual(1);
+  });
+
+  it("estimatedMatches is rounded probability × base pool (display cap)", () => {
+    const r = calculateDelulu(base);
+    const expected = Math.min(
+      MAX_POOL_COUNT_DISPLAY,
+      Math.max(1, Math.round(r.probability * BASE_MALE_POOL)),
+    );
+    expect(r.estimatedMatches).toBe(expected);
+  });
+
+  it("uses female base pool for man_seeking_woman", () => {
+    const r = calculateForSeeker({ ...base, seeker: "man_seeking_woman" });
+    const expected = Math.min(
+      MAX_POOL_COUNT_DISPLAY,
+      Math.max(1, Math.round(r.probability * FEMALE_BASE_POOL)),
+    );
+    expect(r.estimatedMatches).toBe(expected);
   });
 
   it("gets stricter when height increases", () => {

@@ -3,7 +3,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { useTranslations } from "next-intl";
-import { motion } from "motion/react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { calculateDelulu, oneInN } from "@/lib/calc/probability";
@@ -14,7 +13,8 @@ import type { CalculationResult, Seeker } from "@/lib/types/quiz";
 import { buildSharedResultPath, encodeSharedResult } from "@/lib/share-payload";
 import { trackEvent } from "@/lib/analytics/events";
 import { pushRun } from "@/lib/run-history";
-import { basePoolForSeeker, buildFiltrationDebt, formatOneInCompact } from "@/lib/result-filtration";
+import { ResultHeroShowcase } from "@/components/result/ResultHeroShowcase";
+import { basePoolForSeeker, buildFiltrationDebt } from "@/lib/result-filtration";
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
 
@@ -205,10 +205,6 @@ export default function ResultClient({
     Number.isFinite(1 / calc.probability) &&
     1 / calc.probability > MAX_ONE_IN_DISPLAY;
 
-  const compactIn = oddsPastUiCeil
-    ? `${MAX_ONE_IN_DISPLAY.toLocaleString()}+`
-    : formatOneInCompact(n, MAX_ONE_IN_DISPLAY);
-
   const debtRows = buildFiltrationDebt(seeker, calc.breakdown);
   const basePool = basePoolForSeeker(seeker);
   const sev = severityPercent(calc.tier);
@@ -225,36 +221,14 @@ export default function ResultClient({
 
   return (
     <main className="flex flex-1 flex-col pt-20">
-      <section className="relative w-full overflow-hidden border-b border-pink-200/45 bg-gradient-to-b from-pink-100/70 via-white to-violet-50/50 px-4 pb-20 pt-8 md:px-16">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-pink-300/35 via-fuchsia-200/25 to-violet-300/35 blur-3xl" />
-        <motion.div
-          className="relative mx-auto max-w-7xl text-center"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 120, damping: 20, mass: 0.9 }}
-        >
-          <h1 className="font-lab-display mb-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold text-transparent drop-shadow-sm md:text-7xl lg:text-[84px] lg:leading-[90px]">
-            <span className="mr-2 text-[0.45em] font-semibold tracking-tight md:text-[0.5em]">
-              {t("labHeroInPrefix")}
-            </span>
-            {compactIn}
-          </h1>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.08, duration: 0.45 }}
-            className="font-lab-mono text-lab-on-surface-variant mx-auto mt-2 max-w-2xl rounded-2xl border border-pink-200/50 bg-white/70 px-5 py-4 text-xs uppercase tracking-wide shadow-sm backdrop-blur-sm"
-          >
-            {t("heroChanceLine", { pct: pctLabel })}
-          </motion.div>
-          <p className="font-lab-body text-lab-on-surface-variant mx-auto mt-5 max-w-xl text-sm leading-relaxed">
-            {t("poolExplainer", { count: calc.estimatedMatches })}
-          </p>
-          <p className="font-lab-body text-lab-on-surface-variant mx-auto mt-4 max-w-xl text-xs leading-relaxed opacity-80 md:text-sm md:opacity-75">
-            {seeker === "woman_seeking_man" ? t("labHeroSub_male") : t("labHeroSub_female")}
-          </p>
-        </motion.div>
-      </section>
+      <ResultHeroShowcase
+        seeker={seeker}
+        locale={locale}
+        estimatedMatches={calc.estimatedMatches}
+        n={n}
+        oddsPastUiCeil={oddsPastUiCeil}
+        pctLabel={pctLabel}
+      />
 
       <section className="grid min-h-[600px] w-full grid-cols-1 border-pink-200/35 bg-gradient-to-b from-white via-pink-50/20 to-violet-50/30 px-4 md:grid-cols-12 md:items-start md:px-16">
         <div className="border-b border-pink-200/40 py-12 md:col-span-7 md:border-r md:border-b-0 md:py-16 md:pr-12">

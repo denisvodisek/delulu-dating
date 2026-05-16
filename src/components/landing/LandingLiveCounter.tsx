@@ -32,7 +32,6 @@ export function LandingLiveCounter() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLSpanElement>(null);
   const prevTargetRef = useRef<number | null>(null);
-  const tickingStartedRef = useRef(false);
   const [target, setTarget] = useState<number | null>(null);
 
   useEffect(() => {
@@ -91,9 +90,10 @@ export function LandingLiveCounter() {
     prevTargetRef.current = target;
   }, [target, locale]);
 
+  /** Keep interval stable: do not depend on `target` or every tick clears the pending timeout and never reschedules. */
+  const targetReady = target != null;
   useEffect(() => {
-    if (target == null || tickingStartedRef.current) return;
-    tickingStartedRef.current = true;
+    if (!targetReady) return;
     let cancelled = false;
     let timer: number | null = null;
 
@@ -119,7 +119,7 @@ export function LandingLiveCounter() {
       cancelled = true;
       if (timer != null) window.clearTimeout(timer);
     };
-  }, [target]);
+  }, [targetReady]);
 
   useEffect(() => {
     if (!wrapRef.current || target == null) return;
@@ -139,15 +139,6 @@ export function LandingLiveCounter() {
     return () => ctx.revert();
   }, [target]);
 
-  function poke() {
-    if (!wrapRef.current) return;
-    gsap.fromTo(
-      wrapRef.current,
-      { scale: 1 },
-      { scale: 1.02, duration: 0.15, yoyo: true, repeat: 1, ease: "power2.out" },
-    );
-  }
-
   if (target == null) {
     return (
       <div
@@ -159,10 +150,10 @@ export function LandingLiveCounter() {
 
   return (
     <div ref={wrapRef} className="group relative w-full max-w-lg select-none">
-      <button
-        type="button"
-        onClick={poke}
-        className="relative w-full overflow-hidden rounded-2xl border-2 border-pink-200/60 bg-gradient-to-br from-white/95 via-pink-50/90 to-violet-50/85 px-5 py-5 text-left shadow-[0_16px_40px_-12px_rgba(217,70,239,0.35)] transition-shadow hover:shadow-[0_20px_44px_-12px_rgba(236,72,153,0.45)] focus-visible:ring-2 focus-visible:ring-fuchsia-400 focus-visible:outline-none md:px-7 md:py-6"
+      <div
+        role="status"
+        aria-live="polite"
+        className="relative w-full overflow-hidden rounded-2xl border-2 border-pink-200/60 bg-gradient-to-br from-white/95 via-pink-50/90 to-violet-50/85 px-5 py-5 text-left shadow-[0_16px_40px_-12px_rgba(217,70,239,0.35)] md:px-7 md:py-6"
       >
         <div className="pointer-events-none absolute -top-12 -right-8 h-32 w-32 rounded-full bg-fuchsia-400/25 blur-2xl" data-float />
         <div className="pointer-events-none absolute -bottom-10 -left-6 h-28 w-28 rounded-full bg-pink-400/25 blur-2xl" data-float />
@@ -181,10 +172,7 @@ export function LandingLiveCounter() {
             {hint}
           </p>
         ) : null}
-        <p className="font-lab-mono relative mt-3 text-[9px] text-slate-500 uppercase tracking-wider">
-          {t("liveCounterTap")}
-        </p>
-      </button>
+      </div>
     </div>
   );
 }
