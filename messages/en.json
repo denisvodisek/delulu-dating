@@ -186,9 +186,9 @@
   "result": {
     "title": "Your delulu score",
     "heroKicker": "Rough match odds",
-    "heroLiveLabel": "Your modeled pool",
-    "heroPoolCount_male": "There are {count, number} men for you!",
-    "heroPoolCount_female": "There are {count, number} women for you!",
+    "heroPoolPre": "There are",
+    "heroPoolPost_male": "men for you!",
+    "heroPoolPost_female": "women for you!",
     "heroOddsEyebrow": "Rough odds",
     "heroChanceLine_male": "That's about {pct} of HK men in this model passing every filter at once.",
     "heroChanceLine_female": "That's about {pct} of HK women in this model passing every filter at once.",
@@ -275,6 +275,9 @@
     "labSeverityCritical": "Critical load — share responsibly"
   },
   "share": {
+    "storyImage": "Share story card",
+    "storyImageHint": "Creates a 9:16 PNG built for Stories. Phones open the system share sheet; desktops download the file.",
+    "storyImageWorking": "Making your image…",
     "copy": "Copy link",
     "whatsapp": "WhatsApp",
     "threads": "Threads",

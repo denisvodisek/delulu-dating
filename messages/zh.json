@@ -186,9 +186,9 @@
   "result": {
     "title": "你嘅妄想指數",
     "heroKicker": "粗略中獎機會",
-    "heroLiveLabel": "模型計出嘅池",
-    "heroPoolCount_male": "仲有 {count, number} 個港男符合你條件！",
-    "heroPoolCount_female": "仲有 {count, number} 個港女符合你條件！",
+    "heroPoolPre": "仲有",
+    "heroPoolPost_male": "個港男符合你條件！",
+    "heroPoolPost_female": "個港女符合你條件！",
     "heroOddsEyebrow": "粗略機率",
     "heroChanceLine_male": "模型入面大概 {pct} 港男同時過晒你所有 filter。",
     "heroChanceLine_female": "模型入面大概 {pct} 港女同時過晒你所有 filter。",
@@ -275,6 +275,9 @@
     "labSeverityCritical": "紅燈負載 — 轉發要帶腦"
   },
   "share": {
+    "storyImage": "分享 Story 圖",
+    "storyImageHint": "會出 9:16 PNG，啱貼 IG Story。手機用分享選單；電腦會下載檔案。",
+    "storyImageWorking": "整緊圖…",
     "copy": "複製連結",
     "whatsapp": "WhatsApp",
     "threads": "Threads",

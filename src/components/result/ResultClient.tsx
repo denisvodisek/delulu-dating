@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -10,10 +10,10 @@ import { formatMatchPercent } from "@/lib/format-match";
 import { MAX_ONE_IN_DISPLAY } from "@/lib/format-one-in";
 import { loadQuiz, clearQuiz } from "@/lib/quiz-storage";
 import type { CalculationResult, Seeker } from "@/lib/types/quiz";
-import { buildSharedResultPath, encodeSharedResult } from "@/lib/share-payload";
 import { trackEvent } from "@/lib/analytics/events";
 import { pushRun } from "@/lib/run-history";
 import { ResultHeroShowcase } from "@/components/result/ResultHeroShowcase";
+import { ResultStoryExportCard } from "@/components/result/ResultStoryExportCard";
 import { basePoolForSeeker, buildFiltrationDebt } from "@/lib/result-filtration";
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
@@ -43,7 +43,9 @@ export default function ResultClient({
   const historySaved = useRef(false);
   const footerRef = useRef<HTMLElement>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
+  const [shareBusy, setShareBusy] = useState(false);
   const confettiLaunched = useRef(false);
+  const storyExportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const q = loadQuiz();
@@ -142,47 +144,37 @@ export default function ResultClient({
     return () => observer.disconnect();
   }, []);
 
-  const shareUrl = useMemo(() => {
-    if (!snap) return "https://delulu.dating";
-    const token = encodeSharedResult({
-      p: Number(snap.calc.probability.toFixed(8)),
-      n: snap.calc.estimatedMatches,
-      tier: snap.calc.tier,
-      ts: Date.now(),
-    });
-    const path = buildSharedResultPath(locale, token);
-    if (typeof window === "undefined") return `https://delulu.dating${path}`;
-    return `${window.location.origin}${path}`;
-  }, [snap, locale]);
-
-  function buildShareBody(c: CalculationResult) {
-    const tierLabel = t(`tier_${c.tier}`);
-    const pctLabel = formatMatchPercent(c.probability);
-    const n = oneInN(c.probability);
-    const oddsPastUiCeil =
-      Number.isFinite(c.probability) &&
-      c.probability > 0 &&
-      Number.isFinite(1 / c.probability) &&
-      1 / c.probability > MAX_ONE_IN_DISPLAY;
-    return oddsPastUiCeil
-      ? t("shareTextCapped", { n, pct: pctLabel, tier: tierLabel })
-      : t("shareText", { n, pct: pctLabel, tier: tierLabel });
-  }
-
-  function wa() {
-    if (!snap) return;
-    void trackEvent("result_share_clicked", { channel: "whatsapp", locale });
-    const text = encodeURIComponent(`${buildShareBody(snap.calc)} ${shareUrl}`);
-    window.open(`https://wa.me/?text=${text}`, "_blank");
-  }
-
-  async function copy() {
-    if (!snap) return;
-    void trackEvent("result_share_clicked", { channel: "copy", locale });
+  async function shareStoryImage() {
+    if (!snap || !storyExportRef.current) return;
+    const el = storyExportRef.current;
+    setShareBusy(true);
     try {
-      await navigator.clipboard.writeText(`${buildShareBody(snap.calc)} ${shareUrl}`);
+      const { toPng } = await import("html-to-image");
+      const dataUrl = await toPng(el, {
+        pixelRatio: 3,
+        cacheBust: true,
+      });
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], "delulu-story.png", { type: "image/png" });
+      if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Delulu Dating",
+          text: "Delulu Dating",
+        });
+        void trackEvent("result_share_clicked", { channel: "story_image_share", locale });
+      } else {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = "delulu-story.png";
+        a.click();
+        void trackEvent("result_share_clicked", { channel: "story_image_download", locale });
+      }
     } catch {
-      /* noop */
+      void trackEvent("result_share_clicked", { channel: "story_image_error", locale });
+    } finally {
+      setShareBusy(false);
     }
   }
 
@@ -218,6 +210,20 @@ export default function ResultClient({
   const tightest = [...calc.breakdown]
     .filter((r) => r.key !== "correlation")
     .sort((a, b) => a.factor - b.factor)[0];
+
+  const storyPre = t("heroPoolPre");
+  const storyPost = seeker === "woman_seeking_man" ? t("heroPoolPost_male") : t("heroPoolPost_female");
+  const storyOneIn = oddsPastUiCeil
+    ? seeker === "woman_seeking_man"
+      ? t("oneInCapped", { n })
+      : t("oneInCapped_female", { n })
+    : seeker === "woman_seeking_man"
+      ? t("oneIn", { n })
+      : t("oneIn_female", { n });
+  const storyChance = t(
+    seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
+    { pct: pctLabel },
+  );
 
   return (
     <main className="flex flex-1 flex-col pt-20">
@@ -380,24 +386,20 @@ export default function ResultClient({
             <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
               {t("labTransmit")}
             </p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={wa}
-                className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
-              >
+            <button
+              type="button"
+              disabled={shareBusy}
+              onClick={() => void shareStoryImage()}
+              className="font-lab-mono flex w-full flex-col gap-1 rounded-2xl border-2 border-transparent bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 text-xs font-bold tracking-wide text-white uppercase shadow-[0_12px_40px_-8px_rgba(217,70,239,0.65)] transition-all hover:brightness-110 disabled:cursor-wait disabled:opacity-70"
+            >
+              <span className="flex items-center justify-center gap-2">
                 <span className="material-symbols-outlined text-base">share</span>
-                {ts("whatsapp")}
-              </button>
-              <button
-                type="button"
-                onClick={() => void copy()}
-                className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
-              >
-                <span className="material-symbols-outlined text-base">content_copy</span>
-                {ts("copy")}
-              </button>
-            </div>
+                {shareBusy ? ts("storyImageWorking") : ts("storyImage")}
+              </span>
+            </button>
+            <p className="text-lab-on-surface-variant text-center font-lab-body text-[11px] leading-relaxed opacity-90">
+              {ts("storyImageHint")}
+            </p>
           </div>
         </div>
       </section>
@@ -502,6 +504,18 @@ export default function ResultClient({
           </div>
         </div>
       </footer>
+      <div className="pointer-events-none fixed top-0 left-[-10000px] opacity-0" aria-hidden>
+        <ResultStoryExportCard
+          ref={storyExportRef}
+          locale={locale}
+          pre={storyPre}
+          post={storyPost}
+          count={calc.estimatedMatches}
+          oneInLine={storyOneIn}
+          chanceLine={storyChance}
+          tierLabel={tierLabel}
+        />
+      </div>
     </main>
   );
 }
