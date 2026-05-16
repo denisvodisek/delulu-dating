@@ -1,10 +1,12 @@
 export type MaritalPreference = "never" | "not_married_ok" | "any";
 export type EducationMin = "any" | "degree" | "postgrad";
 
+export type Seeker = "woman_seeking_man" | "man_seeking_woman";
+
 export type QuizAnswersV1 = {
   version: 1;
-  /** Woman seeking man — day 1 scope */
-  seeker: "woman_seeking_man";
+  /** Day-1 UI uses woman_seeking_man; architecture supports v2 */
+  seeker: Seeker;
   ageMin: number;
   ageMax: number;
   minHeightCm: number;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateDelulu } from "@/lib/calc/probability";
+import { calculateDelulu, calculateForSeeker } from "@/lib/calc/probability";
 import type { QuizAnswersV1 } from "@/lib/types/quiz";
 
 const base: QuizAnswersV1 = {
@@ -33,5 +33,14 @@ describe("calculateDelulu", () => {
     const low = calculateDelulu({ ...base, minMonthlyIncomeHKD: 20000 }).probability;
     const high = calculateDelulu({ ...base, minMonthlyIncomeHKD: 120000 }).probability;
     expect(high).toBeLessThan(low);
+  });
+
+  it("supports seeker dispatcher for v2", () => {
+    const woman = calculateForSeeker(base);
+    const man = calculateForSeeker({ ...base, seeker: "man_seeking_woman" });
+    expect(woman.probability).toBeGreaterThan(0);
+    expect(man.probability).toBeGreaterThan(0);
+    expect(woman.tier).toBeDefined();
+    expect(man.tier).toBeDefined();
   });
 });

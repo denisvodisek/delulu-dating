@@ -14,11 +14,15 @@ import { Separator } from "@/components/ui/separator";
 import { calculateDelulu, oneInN } from "@/lib/calc/probability";
 import { loadQuiz, clearQuiz } from "@/lib/quiz-storage";
 import type { CalculationResult } from "@/lib/types/quiz";
+import { buildSharedResultPath, encodeSharedResult } from "@/lib/share-payload";
+import { trackEvent } from "@/lib/analytics/events";
 
 export default function ResultClient({
   children,
+  locale,
 }: {
   children?: React.ReactNode;
+  locale: string;
 }) {
   const t = useTranslations("result");
   const tb = useTranslations("bd");
@@ -38,12 +42,16 @@ export default function ResultClient({
 
   useEffect(() => {
     if (!calc || !rootRef.current) return;
+    void trackEvent("result_viewed", {
+      locale,
+      tier: calc.tier,
+      probability: Number(calc.probability.toFixed(6)),
+    });
+
     const el = rootRef.current;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)")
-      .matches;
-    if (reduce) {
-      return;
-    }
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         el.querySelectorAll(".reveal-item"),
@@ -66,12 +74,20 @@ export default function ResultClient({
       );
     }, el);
     return () => ctx.revert();
-  }, [calc]);
+  }, [calc, locale]);
 
   const shareUrl = useMemo(() => {
-    if (typeof window === "undefined") return "https://delulu.dating";
-    return window.location.origin + window.location.pathname;
-  }, []);
+    if (!calc) return "https://delulu.dating";
+    const token = encodeSharedResult({
+      p: Number(calc.probability.toFixed(8)),
+      n: calc.estimatedMatches,
+      tier: calc.tier,
+      ts: Date.now(),
+    });
+    const path = buildSharedResultPath(locale, token);
+    if (typeof window === "undefined") return `https://delulu.dating${path}`;
+    return `${window.location.origin}${path}`;
+  }, [calc, locale]);
 
   const sortedBreakdown = useMemo(() => {
     if (!calc) return [];
@@ -91,8 +107,7 @@ export default function ResultClient({
   }
 
   const pct = calc.probability * 100;
-  const pctLabel =
-    pct >= 0.01 ? `${pct.toFixed(2)}%` : `${pct.toExponential(1)}%`;
+  const pctLabel = pct >= 0.01 ? `${pct.toFixed(2)}%` : `${pct.toExponential(1)}%`;
   const tierKey = `tier_${calc.tier}` as
     | "tier_realistic"
     | "tier_picky"
@@ -108,6 +123,7 @@ export default function ResultClient({
   });
 
   async function nativeShare() {
+    void trackEvent("result_share_clicked", { channel: "native", locale });
     try {
       if (navigator.share) {
         await navigator.share({
@@ -117,26 +133,30 @@ export default function ResultClient({
         });
       }
     } catch {
-      /* noop */
+      // noop
     }
   }
 
   function wa() {
+    void trackEvent("result_share_clicked", { channel: "whatsapp", locale });
     const text = encodeURIComponent(`${shareBody} ${shareUrl}`);
     window.open(`https://wa.me/?text=${text}`, "_blank");
   }
 
   function threads() {
+    void trackEvent("result_share_clicked", { channel: "threads", locale });
     const text = encodeURIComponent(`${shareBody} ${shareUrl}`);
     window.open(`https://www.threads.net/intent/post?text=${text}`, "_blank");
   }
 
   function lineShare() {
+    void trackEvent("result_share_clicked", { channel: "line", locale });
     const text = encodeURIComponent(`${shareBody} ${shareUrl}`);
     window.open(`https://line.me/R/msg/text/?${text}`, "_blank");
   }
 
   function telegramShare() {
+    void trackEvent("result_share_clicked", { channel: "telegram", locale });
     const text = encodeURIComponent(`${shareBody} ${shareUrl}`);
     window.open(
       `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${text}`,
@@ -145,18 +165,16 @@ export default function ResultClient({
   }
 
   async function copy() {
+    void trackEvent("result_share_clicked", { channel: "copy", locale });
     try {
       await navigator.clipboard.writeText(`${shareBody} ${shareUrl}`);
     } catch {
-      /* noop */
+      // noop
     }
   }
 
   return (
-    <main
-      ref={rootRef}
-      className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-10"
-    >
+    <main ref={rootRef} className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-10">
       <div className="reveal-item text-center">
         <Badge className="mb-3 rounded-full bg-white/70 px-4 py-1 text-xs font-bold shadow-sm backdrop-blur">
           <Confetti className="mr-1 inline" weight="duotone" />
@@ -195,9 +213,7 @@ export default function ResultClient({
               className="flex items-center justify-between rounded-2xl border bg-card/60 px-4 py-3 text-sm"
             >
               <span className="font-medium">{tb(row.labelKey)}</span>
-              <span className="font-mono text-xs text-muted-foreground">
-                ×{row.factor.toFixed(3)}
-              </span>
+              <span className="font-mono text-xs text-muted-foreground">×{row.factor.toFixed(3)}</span>
             </div>
           ))}
           <div className="flex items-center justify-between rounded-2xl border bg-card/60 px-4 py-3 text-sm">
@@ -212,42 +228,22 @@ export default function ResultClient({
       <div className="reveal-item space-y-3">
         <h2 className="text-lg font-bold">{t("share")}</h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          <Button
-            variant="secondary"
-            className="rounded-2xl font-semibold"
-            onClick={() => void nativeShare()}
-          >
+          <Button variant="secondary" className="rounded-2xl font-semibold" onClick={() => void nativeShare()}>
             {ts("native")}
           </Button>
           <Button variant="secondary" className="rounded-2xl font-semibold" onClick={wa}>
             {ts("whatsapp")}
           </Button>
-          <Button
-            variant="secondary"
-            className="rounded-2xl font-semibold"
-            onClick={threads}
-          >
+          <Button variant="secondary" className="rounded-2xl font-semibold" onClick={threads}>
             {ts("threads")}
           </Button>
-          <Button
-            variant="secondary"
-            className="rounded-2xl font-semibold"
-            onClick={lineShare}
-          >
+          <Button variant="secondary" className="rounded-2xl font-semibold" onClick={lineShare}>
             {ts("line")}
           </Button>
-          <Button
-            variant="secondary"
-            className="rounded-2xl font-semibold"
-            onClick={telegramShare}
-          >
+          <Button variant="secondary" className="rounded-2xl font-semibold" onClick={telegramShare}>
             {ts("telegram")}
           </Button>
-          <Button
-            variant="secondary"
-            className="rounded-2xl font-semibold"
-            onClick={() => void copy()}
-          >
+          <Button variant="secondary" className="rounded-2xl font-semibold" onClick={() => void copy()}>
             {ts("copy")}
           </Button>
         </div>

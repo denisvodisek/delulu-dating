@@ -10,7 +10,7 @@ export default async function ResultPage({
   const { locale } = await params;
   setRequestLocale(locale);
   return (
-    <ResultClient>
+    <ResultClient locale={locale}>
       <MonetizationSlot />
     </ResultClient>
   );

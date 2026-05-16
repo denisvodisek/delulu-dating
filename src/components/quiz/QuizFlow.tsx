@@ -1,8 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, ArrowRight, Calculator } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calculator,
+  CircleNotch,
+} from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,25 +17,51 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { calculateDelulu } from "@/lib/calc/probability";
-import { DISTRICT_MALE_SHARE } from "@/lib/data/hk-demographics";
+import { BASE_MALE_POOL, DISTRICT_MALE_SHARE } from "@/lib/data/hk-demographics";
 import { DEFAULT_QUIZ, type QuizAnswersV1 } from "@/lib/types/quiz";
 import { saveQuiz } from "@/lib/quiz-storage";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics/events";
 
 const STEPS = 7;
 
 export default function QuizFlow() {
   const t = useTranslations("quiz");
   const td = useTranslations("district");
+  const tb = useTranslations("bd");
+  const tr = useTranslations("reveal");
   const locale = useLocale();
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [q, setQ] = useState<QuizAnswersV1>(DEFAULT_QUIZ);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [revealLines, setRevealLines] = useState<string[]>([]);
+  const [revealIndex, setRevealIndex] = useState(0);
 
   const live = useMemo(() => calculateDelulu(q), [q]);
   const pct = live.probability * 100;
 
   const districtKeys = Object.keys(DISTRICT_MALE_SHARE);
+
+  useEffect(() => {
+    void trackEvent("quiz_viewed", { locale, seeker: q.seeker });
+  }, [locale, q.seeker]);
+
+  useEffect(() => {
+    if (!isRevealing || revealLines.length === 0) return;
+    setRevealIndex(0);
+    const iv = window.setInterval(() => {
+      setRevealIndex((prev) => Math.min(prev + 1, revealLines.length - 1));
+    }, 260);
+    const done = window.setTimeout(() => {
+      clearInterval(iv);
+      router.push("/result");
+    }, 260 * (revealLines.length + 2));
+    return () => {
+      clearInterval(iv);
+      clearTimeout(done);
+    };
+  }, [isRevealing, revealLines, router]);
 
   function toggleDistrict(key: string) {
     setQ((prev) => {
@@ -44,20 +75,53 @@ export default function QuizFlow() {
     });
   }
 
-  function next() {
-    if (step < STEPS - 1) setStep((s) => s + 1);
-    else {
-      saveQuiz(q);
-      void fetch("/api/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale }),
-      }).catch(() => {});
-      router.push("/result");
+  function buildRevealLog() {
+    const lines = [tr("logIntro")];
+    let pool = BASE_MALE_POOL;
+    const rows = [...live.breakdown]
+      .filter((row) => row.key !== "correlation")
+      .sort((a, b) => a.factor - b.factor)
+      .slice(0, 5);
+
+    for (const row of rows) {
+      pool = Math.max(1, Math.round(pool * row.factor));
+      lines.push(`${tb(row.labelKey)} -> ~${pool.toLocaleString()}`);
     }
+
+    lines.push(tr("calculating"));
+    return lines;
+  }
+
+  function next() {
+    if (isRevealing) return;
+
+    if (step < STEPS - 1) {
+      setStep((s) => s + 1);
+      void trackEvent("quiz_step_next", { step: step + 1, locale });
+      return;
+    }
+
+    saveQuiz(q);
+    void fetch("/api/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale }),
+    }).catch(() => {});
+
+    void trackEvent("quiz_completed", {
+      locale,
+      probability: Number(live.probability.toFixed(6)),
+      tier: live.tier,
+      minHeightCm: q.minHeightCm,
+      minMonthlyIncomeHKD: q.minMonthlyIncomeHKD,
+    });
+
+    setRevealLines(buildRevealLog());
+    setIsRevealing(true);
   }
 
   function back() {
+    if (isRevealing) return;
     setStep((s) => Math.max(0, s - 1));
   }
 
@@ -164,9 +228,7 @@ export default function QuizFlow() {
                     "h-12 justify-start rounded-2xl border-2 text-left font-semibold",
                     q.marital === key && "shadow-md",
                   )}
-                  onClick={() =>
-                    setQ((p) => ({ ...p, marital: key }))
-                  }
+                  onClick={() => setQ((p) => ({ ...p, marital: key }))}
                 >
                   {label}
                 </Button>
@@ -213,9 +275,7 @@ export default function QuizFlow() {
                   type="button"
                   variant={q.educationMin === key ? "default" : "outline"}
                   className="h-12 justify-start rounded-2xl border-2 text-left font-semibold"
-                  onClick={() =>
-                    setQ((p) => ({ ...p, educationMin: key }))
-                  }
+                  onClick={() => setQ((p) => ({ ...p, educationMin: key }))}
                 >
                   {label}
                 </Button>
@@ -244,9 +304,7 @@ export default function QuizFlow() {
                 <Switch
                   id="kids"
                   checked={q.noKidsFromPrev}
-                  onCheckedChange={(v) =>
-                    setQ((p) => ({ ...p, noKidsFromPrev: v }))
-                  }
+                  onCheckedChange={(v) => setQ((p) => ({ ...p, noKidsFromPrev: v }))}
                 />
               </div>
             </div>
@@ -260,7 +318,7 @@ export default function QuizFlow() {
           variant="ghost"
           className="rounded-2xl"
           onClick={back}
-          disabled={step === 0}
+          disabled={step === 0 || isRevealing}
         >
           <ArrowLeft className="mr-1" />
           {t("back")}
@@ -270,14 +328,38 @@ export default function QuizFlow() {
           variant="secondary"
           className="rounded-2xl"
           onClick={() => setQ(DEFAULT_QUIZ)}
+          disabled={isRevealing}
         >
           {t("skip")}
         </Button>
-        <Button type="button" className="rounded-2xl font-bold" onClick={next}>
+        <Button
+          type="button"
+          className="rounded-2xl font-bold"
+          onClick={next}
+          disabled={isRevealing}
+        >
           {step === STEPS - 1 ? t("calculate") : t("next")}
           <ArrowRight className="ml-1" />
         </Button>
       </div>
+
+      {isRevealing ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/55 px-6 backdrop-blur-sm">
+          <Card className="w-full max-w-md border-white/25 bg-zinc-950/90 p-6 text-white">
+            <div className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-zinc-300">
+              <CircleNotch className="animate-spin" size={16} />
+              {tr("calculating")}
+            </div>
+            <div className="space-y-2 font-mono text-xs">
+              {revealLines.slice(0, revealIndex + 1).map((line, i) => (
+                <p key={`${line}-${i}`} className="text-zinc-200">
+                  {line}
+                </p>
+              ))}
+            </div>
+          </Card>
+        </div>
+      ) : null}
     </div>
   );
 }
