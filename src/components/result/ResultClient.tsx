@@ -200,31 +200,25 @@ export default function ResultClient({
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 120, damping: 20, mass: 0.9 }}
         >
-          <span className="font-lab-mono mb-4 inline-flex rounded-full border border-pink-200/60 bg-white/80 px-4 py-2 text-xs font-bold tracking-wide text-fuchsia-800 uppercase shadow-sm backdrop-blur-sm">
-            {t("labHeroSplash")}
-          </span>
-          <span className="font-lab-mono text-fuchsia-700/90 mt-4 mb-2 block text-xs font-semibold uppercase tracking-[0.2em]">
-            {t("labHeroKicker")}
-          </span>
           <h1 className="font-lab-display mb-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold text-transparent drop-shadow-sm md:text-7xl lg:text-[84px] lg:leading-[90px]">
             <span className="mr-2 text-[0.45em] font-semibold tracking-tight md:text-[0.5em]">
               {t("labHeroInPrefix")}
             </span>
             {compactIn}
           </h1>
-          <p className="font-lab-body text-lab-on-surface-variant mx-auto max-w-2xl text-lg leading-relaxed md:text-xl">
-            {seeker === "woman_seeking_man" ? t("labHeroSub_male") : t("labHeroSub_female")}
-          </p>
           <motion.div
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.12, duration: 0.45 }}
-            className="font-lab-mono text-lab-on-surface-variant mx-auto mt-6 max-w-2xl rounded-2xl border border-pink-200/50 bg-white/70 px-5 py-4 text-xs uppercase tracking-wide shadow-sm backdrop-blur-sm"
+            transition={{ delay: 0.08, duration: 0.45 }}
+            className="font-lab-mono text-lab-on-surface-variant mx-auto mt-2 max-w-2xl rounded-2xl border border-pink-200/50 bg-white/70 px-5 py-4 text-xs uppercase tracking-wide shadow-sm backdrop-blur-sm"
           >
             {t("heroChanceLine", { pct: pctLabel })}
           </motion.div>
           <p className="font-lab-body text-lab-on-surface-variant mx-auto mt-5 max-w-xl text-sm leading-relaxed">
             {t("poolExplainer", { count: calc.estimatedMatches })}
+          </p>
+          <p className="font-lab-body text-lab-on-surface-variant mx-auto mt-4 max-w-xl text-xs leading-relaxed opacity-80 md:text-sm md:opacity-75">
+            {seeker === "woman_seeking_man" ? t("labHeroSub_male") : t("labHeroSub_female")}
           </p>
         </motion.div>
       </section>

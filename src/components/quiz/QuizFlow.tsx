@@ -562,7 +562,7 @@ export default function QuizFlow() {
           type="button"
           onClick={next}
           disabled={isRevealing}
-          className="font-lab-mono text-lab-mono flex w-full items-center justify-center gap-2 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 text-xs font-bold uppercase tracking-wide text-white shadow-lg shadow-pink-300/40 transition-all hover:brightness-105 disabled:opacity-50 md:w-auto md:px-12"
+          className="font-lab-mono text-lab-mono flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 text-xs font-bold uppercase tracking-wide text-white shadow-lg shadow-pink-300/40 transition-all hover:brightness-105 disabled:opacity-50 md:w-auto md:px-12"
         >
           {step === STEPS - 1 ? t("calculate") : t("labNextCriterion")}
           <span className="material-symbols-outlined text-lg">arrow_forward</span>
