@@ -120,6 +120,7 @@ export default function QuizFlow() {
   const [isRevealing, setIsRevealing] = useState(false);
   const [revealLines, setRevealLines] = useState<string[]>([]);
   const [revealIndex, setRevealIndex] = useState(0);
+  const [revealPct, setRevealPct] = useState(8);
 
   const live = useMemo(() => calculateDelulu(q), [q]);
   const districtKeys = Object.keys(DISTRICT_MALE_SHARE);
@@ -137,15 +138,22 @@ export default function QuizFlow() {
   useEffect(() => {
     if (!isRevealing || revealLines.length === 0) return;
     setRevealIndex(0);
+    setRevealPct(10);
     const iv = window.setInterval(() => {
       setRevealIndex((prev) => Math.min(prev + 1, revealLines.length - 1));
-    }, 260);
+    }, 240);
+    const progressIv = window.setInterval(() => {
+      setRevealPct((prev) => Math.min(96, prev + (2 + Math.floor(Math.random() * 5))));
+    }, 180);
     const done = window.setTimeout(() => {
       clearInterval(iv);
+      clearInterval(progressIv);
+      setRevealPct(100);
       router.push("/result");
-    }, 260 * (revealLines.length + 2));
+    }, 240 * (revealLines.length + 4));
     return () => {
       clearInterval(iv);
+      clearInterval(progressIv);
       clearTimeout(done);
     };
   }, [isRevealing, revealLines, router]);
@@ -571,17 +579,33 @@ export default function QuizFlow() {
 
       {isRevealing ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-fuchsia-950/35 px-6 backdrop-blur-md">
-          <div className="w-full max-w-md rounded-3xl border-2 border-pink-200/80 bg-gradient-to-br from-pink-50 via-white to-violet-100 p-8 shadow-[0_24px_80px_rgba(192,132,252,0.35)] sm:max-w-lg">
-            <div className="font-lab-mono mb-4 flex items-center gap-2 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase">
+          <div className="relative w-full max-w-md overflow-hidden rounded-3xl border-2 border-pink-200/80 bg-gradient-to-br from-pink-50 via-white to-violet-100 p-8 shadow-[0_24px_80px_rgba(192,132,252,0.35)] sm:max-w-lg">
+            <div className="pointer-events-none absolute -top-16 -left-10 h-32 w-32 rounded-full bg-fuchsia-300/35 blur-2xl" />
+            <div className="pointer-events-none absolute -right-12 -bottom-14 h-40 w-40 rounded-full bg-violet-300/30 blur-2xl" />
+            <div className="font-lab-mono relative mb-4 flex items-center gap-2 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase">
               <CircleNotch className="animate-spin text-fuchsia-500" size={18} />
               {t("labRevealTitle")}
             </div>
-            <div className="font-lab-mono space-y-2 text-xs leading-relaxed">
+            <div className="relative mb-4 h-2 overflow-hidden rounded-full bg-pink-100">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-pink-400 via-fuchsia-500 to-violet-500 transition-[width] duration-200"
+                style={{ width: `${revealPct}%` }}
+              />
+            </div>
+            <p className="font-lab-mono relative mb-4 text-[10px] font-semibold tracking-widest text-fuchsia-800 uppercase">
+              {revealPct}%
+            </p>
+            <div className="font-lab-mono relative space-y-2 text-xs leading-relaxed">
               {revealLines.slice(0, revealIndex + 1).map((line, i) => (
                 <p key={`${line}-${i}`} className="text-fuchsia-900/90 uppercase">
                   {line}
                 </p>
               ))}
+            </div>
+            <div className="relative mt-5 flex items-center gap-2">
+              <span className="h-2 w-2 animate-bounce rounded-full bg-pink-400 [animation-delay:-0.25s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-fuchsia-400 [animation-delay:-0.12s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-violet-400" />
             </div>
           </div>
         </div>

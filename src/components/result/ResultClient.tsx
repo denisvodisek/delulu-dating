@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -18,6 +19,11 @@ import {
   buildFiltrationDebt,
   formatOneInCompact,
 } from "@/lib/result-filtration";
+
+const ResultHeroBackdrop = dynamic(
+  () => import("@/components/result/ResultHeroBackdrop").then((m) => m.ResultHeroBackdrop),
+  { ssr: false },
+);
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
 
@@ -194,6 +200,9 @@ export default function ResultClient({
     <main className="flex flex-1 flex-col pt-20">
       <section className="relative w-full overflow-hidden border-b border-pink-200/45 bg-gradient-to-b from-pink-100/70 via-white to-violet-50/50 px-4 pb-20 pt-8 md:px-16">
         <div className="pointer-events-none absolute -top-24 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-pink-300/35 via-fuchsia-200/25 to-violet-300/35 blur-3xl" />
+        <div className="absolute inset-0 hidden md:block">
+          <ResultHeroBackdrop />
+        </div>
         <motion.div
           className="relative mx-auto max-w-7xl text-center"
           initial={{ opacity: 0, y: 28 }}
@@ -430,33 +439,88 @@ export default function ResultClient({
         </div>
       ) : null}
 
-      <div className="flex h-20 w-full overflow-hidden border-t border-pink-200/40">
-        <div className="w-1/4 flex-none bg-gradient-to-br from-pink-400 to-fuchsia-500" />
-        <div className="w-1/4 flex-none bg-gradient-to-br from-fuchsia-400 to-violet-500" />
-        <div className="w-1/4 flex-none bg-gradient-to-br from-violet-400 to-sky-400" />
-        <div className="w-1/4 flex-none bg-gradient-to-br from-sky-300 to-pink-300" />
-      </div>
+      <footer className="relative overflow-hidden border-t border-pink-200/40 bg-gradient-to-br from-[#fff5fb] via-[#f7f0ff] to-[#eef7ff] px-4 py-14 md:px-16 md:py-16">
+        <div className="pointer-events-none absolute -top-16 -left-8 h-44 w-44 rounded-full bg-pink-300/25 blur-3xl" />
+        <div className="pointer-events-none absolute -right-14 bottom-0 h-52 w-52 rounded-full bg-violet-300/25 blur-3xl" />
+        <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-200/20 blur-3xl" />
 
-      <footer className="flex w-full flex-col items-center gap-8 border-t border-pink-200/40 bg-white/80 px-4 py-12 backdrop-blur-sm md:flex-row md:justify-between md:px-16">
-        <div className="flex flex-col items-center gap-3 text-center md:flex-row md:gap-8 md:text-left">
-          <span className="font-lab-mono text-sm font-bold uppercase tracking-wide text-lab-on-surface">
-            {t("labFooterBrand")}
-          </span>
-          <span className="text-lab-on-surface-variant font-lab-body max-w-md text-sm">{t("labFooterLegal")}</span>
+        <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
+          <div className="md:col-span-7">
+            <h4 className="font-lab-display text-3xl font-extrabold tracking-tight uppercase md:text-5xl md:leading-[1.02]">
+              {t("labFooterTitle")}
+            </h4>
+            <p className="font-lab-body text-lab-on-surface-variant mt-4 max-w-xl text-base leading-relaxed">
+              {t("labFooterSub")}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <span className="font-lab-mono rounded-full border border-pink-200/70 bg-white/85 px-3 py-1 text-[10px] font-semibold tracking-wide text-fuchsia-900 uppercase">
+                {t("labFooterBadgeModel")}
+              </span>
+              <span className="font-lab-mono rounded-full border border-violet-200/70 bg-white/85 px-3 py-1 text-[10px] font-semibold tracking-wide text-violet-900 uppercase">
+                {t("labFooterBadgePrivate")}
+              </span>
+              <span className="font-lab-mono rounded-full border border-sky-200/70 bg-white/85 px-3 py-1 text-[10px] font-semibold tracking-wide text-sky-900 uppercase">
+                {t("labFooterBadgeHK")}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 md:col-span-5 md:items-end">
+            <button
+              type="button"
+              onClick={() => {
+                clearQuiz();
+                router.push("/quiz");
+              }}
+              className="font-lab-mono w-full rounded-2xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-7 py-4 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/40 transition-all hover:scale-[1.02] hover:shadow-pink-300/60 md:w-auto"
+            >
+              {t("labRedoCalc")}
+            </button>
+            <Link
+              href="/methodology"
+              className="font-lab-mono flex w-full items-center justify-center rounded-2xl border-2 border-pink-200/70 bg-white/85 px-7 py-4 text-xs font-semibold tracking-widest text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50 md:w-auto"
+            >
+              {t("labReadMethod")}
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-8 md:justify-end">
-          <Link
-            href="/methodology"
-            className="font-lab-mono text-lab-on-surface-variant hover:text-fuchsia-700 text-xs font-semibold uppercase tracking-wide transition-colors"
-          >
-            {t("labFooterMethodology")}
-          </Link>
-          <span className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase">
-            {t("labFooterPrivacy")}
-          </span>
-          <span className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase">
-            {t("labFooterSocials")}
-          </span>
+
+        <div className="relative mx-auto mt-10 grid max-w-6xl grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="rounded-2xl border border-pink-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm">
+            <p className="font-lab-mono text-[10px] font-semibold tracking-wider text-fuchsia-700 uppercase">{t("labFooterStat1Label")}</p>
+            <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{t("labFooterStat1Value")}</p>
+          </div>
+          <div className="rounded-2xl border border-violet-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm">
+            <p className="font-lab-mono text-[10px] font-semibold tracking-wider text-violet-700 uppercase">{t("labFooterStat2Label")}</p>
+            <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{t("labFooterStat2Value")}</p>
+          </div>
+          <div className="rounded-2xl border border-sky-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm">
+            <p className="font-lab-mono text-[10px] font-semibold tracking-wider text-sky-700 uppercase">{t("labFooterStat3Label")}</p>
+            <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{t("labFooterStat3Value")}</p>
+          </div>
+        </div>
+
+        <div className="relative mx-auto mt-8 flex max-w-6xl flex-col items-center justify-between gap-5 border-t border-pink-200/45 pt-6 md:flex-row">
+          <div className="flex flex-col items-center gap-2 md:items-start">
+            <span className="font-lab-mono text-sm font-bold uppercase tracking-wide text-lab-on-surface">
+              {t("labFooterBrand")}
+            </span>
+            <span className="text-lab-on-surface-variant font-lab-body max-w-md text-xs md:text-sm">{t("labFooterLegal")}</span>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 md:justify-end">
+            <Link
+              href="/methodology"
+              className="font-lab-mono rounded-full border border-pink-200/70 bg-white/90 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300"
+            >
+              {t("labFooterMethodology")}
+            </Link>
+            <span className="font-lab-mono rounded-full border border-pink-200/70 bg-white/90 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-fuchsia-900 uppercase">
+              {t("labFooterPrivacy")}
+            </span>
+            <span className="font-lab-mono rounded-full border border-pink-200/70 bg-white/90 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-fuchsia-900 uppercase">
+              {t("labFooterSocials")}
+            </span>
+          </div>
         </div>
       </footer>
     </main>

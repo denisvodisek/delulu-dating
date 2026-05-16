@@ -76,9 +76,16 @@ export default function LandingClient() {
               </p>
               <Link
                 href="/quiz"
-                className="font-lab-mono text-lab-mono inline-block rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-12 py-6 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/40 transition-all hover:brightness-105"
+                className="group font-lab-mono text-lab-mono relative inline-flex items-center overflow-hidden rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-12 py-6 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/40 transition-all duration-300 hover:scale-[1.03] hover:shadow-pink-300/60 active:scale-[0.98]"
               >
-                {t("heroCta")}
+                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <span className="relative flex items-center gap-2">
+                  {t("heroCta")}
+                  <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
+                    arrow_forward
+                  </span>
+                </span>
+                <span className="pointer-events-none absolute top-2 right-3 h-2 w-2 rounded-full bg-white/80 shadow-[0_0_12px_rgba(255,255,255,0.8)]" />
               </Link>
             </div>
           </div>

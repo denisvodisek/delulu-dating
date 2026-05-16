@@ -5,12 +5,24 @@ import gsap from "gsap";
 import { useLocale, useTranslations } from "next-intl";
 
 const LS_KEY = "delulu-landing-run-display-v1";
+const MIN_DISPLAY = 10_000;
+const MAX_DISPLAY = 98_000;
 
-/** Theatrical count, always rounded to thousands; stable per browser via localStorage. */
+function clampDisplay(n: number): number {
+  return Math.max(MIN_DISPLAY, Math.min(MAX_DISPLAY, n));
+}
+
+/** Seed display in a believable 10k-range based on live-ish API baseline. */
 function newPersistedValue(apiRuns: number): number {
-  const k = Math.max(1, Math.floor(apiRuns));
-  const salt = 2048 + Math.floor(Math.random() * 8192);
-  return Math.round((k * 1000 + salt) / 1000) * 1000;
+  const base = Math.max(2000, Math.floor(apiRuns));
+  const boosted = base * 1.9 + Math.floor(Math.random() * 5500);
+  const rounded = Math.round(boosted / 100) * 100;
+  return clampDisplay(rounded);
+}
+
+function nextTickValue(current: number): number {
+  const step = 100 + Math.floor(Math.random() * 700);
+  return clampDisplay(current + step);
 }
 
 export function LandingLiveCounter() {
@@ -18,6 +30,8 @@ export function LandingLiveCounter() {
   const locale = useLocale();
   const wrapRef = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLSpanElement>(null);
+  const prevTargetRef = useRef<number | null>(null);
+  const tickingStartedRef = useRef(false);
   const [target, setTarget] = useState<number | null>(null);
 
   useEffect(() => {
@@ -62,17 +76,49 @@ export function LandingLiveCounter() {
     const el = valueRef.current;
     const loc = locale === "zh" ? "zh-HK" : "en-US";
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const start = prefersReduced ? target : Math.floor(target * 0.88);
+    const prev = prevTargetRef.current;
+    const start = prefersReduced || prev == null ? target : prev;
     const o = { val: start };
     gsap.to(o, {
       val: target,
-      duration: prefersReduced ? 0 : 2.4,
+      duration: prefersReduced ? 0 : 0.9,
       ease: "power3.out",
       onUpdate: () => {
         el.textContent = Math.round(o.val).toLocaleString(loc);
       },
     });
+    prevTargetRef.current = target;
   }, [target, locale]);
+
+  useEffect(() => {
+    if (target == null || tickingStartedRef.current) return;
+    tickingStartedRef.current = true;
+    let cancelled = false;
+    let timer: number | null = null;
+
+    const schedule = () => {
+      const delay = 3400 + Math.floor(Math.random() * 3000);
+      timer = window.setTimeout(() => {
+        setTarget((prev) => {
+          if (prev == null) return prev;
+          const next = nextTickValue(prev);
+          try {
+            localStorage.setItem(LS_KEY, String(next));
+          } catch {
+            /* noop */
+          }
+          return next;
+        });
+        if (!cancelled) schedule();
+      }, delay);
+    };
+
+    schedule();
+    return () => {
+      cancelled = true;
+      if (timer != null) window.clearTimeout(timer);
+    };
+  }, [target]);
 
   useEffect(() => {
     if (!wrapRef.current || target == null) return;
