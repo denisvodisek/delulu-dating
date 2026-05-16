@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import type { RunInsert } from "@/lib/supabase/database.types";
+import { createServiceSupabase } from "@/lib/supabase/service";
 
 const bodySchema = z.object({
   locale: z.enum(["en", "zh"]).optional(),
@@ -41,17 +43,15 @@ export async function POST(req: Request) {
   const locale = parsedBody.data.locale ?? "en";
 
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!url || !key) {
+    const supabase = await createServiceSupabase();
+    if (!supabase) {
       return NextResponse.json({ ok: true, skipped: true });
     }
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabase = createClient(url, key);
-    const { error } = await supabase.from("runs").insert({
+    const row: RunInsert = {
       locale,
       created_at: new Date().toISOString(),
-    });
+    };
+    const { error } = await supabase.from("runs").insert(row);
     if (error) {
       return NextResponse.json({ ok: false, error: "db" }, { status: 502 });
     }

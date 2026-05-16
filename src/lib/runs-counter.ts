@@ -1,3 +1,29 @@
+/** Start/end of the current calendar day in Asia/Hong_Kong (for `runs` counts). */
+export function getHongKongDayBounds(now = new Date()): {
+  startIso: string;
+  endIso: string;
+} {
+  const ymd = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Hong_Kong",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+  const startMs = Date.parse(`${ymd}T00:00:00+08:00`);
+  if (Number.isNaN(startMs)) {
+    const d = new Date(now);
+    d.setUTCHours(0, 0, 0, 0);
+    return {
+      startIso: d.toISOString(),
+      endIso: new Date(d.getTime() + 86_400_000).toISOString(),
+    };
+  }
+  return {
+    startIso: new Date(startMs).toISOString(),
+    endIso: new Date(startMs + 86_400_000).toISOString(),
+  };
+}
+
 function dayKey(d = new Date()) {
   return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
 }
