@@ -12,8 +12,7 @@ import { LandingLiveCounter } from "@/components/landing/LandingLiveCounter";
 import { LandingCtaSection } from "@/components/landing/LandingCtaSection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?auto=format&fit=crop&w=1600&q=85";
+const HERO_IMAGE = "/hero-hk-street.png";
 
 function specimenStripClasses(tier: SavedRun["tier"]) {
   if (tier === "god" || tier === "delulu") {
