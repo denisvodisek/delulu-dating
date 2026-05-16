@@ -21,7 +21,7 @@
     "cta": "開始計",
     "runsToday": "今日已有 {count, number} 個香港人玩過",
     "liveCounterLabel": "今日已檢查人數",
-    "liveCounterHint": "存喺呢個瀏覽器，refresh 都一致。每幾秒會更新一次。",
+    "liveCounterHint": "",
     "liveCounterTap": "撳吓卡片，個 counter 會繼續慢慢升。",
     "recentRuns": "之前計過",
     "recentOpen": "打開",

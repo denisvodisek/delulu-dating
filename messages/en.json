@@ -21,7 +21,7 @@
     "cta": "Run the calculator",
     "runsToday": "{count, number} Hongkongers checked today",
     "liveCounterLabel": "People checked today",
-    "liveCounterHint": "Saved in this browser for consistency. Updates every few seconds.",
+    "liveCounterHint": "",
     "liveCounterTap": "Tap to nudge the card while the counter keeps ticking.",
     "recentRuns": "Recent runs",
     "recentOpen": "Open",

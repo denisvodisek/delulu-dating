@@ -27,6 +27,7 @@ function nextTickValue(current: number): number {
 
 export function LandingLiveCounter() {
   const t = useTranslations("landing");
+  const hint = t("liveCounterHint").trim();
   const locale = useLocale();
   const wrapRef = useRef<HTMLDivElement>(null);
   const valueRef = useRef<HTMLSpanElement>(null);
@@ -175,9 +176,11 @@ export function LandingLiveCounter() {
             </span>
           </span>
         </p>
-        <p className="font-lab-mono relative mt-2 text-[10px] text-fuchsia-900/70 md:text-[11px]">
-          {t("liveCounterHint")}
-        </p>
+        {hint ? (
+          <p className="font-lab-mono relative mt-2 text-[10px] text-fuchsia-900/70 md:text-[11px]">
+            {hint}
+          </p>
+        ) : null}
         <p className="font-lab-mono relative mt-3 text-[9px] text-slate-500 uppercase tracking-wider">
           {t("liveCounterTap")}
         </p>

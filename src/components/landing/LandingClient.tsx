@@ -194,7 +194,7 @@ export default function LandingClient() {
                           {tResult(`tier_${run.tier}`)}
                         </h4>
                         <p className="text-lab-on-surface-variant mt-1 text-sm">
-                          {oneLine} · ~{tResult("estimatedPool", { count: pool })}
+                          {oneLine} · {tResult("estimatedPool", { count: pool })}
                         </p>
                       </div>
                       <span className="material-symbols-outlined shrink-0 text-slate-400 transition-colors group-hover:text-fuchsia-600">

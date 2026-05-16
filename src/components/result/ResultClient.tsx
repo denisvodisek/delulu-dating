@@ -465,8 +465,8 @@ export default function ResultClient({
         <div className="pointer-events-none absolute -right-14 bottom-0 h-52 w-52 rounded-full bg-violet-300/25 blur-3xl" />
         <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-200/20 blur-3xl" />
 
-        <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
-          <div className="md:col-span-7" data-footer-showcase>
+        <div className="relative mx-auto max-w-6xl">
+          <div data-footer-showcase>
             <h4 className="font-lab-display text-3xl font-extrabold tracking-tight uppercase md:text-5xl md:leading-[1.02]">
               {t("labFooterTitle")}
             </h4>
@@ -484,25 +484,6 @@ export default function ResultClient({
                 {t("labFooterBadgeHK")}
               </span>
             </div>
-          </div>
-
-          <div className="flex flex-col gap-4 md:col-span-5 md:items-end" data-footer-showcase>
-            <button
-              type="button"
-              onClick={() => {
-                clearQuiz();
-                router.push("/quiz");
-              }}
-              className="font-lab-mono w-full rounded-2xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-7 py-4 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/40 transition-all hover:scale-[1.02] hover:shadow-pink-300/60 md:w-auto"
-            >
-              {t("labRedoCalc")}
-            </button>
-            <Link
-              href="/methodology"
-              className="font-lab-mono flex w-full items-center justify-center rounded-2xl border-2 border-pink-200/70 bg-white/85 px-7 py-4 text-xs font-semibold tracking-widest text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50 md:w-auto"
-            >
-              {t("labReadMethod")}
-            </Link>
           </div>
         </div>
 
