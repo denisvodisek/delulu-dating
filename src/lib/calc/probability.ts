@@ -2,6 +2,7 @@ import type { CalculationResult, QuizAnswersV1, BreakdownRow, Seeker } from "@/l
 import {
   BASE_MALE_POOL,
   CORRELATION_BOOST,
+  carFactor,
   districtUnionFactor,
   educationFactor,
   maleAgeWindowFactor,
@@ -9,8 +10,10 @@ import {
   maleIncomeTail,
   maritalFactor,
   noKidsFactor,
+  ownFlatFactor,
   smokingFactor,
 } from "@/lib/data/hk-demographics";
+import { MAX_ONE_IN_DISPLAY, MAX_POOL_COUNT_DISPLAY } from "@/lib/format-one-in";
 
 type ModelConfig = {
   basePool: number;
@@ -118,6 +121,8 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
   const fEdu = educationFactor(answers.educationMin);
   const fSmoke = smokingFactor(answers.noSmoking);
   const fKids = noKidsFactor(answers.noKidsFromPrev);
+  const fFlat = ownFlatFactor(answers.requiresOwnFlat);
+  const fCar = carFactor(answers.requiresCar);
 
   const raw =
     fAge *
@@ -128,6 +133,8 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
     fEdu *
     fSmoke *
     fKids *
+    fFlat *
+    fCar *
     CORRELATION_BOOST;
 
   const probability = Math.min(1, Math.max(1 / model.basePool, raw));
@@ -141,11 +148,16 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
     { key: "education", labelKey: "education", factor: fEdu },
     { key: "smoke", labelKey: "smoke", factor: fSmoke },
     { key: "kids", labelKey: "kids", factor: fKids },
+    { key: "flat", labelKey: "flat", factor: fFlat },
+    { key: "car", labelKey: "car", factor: fCar },
     { key: "correlation", labelKey: "correlation", factor: CORRELATION_BOOST },
   ];
 
   const tier = tierFromProbability(probability);
-  const estimatedMatches = Math.max(1, Math.round(probability * model.basePool));
+  const estimatedMatches = Math.min(
+    MAX_POOL_COUNT_DISPLAY,
+    Math.max(1, Math.round(probability * model.basePool)),
+  );
 
   return { probability, breakdown, tier, estimatedMatches };
 }
@@ -159,6 +171,10 @@ export function tierFromProbability(p: number): CalculationResult["tier"] {
 }
 
 export function oneInN(p: number): number {
-  if (p <= 0) return Number.POSITIVE_INFINITY;
-  return Math.max(1, Math.round(1 / p));
+  if (!Number.isFinite(p) || p <= 0) return MAX_ONE_IN_DISPLAY;
+  const inv = 1 / p;
+  if (!Number.isFinite(inv)) return MAX_ONE_IN_DISPLAY;
+  const rounded = Math.round(inv);
+  if (!Number.isFinite(rounded)) return MAX_ONE_IN_DISPLAY;
+  return Math.min(MAX_ONE_IN_DISPLAY, Math.max(1, rounded));
 }

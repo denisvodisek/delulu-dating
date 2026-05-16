@@ -137,4 +137,9 @@
       radial-gradient(820px 640px at 58% 92%, #ffe2cf 0%, transparent 58%),
       #fff8fb;
   }
+
+  /** Wider readable column on phones + desktop — avoid “narrow card in the middle” */
+  .page-shell {
+    @apply mx-auto w-full max-w-[min(100%,40rem)] px-4 sm:px-6 md:max-w-3xl lg:max-w-[52rem] lg:px-8;
+  }
 }

@@ -3,7 +3,7 @@
  * Sources (see /methodology):
  * - Census 2021 population / district profiles (censtatd.gov.hk)
  * - AEHS 2024 male wage percentiles (info.gov.hk / censtatd)
- * - Population Health Survey 2014/15 male mean height 169.5 cm (chp.gov.hk)
+ * - Population Health Survey 2014/15 male mean height 169.5 cm (chp.gov.hk) — still the clean published male mean bundle for curve-fitting; replace when CHP issues a newer one
  * - Anthropometric literature: SD ~5.8 cm for HK Chinese adult males (cityu.edu.hk anthropometry chapter)
  */
 
@@ -171,6 +171,23 @@ export function smokingFactor(requireNonSmoker: boolean): number {
 export function noKidsFactor(requireNoKids: boolean): number {
   if (!requireNoKids) return 1;
   return 0.72;
+}
+
+/**
+ * Illustrative only: owning (vs renting) private housing is rare among younger HK men in the model.
+ * Calibrated harsh so the toggle is felt — not a mortgage underwriting table.
+ */
+export function ownFlatFactor(requireOwnFlat: boolean): number {
+  if (!requireOwnFlat) return 1;
+  return 0.11;
+}
+
+/**
+ * Illustrative: share of men in the modeled pool who keep a private car for regular use.
+ */
+export function carFactor(requireCar: boolean): number {
+  if (!requireCar) return 1;
+  return 0.24;
 }
 
 export function districtUnionFactor(selectedKeys: string[]): number {

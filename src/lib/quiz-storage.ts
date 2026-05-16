@@ -3,14 +3,26 @@ import { DEFAULT_QUIZ } from "@/lib/types/quiz";
 
 const STORAGE_KEY = "delulu-dating-quiz-v1";
 
+/** Merge saved payloads with defaults (new filters, shape fixes). */
+export function normalizeQuiz(raw: Partial<QuizAnswersV1> | null | undefined): QuizAnswersV1 {
+  if (!raw || typeof raw !== "object") return { ...DEFAULT_QUIZ };
+  if ("version" in raw && raw.version !== 1) return { ...DEFAULT_QUIZ };
+  return {
+    ...DEFAULT_QUIZ,
+    ...raw,
+    version: 1,
+    districts: Array.isArray(raw.districts) ? raw.districts : [],
+  };
+}
+
 export function loadQuiz(): QuizAnswersV1 | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as QuizAnswersV1;
-    if (parsed?.version !== 1) return null;
-    return parsed;
+    const parsed = JSON.parse(raw) as Partial<QuizAnswersV1>;
+    if (!parsed || typeof parsed !== "object") return null;
+    return normalizeQuiz(parsed);
   } catch {
     return null;
   }

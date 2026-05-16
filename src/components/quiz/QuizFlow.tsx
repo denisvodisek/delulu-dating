@@ -6,16 +6,16 @@ import {
   ArrowLeft,
   ArrowRight,
   Calculator,
+  Check,
   CircleNotch,
+  X,
 } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import { calculateDelulu } from "@/lib/calc/probability";
 import { BASE_MALE_POOL, DISTRICT_MALE_SHARE } from "@/lib/data/hk-demographics";
 import { DEFAULT_QUIZ, type QuizAnswersV1 } from "@/lib/types/quiz";
@@ -23,7 +23,7 @@ import { saveQuiz } from "@/lib/quiz-storage";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics/events";
 
-const STEPS = 7;
+const STEPS = 9;
 
 export default function QuizFlow() {
   const t = useTranslations("quiz");
@@ -39,7 +39,6 @@ export default function QuizFlow() {
   const [revealIndex, setRevealIndex] = useState(0);
 
   const live = useMemo(() => calculateDelulu(q), [q]);
-  const pct = live.probability * 100;
 
   const districtKeys = Object.keys(DISTRICT_MALE_SHARE);
 
@@ -128,21 +127,24 @@ export default function QuizFlow() {
   const progress = ((step + 1) / STEPS) * 100;
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-4 px-4 py-8">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <Calculator weight="duotone" />
-            {t("livePool")}
+    <div className="page-shell flex flex-1 flex-col gap-5 py-8 sm:gap-6 sm:py-10">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-3 text-xs font-semibold text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <Calculator weight="duotone" className="shrink-0 text-primary" />
+            <span>
+              {t("stepProgress", { current: step + 1, total: STEPS })}
+            </span>
           </span>
-          <Badge variant="secondary" className="rounded-full font-mono text-xs">
-            {pct >= 0.01 ? `${pct.toFixed(2)}%` : `${pct.toExponential(1)}%`}
-          </Badge>
+          <span className="shrink-0 tabular-nums text-[11px] font-bold uppercase tracking-wide text-foreground/70">
+            {t("noSpoilers")}
+          </span>
         </div>
-        <Progress value={progress} className="h-2 rounded-full" />
+        <Progress value={progress} className="h-2.5 rounded-full bg-white/50" />
       </div>
 
-      <Card className="border-white/60 bg-white/80 p-6 shadow-xl backdrop-blur-md">
+      <Card className="overflow-visible rounded-3xl border-white/55 bg-white/85 py-0 shadow-[0_20px_50px_-24px_rgba(120,80,160,0.35)] backdrop-blur-md ring-1 ring-foreground/8">
+        <div className="p-5 sm:p-8">
         {step === 0 && (
           <Step title={t("stepAge")} hint={t("ageHint")}>
             <div className="grid gap-6">
@@ -240,7 +242,7 @@ export default function QuizFlow() {
         {step === 4 && (
           <Step title={t("stepDistrict")}>
             <p className="mb-3 text-sm text-muted-foreground">{t("districtNone")}</p>
-            <div className="grid max-h-64 grid-cols-2 gap-2 overflow-y-auto pr-1">
+            <div className="grid max-h-[min(50vh,20rem)] grid-cols-2 gap-2.5 overflow-y-auto overflow-x-hidden overscroll-contain pr-1 sm:grid-cols-3">
               {districtKeys.map((key) => {
                 const on = q.districts.includes(key);
                 return (
@@ -286,33 +288,146 @@ export default function QuizFlow() {
 
         {step === 6 && (
           <Step title={t("stepLifestyle")}>
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between gap-4 rounded-2xl border bg-muted/30 p-4">
-                <Label htmlFor="smoke" className="text-sm font-semibold">
-                  {t("noSmoke")}
-                </Label>
-                <Switch
-                  id="smoke"
-                  checked={q.noSmoking}
-                  onCheckedChange={(v) => setQ((p) => ({ ...p, noSmoking: v }))}
-                />
+            <div className="grid gap-5">
+              <div className="rounded-3xl border border-foreground/10 bg-gradient-to-br from-white/90 to-muted/40 p-4 shadow-inner sm:p-5">
+                <p className="mb-3 text-sm font-bold">{t("noSmoke")}</p>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setQ((p) => ({ ...p, noSmoking: true }))}
+                    className={cn(
+                      "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                      q.noSmoking
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                    )}
+                  >
+                    <Check className="shrink-0" weight="bold" size={18} />
+                    {t("toggleMust")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQ((p) => ({ ...p, noSmoking: false }))}
+                    className={cn(
+                      "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                      !q.noSmoking
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                    )}
+                  >
+                    <X className="shrink-0" weight="bold" size={18} />
+                    {t("toggleDontCare")}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center justify-between gap-4 rounded-2xl border bg-muted/30 p-4">
-                <Label htmlFor="kids" className="text-sm font-semibold">
-                  {t("noKids")}
-                </Label>
-                <Switch
-                  id="kids"
-                  checked={q.noKidsFromPrev}
-                  onCheckedChange={(v) => setQ((p) => ({ ...p, noKidsFromPrev: v }))}
-                />
+              <div className="rounded-3xl border border-foreground/10 bg-gradient-to-br from-white/90 to-muted/40 p-4 shadow-inner sm:p-5">
+                <p className="mb-3 text-sm font-bold">{t("noKids")}</p>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setQ((p) => ({ ...p, noKidsFromPrev: true }))}
+                    className={cn(
+                      "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                      q.noKidsFromPrev
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                    )}
+                  >
+                    <Check className="shrink-0" weight="bold" size={18} />
+                    {t("toggleMust")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setQ((p) => ({ ...p, noKidsFromPrev: false }))}
+                    className={cn(
+                      "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                      !q.noKidsFromPrev
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                    )}
+                  >
+                    <X className="shrink-0" weight="bold" size={18} />
+                    {t("toggleDontCare")}
+                  </button>
+                </div>
               </div>
             </div>
           </Step>
         )}
+
+        {step === 7 && (
+          <Step title={t("stepFlat")} hint={t("flatHint")}>
+            <div className="rounded-3xl border border-foreground/10 bg-gradient-to-br from-white/90 to-muted/40 p-4 shadow-inner sm:p-5">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setQ((p) => ({ ...p, requiresOwnFlat: true }))}
+                  className={cn(
+                    "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                    q.requiresOwnFlat
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                  )}
+                >
+                  <Check className="shrink-0" weight="bold" size={18} />
+                  {t("flatMust")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQ((p) => ({ ...p, requiresOwnFlat: false }))}
+                  className={cn(
+                    "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                    !q.requiresOwnFlat
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                  )}
+                >
+                  <X className="shrink-0" weight="bold" size={18} />
+                  {t("flatDontCare")}
+                </button>
+              </div>
+            </div>
+          </Step>
+        )}
+
+        {step === 8 && (
+          <Step title={t("stepCar")} hint={t("carHint")}>
+            <div className="rounded-3xl border border-foreground/10 bg-gradient-to-br from-white/90 to-muted/40 p-4 shadow-inner sm:p-5">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setQ((p) => ({ ...p, requiresCar: true }))}
+                  className={cn(
+                    "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                    q.requiresCar
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                  )}
+                >
+                  <Check className="shrink-0" weight="bold" size={18} />
+                  {t("carMust")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQ((p) => ({ ...p, requiresCar: false }))}
+                  className={cn(
+                    "flex min-h-[3.25rem] items-center justify-center gap-2 rounded-2xl border-2 px-3 text-sm font-bold transition-all",
+                    !q.requiresCar
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-transparent bg-white/80 text-muted-foreground hover:border-foreground/15",
+                  )}
+                >
+                  <X className="shrink-0" weight="bold" size={18} />
+                  {t("carDontCare")}
+                </button>
+              </div>
+            </div>
+          </Step>
+        )}
+        </div>
       </Card>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap">
         <Button
           type="button"
           variant="ghost"
@@ -345,7 +460,7 @@ export default function QuizFlow() {
 
       {isRevealing ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/55 px-6 backdrop-blur-sm">
-          <Card className="w-full max-w-md border-white/25 bg-zinc-950/90 p-6 text-white">
+          <Card className="w-full max-w-md rounded-3xl border-white/25 bg-zinc-950/92 p-6 text-white shadow-2xl sm:max-w-lg">
             <div className="mb-4 inline-flex items-center gap-2 text-sm font-semibold text-zinc-300">
               <CircleNotch className="animate-spin" size={16} />
               {tr("calculating")}
@@ -376,7 +491,7 @@ function Step({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-extrabold tracking-tight">{title}</h2>
+        <h2 className="text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h2>
         {hint ? <p className="mt-2 text-sm text-muted-foreground">{hint}</p> : null}
       </div>
       {children}

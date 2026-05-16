@@ -1,9 +1,16 @@
+import { MAX_POOL_COUNT_DISPLAY } from "@/lib/format-one-in";
+
 export type SharedResultPayload = {
   p: number;
   n: number;
   tier: "realistic" | "picky" | "very_picky" | "delulu" | "god";
   ts: number;
 };
+
+function clampNum(n: number, lo: number, hi: number): number {
+  if (!Number.isFinite(n)) return lo;
+  return Math.min(hi, Math.max(lo, n));
+}
 
 function toBase64Url(input: string): string {
   if (typeof Buffer !== "undefined") {
@@ -42,7 +49,12 @@ export function decodeSharedResult(token: string): SharedResultPayload | null {
     ) {
       return null;
     }
-    return data;
+    return {
+      p: clampNum(data.p, 1e-15, 1),
+      n: clampNum(Math.round(data.n), 1, MAX_POOL_COUNT_DISPLAY),
+      tier: data.tier,
+      ts: clampNum(data.ts, 0, 9e15),
+    };
   } catch {
     return null;
   }

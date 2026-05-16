@@ -14,6 +14,8 @@ const base: QuizAnswersV1 = {
   educationMin: "any",
   noSmoking: false,
   noKidsFromPrev: false,
+  requiresOwnFlat: false,
+  requiresCar: false,
 };
 
 describe("calculateDelulu", () => {

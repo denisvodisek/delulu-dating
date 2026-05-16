@@ -1,26 +1,36 @@
 {
   "meta": {
     "title": "Delulu Dating — How delulu is your HK boyfriend wishlist?",
-    "description": "A spicy, kawaii reality check for Hong Kong dating standards. Real census data. Zero shame (okay, maybe a little)."
+    "description": "Stack dating deal-breakers against Hong Kong stats. Sharp, dumb, not a matchmaker."
   },
   "nav": {
     "methodology": "How it works",
     "start": "Start",
     "brand": "Delulu Dating",
-    "howShort": "How"
+    "howShort": "How",
+    "language": "Language",
+    "langEn": "EN",
+    "langZh": "中文"
   },
   "landing": {
-    "badge": "Made for Hong Kong",
-    "headline": "How delulu is your boyfriend wishlist?",
-    "sub": "Stack your filters. Watch the pool shrink. Laugh (or cry). Share with your group chat.",
-    "cta": "Calculate my delulu",
+    "badge": "Census numbers, not therapy",
+    "headline": "How tight is your boyfriend filter in Hong Kong?",
+    "sub": "You stack deal-breakers. We show how fast the pool vanishes. Sharp, dumb, honest.",
+    "cta": "Run the calculator",
     "runsToday": "{count, number} Hongkongers checked today",
+    "recentRuns": "Recent runs",
+    "recentOpen": "Open",
+    "recentEmpty": "No saved runs yet. Finish a quiz and it lands here.",
+    "recentWhen": "{date}",
     "disclaimer": "Satire + statistics. Not a dating service. Not your therapist.",
     "comingSoon": "Coming soon",
     "findGirlfriend": "Find a girlfriend (HK edition)"
   },
   "quiz": {
-    "livePool": "Estimated match pool",
+    "stepProgress": "Step {current} of {total}",
+    "noSpoilers": "No spoilers",
+    "toggleMust": "Must have",
+    "toggleDontCare": "Don't care",
     "stepAge": "What age range?",
     "stepHeight": "Minimum height (cm)",
     "stepIncome": "Minimum monthly income (HK$)",
@@ -33,7 +43,7 @@
     "back": "Back",
     "calculate": "Reveal my delulu",
     "ageHint": "Typical dating apps peak around 25–35.",
-    "heightHint": "HK male mean height ≈ 170 cm (measured).",
+    "heightHint": "Mean HK male height in government health stats is ~170 cm (2014/15 survey — still the clean published bundle we model from).",
     "incomeHint": "HK$100k+/mo is roughly top 2–3% of male earners.",
     "maritalNever": "Never married only",
     "maritalNotNow": "Not married now (incl. divorced)",
@@ -43,7 +53,15 @@
     "eduDegree": "Bachelor's or higher",
     "eduPostgrad": "Master's or higher",
     "noSmoke": "Non-smoker",
-    "noKids": "No kids from previous relationship"
+    "noKids": "No kids from previous relationship",
+    "stepFlat": "Property",
+    "flatHint": "A harsh filter in Hong Kong. This means he owns his place (private), not family titled, not “we’ll figure it out later”.",
+    "flatMust": "Must own flat",
+    "flatDontCare": "Renting is fine",
+    "stepCar": "Car",
+    "carHint": "Private car in HK is rarer than drama make it sound. Toy share in the model, not a BMW salesperson quote.",
+    "carMust": "Must drive / keep a car",
+    "carDontCare": "No car is fine"
   },
   "reveal": {
     "calculating": "Calculating your delulu level…",
@@ -51,21 +69,30 @@
   },
   "result": {
     "title": "Your delulu score",
-    "oneIn": "About 1 in {n, number} HK men match all active filters",
+    "heroKicker": "Rough match odds",
+    "heroChanceLine": "That's about {pct} of HK men in this toy model who pass every filter at once.",
+    "poolExplainer": "~{count, number} men left in our modeled pool — not headhunters, just: (rough headcount) × (your combined chances). Tap “How we calculated this” for the boring version.",
+    "oneIn": "About 1 in {n, number} HK men",
+    "oneInCapped": "About 1 in {n, number}+ HK men (display cap — odds are meaner than this)",
     "tier_realistic": "Grounded Queen",
     "tier_picky": "Selective but Valid",
     "tier_very_picky": "High Standards Energy",
     "tier_delulu": "Certified Delulu",
     "tier_god": "God-tier Delulu",
-    "breakdown": "What shrank your pool the most",
+    "breakdown": "Which filter cuts the hardest",
+    "breakdownSubtitle": "Each row = share of the pool still left after that filter (vs the step before). 35% means “about 35 in 100 get through,” not a grade.",
+    "filterKeeps": "~{pct}% of the pool still fits after this",
+    "filterBoost": "~+{pct}% — tall + high earners overlap more in real life than pure randomness",
     "tips": "Reality tips",
-    "share": "Share with friends",
+    "share": "Send it",
+    "shareLead": "One tap — let the group chat decide if you’re brave or delulu.",
     "again": "Try again",
     "methodologyCta": "How we calculated this",
     "monetizationOff": "No ads yet — we're building the vibe first.",
     "monetizationOn": "Partner placements load here when we flip the switch.",
     "tipTight": "Your toughest filter right now is {label}. Loosen it a hair and the pool jumps.",
-    "shareText": "My Delulu Dating score: {pct}% match pool ({tier}). Try yours on delulu.dating",
+    "shareText": "Delulu Dating: about 1 in {n, number} HK men for my filters ({tier}). Model says {pct}. Try delulu.dating",
+    "shareTextCapped": "Delulu Dating: my filters look brutal — about 1 in {n, number}+ HK men ({tier}). Model says {pct}. Try delulu.dating",
     "estimatedPool": "~{count, number} men in the modelled HK pool"
   },
   "share": {
@@ -81,11 +108,12 @@
     "intro": "Delulu Dating multiplies independent population filters. It's a Fermi estimate for dating — not a prediction about any individual human.",
     "back": "← Home",
     "b1": "Model: independent filters are multiplied (joint probability under independence). A +12% correlation uplift stops “tall + rich” stacks from being astronomically harsher than a naive model.",
-    "b2": "Height: HK Population Health Survey (2014/15) reports male mean height 169.5 cm; SD approximated at 5.8 cm from local anthropometric references.",
+    "b2": "Height: Census doesn't publish “mean male height” every year. We use the Population Health Survey (2014/15) male mean (169.5 cm) plus a literature SD (~5.8 cm) for the bell curve. Newer self-reported app polls inflate height — we keep the boring government curve until CHP publishes a replacement bundle.",
     "b3": "Income: Census and Statistics Department Annual Earnings and Hours Survey — male wage percentile curve (HK$), interpolated between published points.",
     "b4": "Age / marital / education: 2021 Census and thematic reports (simplified age-window and never-married proxies).",
     "b5": "Districts: 2021 Census district weights blended into male-share priors — illustrative, not block-level GPS accuracy.",
     "b6": "Smoking / kids: broad CHP / survey priors — rounded, not bespoke matchmaking intel.",
+    "b7": "Flat and car use blunt priors on common deal-breakers. Must own flat keeps about 11% of modeled men. Must keep a car keeps about 24%. Not estate agency research.",
     "outro": "This is spicy satire plus public statistics. If you're offended, the numbers still love you. Probably."
   },
   "district": {
@@ -117,6 +145,8 @@
     "education": "Education",
     "smoke": "Non-smoker",
     "kids": "No kids from previous relationship",
+    "flat": "Own private flat (not rent)",
+    "car": "Keeps a private car",
     "correlation": "Correlation adjustment (+12%)"
   }
 }

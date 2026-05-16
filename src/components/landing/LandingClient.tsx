@@ -1,18 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
-import { Heart, Sparkle } from "@phosphor-icons/react";
-import { Link } from "@/i18n/navigation";
-import { buttonVariants } from "@/components/ui/button";
+import { useLocale, useTranslations } from "next-intl";
+import { Clock, Heart, Sparkle } from "@phosphor-icons/react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { listRecentRuns, type SavedRun } from "@/lib/run-history";
+import { saveQuiz } from "@/lib/quiz-storage";
 
 export default function LandingClient() {
   const t = useTranslations("landing");
+  const tResult = useTranslations("result");
   const tMeta = useTranslations("meta");
+  const locale = useLocale();
+  const router = useRouter();
   const [runs, setRuns] = useState<number | null>(null);
+  const [recent, setRecent] = useState<SavedRun[]>([]);
+
+  useEffect(() => {
+    setRecent(listRecentRuns(6));
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,8 +39,24 @@ export default function LandingClient() {
     };
   }, []);
 
+  function openRun(run: SavedRun) {
+    saveQuiz(run.answers);
+    router.push("/result");
+  }
+
+  function formatWhen(iso: string) {
+    try {
+      return new Date(iso).toLocaleString(locale === "zh" ? "zh-HK" : "en-GB", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+    } catch {
+      return "";
+    }
+  }
+
   return (
-    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-8 px-5 py-14">
+    <main className="page-shell flex min-h-[70vh] flex-1 flex-col justify-center gap-9 py-14 sm:gap-11 sm:py-20">
       <div className="flex flex-col items-center gap-3 text-center">
         <Badge className="rounded-full bg-white/70 px-4 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur">
           <Sparkle className="mr-1 inline" weight="duotone" size={16} />
@@ -49,7 +75,7 @@ export default function LandingClient() {
         )}
       </div>
 
-      <Card className="border-white/60 bg-white/75 p-6 shadow-xl shadow-primary/10 backdrop-blur-md">
+      <Card className="overflow-visible rounded-3xl border-white/55 bg-white/78 p-6 shadow-[0_20px_50px_-24px_rgba(120,80,160,0.35)] backdrop-blur-md ring-1 ring-foreground/8 sm:p-8">
         <div className="flex flex-col gap-4">
           <Link
             href="/quiz"
@@ -70,6 +96,39 @@ export default function LandingClient() {
           </div>
         </div>
       </Card>
+
+      {recent.length > 0 ? (
+        <Card className="rounded-3xl border-white/50 bg-white/60 p-5 backdrop-blur-md sm:p-6">
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-bold text-foreground">
+            <Clock className="text-primary" weight="duotone" size={20} />
+            {t("recentRuns")}
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {recent.map((run) => (
+              <li
+                key={run.id}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-foreground/10 bg-white/80 px-3 py-2.5 sm:px-4"
+              >
+                <div className="min-w-0 text-left">
+                  <p className="truncate text-sm font-semibold">{tResult(`tier_${run.tier}`)}</p>
+                  <p className="text-xs text-muted-foreground">{formatWhen(run.savedAt)}</p>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="shrink-0 rounded-xl font-bold"
+                  onClick={() => openRun(run)}
+                >
+                  {t("recentOpen")}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : (
+        <p className="text-center text-sm text-muted-foreground">{t("recentEmpty")}</p>
+      )}
 
       <p className="text-center text-xs text-muted-foreground">{t("disclaimer")}</p>
       <p className="sr-only">{tMeta("description")}</p>

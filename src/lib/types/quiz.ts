@@ -17,6 +17,10 @@ export type QuizAnswersV1 = {
   educationMin: EducationMin;
   noSmoking: boolean;
   noKidsFromPrev: boolean;
+  /** Must own (not rent) private housing — illustrative prior, see methodology */
+  requiresOwnFlat: boolean;
+  /** Must keep a private car — illustrative prior */
+  requiresCar: boolean;
 };
 
 export const DEFAULT_QUIZ: QuizAnswersV1 = {
@@ -31,6 +35,8 @@ export const DEFAULT_QUIZ: QuizAnswersV1 = {
   educationMin: "any",
   noSmoking: false,
   noKidsFromPrev: false,
+  requiresOwnFlat: false,
+  requiresCar: false,
 };
 
 export type BreakdownRow = {
