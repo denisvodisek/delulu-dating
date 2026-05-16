@@ -15,7 +15,7 @@ npm run test
 Copy `.env.example` to `.env.local`.
 
 - `NEXT_PUBLIC_POSTHOG_KEY` + `NEXT_PUBLIC_POSTHOG_HOST` — optional PostHog (wired in `ClientAnalytics` when key is set)
-- `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` — optional `runs` table; when set, `/api/stats` counts today’s rows (Hong Kong calendar day) instead of the synthetic estimate
+- `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` — optional `runs` table for `POST /api/run` logging (the homepage counter is a synthetic theatrical ticker, not this count)
 - `NEXT_PUBLIC_MONETIZATION` — set to `on` after 10k users to show partner slots
 
 ## `POST /api/run` (Supabase)
@@ -28,7 +28,7 @@ When Supabase env is set, the route validates JSON (`locale` ∈ `en`|`zh` only)
 
 Schema is versioned in **`supabase/migrations/`**. With the [Supabase GitHub integration](https://supabase.com/docs/guides/deployment/database-github-actions), linking this repo applies migrations on push.
 
-The app expects a **`public.runs`** table (see migration files). `POST /api/run` inserts a row; `GET /api/stats` returns `runsToday` from the DB when env vars are set, otherwise a deterministic synthetic number.
+The app expects a **`public.runs`** table (see migration files). `POST /api/run` inserts a row when env vars are set. **`GET /api/stats`** returns a deterministic theatrical `runsToday` for the landing page (Hong Kong day + intraday drift); it does not read the database.
 
 ## Licence
 

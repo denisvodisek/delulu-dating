@@ -18,6 +18,7 @@
     "sub": "You stack deal-breakers. We show how fast the pool vanishes. Sharp, dumb, honest.",
     "cta": "Run the calculator",
     "runsToday": "{count, number} Hongkongers checked today",
+    "runsCounterHint": "Illustrative ticker — moves for atmosphere, not an official tally.",
     "recentRuns": "Recent runs",
     "recentOpen": "Open",
     "recentEmpty": "No saved runs yet. Finish a quiz and it lands here.",

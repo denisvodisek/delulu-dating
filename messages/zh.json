@@ -18,6 +18,7 @@
     "sub": "逐個 deal-breaker 加上去，睇吓個池消幾快。尖、傻、真。",
     "cta": "開始計",
     "runsToday": "今日已有 {count, number} 個香港人玩過",
+    "runsCounterHint": "玩氣氛嘅跳字，唔係正式統計數字。",
     "recentRuns": "之前計過",
     "recentOpen": "打開",
     "recentEmpty": "暫未有記錄。計完一次就會喺度見到。",

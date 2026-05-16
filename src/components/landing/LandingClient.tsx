@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { listRecentRuns, type SavedRun } from "@/lib/run-history";
 import { saveQuiz } from "@/lib/quiz-storage";
 
+const SESSION_COUNTER_OFFSET = "delulu-counter-session-offset";
+
 export default function LandingClient() {
   const t = useTranslations("landing");
   const tResult = useTranslations("result");
@@ -26,16 +28,49 @@ export default function LandingClient() {
 
   useEffect(() => {
     let cancelled = false;
+    let tick: ReturnType<typeof setInterval> | undefined;
+
+    const sessionBump = (): number => {
+      try {
+        const raw = sessionStorage.getItem(SESSION_COUNTER_OFFSET);
+        if (raw != null) {
+          const n = parseInt(raw, 10);
+          return Number.isFinite(n) ? n : 6;
+        }
+        const bump = 3 + Math.floor(Math.random() * 10);
+        sessionStorage.setItem(SESSION_COUNTER_OFFSET, String(bump));
+        return bump;
+      } catch {
+        return 6;
+      }
+    };
+
+    const startTicking = () => {
+      tick = setInterval(() => {
+        setRuns((prev) =>
+          prev == null ? prev : prev + 1 + (Math.random() < 0.28 ? 1 : 0),
+        );
+      }, 5500 + Math.floor(Math.random() * 4500));
+    };
+
     fetch("/api/stats")
       .then((r) => r.json())
       .then((d: { runsToday?: number }) => {
-        if (!cancelled && typeof d.runsToday === "number") setRuns(d.runsToday);
+        if (cancelled) return;
+        const base = typeof d.runsToday === "number" ? d.runsToday : 8840;
+        const display = base + sessionBump();
+        setRuns(display);
+        startTicking();
       })
       .catch(() => {
-        if (!cancelled) setRuns(8840);
+        if (cancelled) return;
+        setRuns(8840 + sessionBump());
+        startTicking();
       });
+
     return () => {
       cancelled = true;
+      if (tick) clearInterval(tick);
     };
   }, []);
 
@@ -69,9 +104,12 @@ export default function LandingClient() {
           {t("sub")}
         </p>
         {runs != null && (
-          <p className="text-sm font-medium text-primary/80">
-            {t("runsToday", { count: runs })}
-          </p>
+          <div className="space-y-1">
+            <p className="text-sm font-semibold tabular-nums text-primary/85 transition-all duration-500">
+              {t("runsToday", { count: runs })}
+            </p>
+            <p className="text-[11px] leading-snug text-muted-foreground/90">{t("runsCounterHint")}</p>
+          </div>
         )}
       </div>
 

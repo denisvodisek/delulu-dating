@@ -42,3 +42,17 @@ export function estimateRunsToday() {
   const h = hashString(dayKey());
   return base + (h % 1800) + Math.floor(Date.now() / 36e5) * 3;
 }
+
+/**
+ * Landing-page “social proof” number only. Uses HK calendar day + intraday drift so it
+ * naturally climbs. Not tied to DB or `POST /api/run` — purely theatrical.
+ */
+export function publicSocialCounter(now = new Date()): number {
+  const fromEstimate = estimateRunsToday();
+  const { startIso } = getHongKongDayBounds(now);
+  const startMs = Date.parse(startIso);
+  const mins = Number.isNaN(startMs)
+    ? 0
+    : Math.max(0, Math.floor((now.getTime() - startMs) / 60_000));
+  return fromEstimate + Math.floor(mins / 5);
+}
