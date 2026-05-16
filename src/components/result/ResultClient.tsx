@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import gsap from "gsap";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -50,6 +51,7 @@ export default function ResultClient({
   const ts = useTranslations("share");
   const router = useRouter();
   const historySaved = useRef(false);
+  const footerRef = useRef<HTMLElement>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const confettiLaunched = useRef(false);
 
@@ -114,6 +116,41 @@ export default function ResultClient({
       probability: Number(snap.calc.probability.toFixed(6)),
     });
   }, [snap, locale]);
+
+  useLayoutEffect(() => {
+    const root = footerRef.current;
+    if (!root) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const q = gsap.utils.selector(root);
+    const nodes = q("[data-footer-showcase]");
+    if (!nodes.length) return;
+
+    if (reduced) {
+      gsap.set(nodes, { opacity: 1, y: 0, scale: 1 });
+      return;
+    }
+
+    gsap.set(nodes, { opacity: 0, y: 24, scale: 0.98 });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some((entry) => entry.isIntersecting);
+        if (!hit) return;
+        observer.disconnect();
+        gsap.to(nodes, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          ease: "power3.out",
+          stagger: 0.08,
+        });
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
 
   const shareUrl = useMemo(() => {
     if (!snap) return "https://delulu.dating";
@@ -439,13 +476,16 @@ export default function ResultClient({
         </div>
       ) : null}
 
-      <footer className="relative overflow-hidden border-t border-pink-200/40 bg-gradient-to-br from-[#fff5fb] via-[#f7f0ff] to-[#eef7ff] px-4 py-14 md:px-16 md:py-16">
+      <footer
+        ref={footerRef}
+        className="relative overflow-hidden border-t border-pink-200/40 bg-gradient-to-br from-[#fff5fb] via-[#f7f0ff] to-[#eef7ff] px-4 py-14 md:px-16 md:py-16"
+      >
         <div className="pointer-events-none absolute -top-16 -left-8 h-44 w-44 rounded-full bg-pink-300/25 blur-3xl" />
         <div className="pointer-events-none absolute -right-14 bottom-0 h-52 w-52 rounded-full bg-violet-300/25 blur-3xl" />
         <div className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-200/20 blur-3xl" />
 
         <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
-          <div className="md:col-span-7">
+          <div className="md:col-span-7" data-footer-showcase>
             <h4 className="font-lab-display text-3xl font-extrabold tracking-tight uppercase md:text-5xl md:leading-[1.02]">
               {t("labFooterTitle")}
             </h4>
@@ -465,7 +505,7 @@ export default function ResultClient({
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 md:col-span-5 md:items-end">
+          <div className="flex flex-col gap-4 md:col-span-5 md:items-end" data-footer-showcase>
             <button
               type="button"
               onClick={() => {
@@ -486,21 +526,24 @@ export default function ResultClient({
         </div>
 
         <div className="relative mx-auto mt-10 grid max-w-6xl grid-cols-1 gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-pink-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm">
+          <div className="rounded-2xl border border-pink-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm" data-footer-showcase>
             <p className="font-lab-mono text-[10px] font-semibold tracking-wider text-fuchsia-700 uppercase">{t("labFooterStat1Label")}</p>
             <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{t("labFooterStat1Value")}</p>
           </div>
-          <div className="rounded-2xl border border-violet-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm">
+          <div className="rounded-2xl border border-violet-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm" data-footer-showcase>
             <p className="font-lab-mono text-[10px] font-semibold tracking-wider text-violet-700 uppercase">{t("labFooterStat2Label")}</p>
             <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{t("labFooterStat2Value")}</p>
           </div>
-          <div className="rounded-2xl border border-sky-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm">
+          <div className="rounded-2xl border border-sky-200/70 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm" data-footer-showcase>
             <p className="font-lab-mono text-[10px] font-semibold tracking-wider text-sky-700 uppercase">{t("labFooterStat3Label")}</p>
             <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{t("labFooterStat3Value")}</p>
           </div>
         </div>
 
-        <div className="relative mx-auto mt-8 flex max-w-6xl flex-col items-center justify-between gap-5 border-t border-pink-200/45 pt-6 md:flex-row">
+        <div
+          className="relative mx-auto mt-8 flex max-w-6xl flex-col items-center justify-between gap-5 border-t border-pink-200/45 pt-6 md:flex-row"
+          data-footer-showcase
+        >
           <div className="flex flex-col items-center gap-2 md:items-start">
             <span className="font-lab-mono text-sm font-bold uppercase tracking-wide text-lab-on-surface">
               {t("labFooterBrand")}
