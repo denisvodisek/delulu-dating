@@ -1,8 +1,46 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+const bodySchema = z.object({
+  locale: z.enum(["en", "zh"]).optional(),
+});
+
+const MAX_BODY = 512;
 
 export async function POST(req: Request) {
+  const ip = getClientIp(req);
+  if (!checkRateLimit(`run:${ip}`, 24, 900_000)) {
+    return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
+  }
+
+  let raw: string;
   try {
-    const body = (await req.json()) as { locale?: string };
+    raw = await req.text();
+  } catch {
+    return NextResponse.json({ ok: false }, { status: 400 });
+  }
+  if (raw.length > MAX_BODY) {
+    return NextResponse.json({ ok: false, error: "payload_too_large" }, { status: 413 });
+  }
+
+  let parsed: unknown = {};
+  if (raw.trim()) {
+    try {
+      parsed = JSON.parse(raw) as unknown;
+    } catch {
+      return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+    }
+  }
+
+  const parsedBody = bodySchema.safeParse(parsed);
+  if (!parsedBody.success) {
+    return NextResponse.json({ ok: false, error: "invalid_body" }, { status: 400 });
+  }
+
+  const locale = parsedBody.data.locale ?? "en";
+
+  try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!url || !key) {
@@ -10,10 +48,13 @@ export async function POST(req: Request) {
     }
     const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(url, key);
-    await supabase.from("runs").insert({
-      locale: body.locale ?? "en",
+    const { error } = await supabase.from("runs").insert({
+      locale,
       created_at: new Date().toISOString(),
     });
+    if (error) {
+      return NextResponse.json({ ok: false, error: "db" }, { status: 502 });
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ ok: false }, { status: 500 });

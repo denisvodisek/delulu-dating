@@ -21,36 +21,14 @@ export default async function MethodologyPage({
 
       <Card className="border-white/60 bg-white/80 p-6 leading-relaxed shadow-lg backdrop-blur">
         <ul className="list-disc space-y-3 pl-5 text-sm">
-          <li>
-            <strong>Model:</strong> independent filters multiplied (joint probability under
-            independence). Mild +12% correlation uplift so tall + rich stacks aren&apos;t
-            astronomically harsher than reality.
-          </li>
-          <li>
-            <strong>Height:</strong> HK Population Health Survey (2014/15) male mean 169.5 cm;
-            SD approximated at 5.8 cm from local anthropometric references.
-          </li>
-          <li>
-            <strong>Income:</strong> Census and Statistics Department Annual Earnings and Hours
-            Survey — male wage percentile curve (HK$), interpolated between published points.
-          </li>
-          <li>
-            <strong>Age / marital / education:</strong> 2021 Census &amp; thematic reports
-            (simplified age-window and never-married proxies).
-          </li>
-          <li>
-            <strong>Districts:</strong> 2021 Census district weights blended into male share
-            priors — illustrative, not block-level GPS accuracy.
-          </li>
-          <li>
-            <strong>Smoking / kids:</strong> broad CHP / survey priors — rounded, not bespoke
-            matchmaking intel.
-          </li>
+          <li>{t("b1")}</li>
+          <li>{t("b2")}</li>
+          <li>{t("b3")}</li>
+          <li>{t("b4")}</li>
+          <li>{t("b5")}</li>
+          <li>{t("b6")}</li>
         </ul>
-        <p className="mt-6 text-sm font-semibold text-primary">
-          This is spicy satire + public statistics. If you&apos;re offended, the numbers
-          still love you. Probably.
-        </p>
+        <p className="mt-6 text-sm font-semibold text-primary">{t("outro")}</p>
       </Card>
 
       <Link

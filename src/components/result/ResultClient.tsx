@@ -26,7 +26,6 @@ export default function ResultClient({
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const [calc, setCalc] = useState<CalculationResult | null>(null);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const q = loadQuiz();
@@ -43,7 +42,6 @@ export default function ResultClient({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)")
       .matches;
     if (reduce) {
-      setReady(true);
       return;
     }
     const ctx = gsap.context(() => {
@@ -57,7 +55,6 @@ export default function ResultClient({
           stagger: 0.08,
           ease: "power3.out",
           onComplete: () => {
-            setReady(true);
             void confetti({
               particleCount: 90,
               spread: 70,
@@ -130,7 +127,7 @@ export default function ResultClient({
   }
 
   function threads() {
-    const text = encodeURIComponent(shareBody);
+    const text = encodeURIComponent(`${shareBody} ${shareUrl}`);
     window.open(`https://www.threads.net/intent/post?text=${text}`, "_blank");
   }
 
@@ -277,7 +274,7 @@ export default function ResultClient({
         </Link>
       </div>
 
-      {ready ? <div className="reveal-item">{children}</div> : null}
+      {children ? <div className="reveal-item mt-2">{children}</div> : null}
     </main>
   );
 }

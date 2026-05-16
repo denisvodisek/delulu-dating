@@ -56,7 +56,7 @@
     "tier_picky": "Selective but Valid",
     "tier_very_picky": "High Standards Energy",
     "tier_delulu": "Certified Delulu",
-    "tier_god": "妄想之神",
+    "tier_god": "God-tier Delulu",
     "breakdown": "What shrank your pool the most",
     "tips": "Reality tips",
     "share": "Share with friends",
@@ -79,7 +79,14 @@
   "methodology": {
     "title": "Methodology & sources",
     "intro": "Delulu Dating multiplies independent population filters. It's a Fermi estimate for dating — not a prediction about any individual human.",
-    "back": "← Home"
+    "back": "← Home",
+    "b1": "Model: independent filters are multiplied (joint probability under independence). A +12% correlation uplift stops “tall + rich” stacks from being astronomically harsher than a naive model.",
+    "b2": "Height: HK Population Health Survey (2014/15) reports male mean height 169.5 cm; SD approximated at 5.8 cm from local anthropometric references.",
+    "b3": "Income: Census and Statistics Department Annual Earnings and Hours Survey — male wage percentile curve (HK$), interpolated between published points.",
+    "b4": "Age / marital / education: 2021 Census and thematic reports (simplified age-window and never-married proxies).",
+    "b5": "Districts: 2021 Census district weights blended into male-share priors — illustrative, not block-level GPS accuracy.",
+    "b6": "Smoking / kids: broad CHP / survey priors — rounded, not bespoke matchmaking intel.",
+    "outro": "This is spicy satire plus public statistics. If you're offended, the numbers still love you. Probably."
   },
   "district": {
     "cw": "Central & Western",

@@ -64,6 +64,7 @@ export default async function LocaleLayout({
     <>
       <LocaleHtmlLang locale={locale} />
       <div
+        lang={locale === "zh" ? "zh-HK" : "en"}
         className={`${notoHK.className} ${fraunces.variable} flex min-h-full flex-1 flex-col`}
       >
         <KawaiiBg />
