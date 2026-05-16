@@ -113,10 +113,10 @@ export default function LandingClient() {
   return (
     <main className="pt-20">
       {/* Hero */}
-      <section className="flex min-h-[calc(100vh-80px)] flex-col overflow-hidden rounded-b-3xl border-b border-pink-200/50 shadow-[0_12px_40px_rgba(236,72,153,0.08)] md:flex-row">
-        <div className="flex flex-1 flex-col justify-between border-b border-pink-200/45 p-4 md:border-r md:border-b-0 md:p-16">
-          <div className="mt-8 md:mt-12">
-            <span className="font-lab-mono text-lab-mono text-lab-primary mb-4 block text-xs font-semibold tracking-[0.2em]">
+      <section className="grid min-h-[calc(100dvh-5rem)] w-full grid-cols-1 overflow-hidden rounded-b-3xl border-b border-pink-200/50 shadow-[0_12px_40px_rgba(236,72,153,0.08)] md:grid-cols-2 md:grid-rows-1">
+        <div className="flex min-h-0 flex-col border-b border-pink-200/45 p-4 md:border-r md:border-b-0 md:p-16">
+          <div className="mt-6 md:mt-10">
+            <span className="font-lab-mono text-lab-mono mb-4 block text-xs font-semibold tracking-[0.2em] text-fuchsia-700">
               {t("heroKicker")}
             </span>
             <h1 className="font-lab-display mb-10 bg-gradient-to-br from-fuchsia-700 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold tracking-tight text-transparent uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
@@ -134,33 +134,36 @@ export default function LandingClient() {
               >
                 {t("heroCta")}
               </Link>
-              <div className="space-y-2 rounded-2xl border border-dashed border-pink-200/70 bg-gradient-to-br from-pink-50/90 to-violet-50/60 p-4 text-center text-xs">
-                <p className="text-lab-on-surface font-semibold">{t("findGirlfriend")}</p>
-                <span className="font-lab-mono inline-block rounded-full border border-pink-200/60 bg-white/80 px-3 py-1 text-[10px] font-bold tracking-wider text-fuchsia-900 uppercase">
-                  {t("comingSoon")}
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col gap-6 md:mt-auto md:pt-10">
+            <div className="space-y-3 rounded-2xl border border-dashed border-pink-200/70 bg-gradient-to-br from-pink-50/90 to-violet-50/60 p-5 text-center text-xs">
+              <p className="text-lab-on-surface font-semibold">{t("findGirlfriend")}</p>
+              <span className="font-lab-mono inline-block rounded-full border border-pink-200/60 bg-white/80 px-3 py-1.5 text-[10px] font-bold tracking-wider text-fuchsia-900 uppercase">
+                {t("comingSoon")}
+              </span>
+            </div>
+
+            <div className="text-white -mx-4 overflow-hidden rounded-2xl bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 whitespace-nowrap shadow-inner md:-mx-0">
+              <div className="inline-flex animate-[marquee_20s_linear_infinite]">
+                <span className="font-lab-mono text-lab-mono px-8 text-xs font-semibold uppercase">
+                  {marqueeLine}
+                </span>
+                <span className="font-lab-mono text-lab-mono px-8 text-xs font-semibold uppercase">
+                  {marqueeLine}
                 </span>
               </div>
             </div>
+            {runs != null && (
+              <p className="text-lab-on-surface-variant font-lab-mono px-1 text-[10px] uppercase leading-snug tracking-wide">
+                {t("runsCounterHint")}
+              </p>
+            )}
           </div>
-
-          <div className="text-white -mx-4 overflow-hidden bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 py-4 whitespace-nowrap shadow-inner md:-mx-16">
-            <div className="inline-flex animate-[marquee_20s_linear_infinite]">
-              <span className="font-lab-mono text-lab-mono px-8 text-xs font-semibold uppercase">
-                {marqueeLine}
-              </span>
-              <span className="font-lab-mono text-lab-mono px-8 text-xs font-semibold uppercase">
-                {marqueeLine}
-              </span>
-            </div>
-          </div>
-          {runs != null && (
-            <p className="text-lab-on-surface-variant font-lab-mono mt-3 px-1 text-[10px] uppercase leading-snug tracking-wide">
-              {t("runsCounterHint")}
-            </p>
-          )}
         </div>
 
-        <div className="relative min-h-[500px] flex-1 overflow-hidden rounded-2xl bg-gradient-to-br from-pink-200/30 via-fuchsia-100/40 to-violet-200/35 md:min-h-0 md:m-4 md:rounded-3xl">
+        <div className="relative min-h-[min(28rem,55dvh)] w-full min-w-0 md:min-h-[min(calc(100dvh-5rem),56rem)]">
           <Image
             src={HERO_IMAGE}
             alt={t("heroImageAlt")}
@@ -171,7 +174,7 @@ export default function LandingClient() {
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pink-300/50 via-fuchsia-200/25 to-violet-200/35 mix-blend-soft-light" />
           <div className="from-fuchsia-950/55 pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent" />
-          <div className="font-lab-mono text-lab-mono absolute top-0 right-0 border-b border-l border-white/25 bg-white/15 p-6 text-right text-sm text-white whitespace-pre-line backdrop-blur-md">
+          <div className="font-lab-mono text-lab-mono absolute top-4 right-4 max-w-[12.5rem] rounded-2xl border border-white/30 bg-fuchsia-950/45 p-4 text-left text-[11px] leading-snug text-white whitespace-pre-line shadow-lg backdrop-blur-md sm:max-w-none sm:text-sm">
             {t("heroCoords")}
           </div>
         </div>
@@ -194,10 +197,10 @@ export default function LandingClient() {
               <span className="font-lab-display text-6xl leading-none opacity-20 transition-opacity group-hover:opacity-100">
                 {step}
               </span>
-              <span className="material-symbols-outlined text-lab-primary text-4xl">{icon}</span>
+              <span className="material-symbols-outlined text-4xl text-fuchsia-600">{icon}</span>
             </div>
             <div>
-              <h3 className="font-lab-mono text-lab-mono text-lab-primary mb-4 text-xs font-semibold uppercase tracking-widest">
+              <h3 className="font-lab-mono text-lab-mono mb-4 text-xs font-semibold tracking-widest text-fuchsia-700 uppercase">
                 {t(titleKey)}
               </h3>
               <p className="text-lab-on-surface-variant font-lab-body text-base leading-relaxed">
@@ -211,7 +214,7 @@ export default function LandingClient() {
       {/* Specimens */}
       <section
         id="specimens"
-        className="px-4 py-16 md:px-16 md:py-[var(--spacing-lab-section)] scroll-mt-24"
+        className="scroll-mt-28 px-4 py-16 md:px-16 md:py-[var(--spacing-lab-section)]"
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-[var(--spacing-lab-gutter)]">
           <div className="lg:col-span-4">
@@ -266,7 +269,7 @@ export default function LandingClient() {
                           {oneLine} · ~{tResult("estimatedPool", { count: pool })}
                         </p>
                       </div>
-                      <span className="material-symbols-outlined text-lab-outline group-hover:text-lab-primary shrink-0 transition-colors">
+                      <span className="material-symbols-outlined shrink-0 text-slate-400 transition-colors group-hover:text-fuchsia-600">
                         arrow_forward
                       </span>
                     </div>
@@ -305,7 +308,7 @@ export default function LandingClient() {
         <div className="flex flex-wrap items-center justify-center gap-6 md:justify-end">
           <Link
             href="/methodology"
-            className="font-lab-mono text-lab-mono text-lab-on-surface-variant hover:text-lab-primary text-xs font-semibold uppercase tracking-wide transition-colors"
+            className="font-lab-mono text-lab-mono text-lab-on-surface-variant hover:text-fuchsia-700 text-xs font-semibold uppercase tracking-wide transition-colors"
           >
             {t("footerMethodology")}
           </Link>

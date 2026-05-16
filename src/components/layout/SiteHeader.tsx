@@ -35,9 +35,9 @@ export function SiteHeader() {
         >
           {t("methodology")}
         </Link>
-        <a href="#specimens" className={cn(navBase, navIdle)}>
+        <Link href="/#specimens" className={cn(navBase, navIdle)}>
           {t("archive")}
-        </a>
+        </Link>
       </nav>
       <LocaleSwitcher variant="lab" />
     </header>

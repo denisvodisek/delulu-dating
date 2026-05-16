@@ -56,7 +56,7 @@ function PoolBlockStrip({ redCount }: { redCount: number }) {
         <div
           key={i}
           className={cn(
-            "rounded-sm",
+            "rounded-md",
             i < safe
               ? "bg-gradient-to-t from-pink-400 to-violet-400 shadow-sm"
               : "bg-pink-100/50",
@@ -222,12 +222,12 @@ export default function QuizFlow() {
         />
       </div>
 
-      <main className="flex min-h-[calc(100dvh-5rem-4px)] items-center justify-center px-4 pt-4 pb-28 md:px-16">
+      <main className="flex min-h-[calc(100dvh-5rem-6px)] items-start justify-center px-4 pt-28 pb-28 md:px-16">
         <div className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border-2 border-pink-200/55 bg-white/70 shadow-[0_24px_60px_-12px_rgba(236,72,153,0.22)] backdrop-blur-xl md:grid-cols-12">
           {/* Left: question + roast + stats */}
           <div className="flex flex-col justify-center gap-8 border-b border-pink-200/40 bg-gradient-to-br from-pink-50/70 via-white to-violet-50/35 p-8 md:col-span-5 md:border-r md:border-b-0 md:p-12">
             <div className="space-y-2">
-              <span className="font-lab-mono text-lab-mono text-lab-primary text-xs font-semibold uppercase tracking-[0.14em]">
+              <span className="font-lab-mono text-lab-mono text-xs font-semibold tracking-[0.14em] text-fuchsia-700 uppercase">
                 {t("labQuestionKicker")}{" "}
                 {String(step + 1).padStart(2, "0")}/{String(STEPS).padStart(2, "0")}
               </span>
@@ -242,7 +242,7 @@ export default function QuizFlow() {
 
             <div className="rounded-2xl border border-pink-200/70 bg-gradient-to-r from-pink-50 via-white to-violet-50/80 p-6 shadow-sm">
               <div className="flex gap-3">
-                <span className="material-symbols-outlined text-lab-primary shrink-0">monitoring</span>
+                <span className="material-symbols-outlined shrink-0 text-fuchsia-600">monitoring</span>
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs leading-relaxed font-medium uppercase">
                   {roastText}
                 </p>
@@ -266,7 +266,7 @@ export default function QuizFlow() {
                 <span
                   className={cn(
                     "font-lab-display text-4xl font-bold md:text-5xl",
-                    diffKey === "labDiffHigh" ? "text-lab-primary" : "text-lab-on-surface",
+                    diffKey === "labDiffHigh" ? "text-fuchsia-600" : "text-lab-on-surface",
                   )}
                 >
                   {t(diffKey)}
@@ -403,7 +403,7 @@ export default function QuizFlow() {
                   {t("labDistrictPick")}
                 </p>
                 <p className="text-lab-on-surface-variant font-lab-body text-sm">{t("districtNone")}</p>
-                <div className="grid max-h-[min(50vh,22rem)] grid-cols-2 gap-0 overflow-y-auto overscroll-contain rounded-2xl border-2 border-pink-200/60 sm:grid-cols-3">
+                <div className="grid max-h-[min(22rem,calc(100dvh-15.5rem))] grid-cols-2 gap-0 overflow-y-auto overscroll-contain rounded-2xl border-2 border-pink-200/60 sm:grid-cols-3">
                   {districtKeys.map((key) => {
                     const on = q.districts.includes(key);
                     return (
@@ -527,7 +527,7 @@ export default function QuizFlow() {
               </p>
             </div>
 
-            <p className="font-lab-mono text-lab-primary text-center text-[10px] font-semibold uppercase tracking-wide">
+            <p className="font-lab-mono text-center text-[10px] font-semibold tracking-widest text-fuchsia-700 uppercase">
               {t("noSpoilers")}
             </p>
           </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { calculateDelulu, oneInN } from "@/lib/calc/probability";
@@ -44,6 +45,7 @@ export default function ResultClient({
   const router = useRouter();
   const historySaved = useRef(false);
   const [snap, setSnap] = useState<Snapshot | null>(null);
+  const confettiLaunched = useRef(false);
 
   useEffect(() => {
     const q = loadQuiz();
@@ -53,6 +55,36 @@ export default function ResultClient({
     }
     setSnap({ calc: calculateDelulu(q), seeker: q.seeker });
   }, [router]);
+
+  useEffect(() => {
+    if (!snap || confettiLaunched.current) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    confettiLaunched.current = true;
+    void import("canvas-confetti").then((mod) => {
+      const c = mod.default;
+      const candy = ["#f472b6", "#c084fc", "#93c5fd", "#fda4af", "#fce7f3"];
+      c({ particleCount: 110, spread: 70, origin: { y: 0.58 }, colors: candy });
+      window.setTimeout(() => {
+        c({
+          particleCount: 70,
+          angle: 120,
+          spread: 58,
+          origin: { x: 1, y: 0.62 },
+          colors: candy,
+        });
+      }, 200);
+      window.setTimeout(() => {
+        c({
+          particleCount: 70,
+          angle: 60,
+          spread: 58,
+          origin: { x: 0, y: 0.62 },
+          colors: candy,
+        });
+      }, 380);
+    });
+  }, [snap]);
 
   useEffect(() => {
     if (!snap || historySaved.current) return;
@@ -160,12 +192,21 @@ export default function ResultClient({
 
   return (
     <main className="flex flex-1 flex-col pt-20">
-      <section className="w-full border-b border-pink-200/45 bg-gradient-to-b from-pink-100/70 via-white to-violet-50/50 px-4 pb-20 pt-6 md:px-16">
-        <div className="mx-auto max-w-7xl text-center">
-          <span className="font-lab-mono text-lab-on-surface-variant mb-8 block text-xs font-semibold uppercase tracking-[0.2em]">
+      <section className="relative w-full overflow-hidden border-b border-pink-200/45 bg-gradient-to-b from-pink-100/70 via-white to-violet-50/50 px-4 pb-20 pt-8 md:px-16">
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-pink-300/35 via-fuchsia-200/25 to-violet-300/35 blur-3xl" />
+        <motion.div
+          className="relative mx-auto max-w-7xl text-center"
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 120, damping: 20, mass: 0.9 }}
+        >
+          <span className="font-lab-mono mb-4 inline-flex rounded-full border border-pink-200/60 bg-white/80 px-4 py-2 text-xs font-bold tracking-wide text-fuchsia-800 uppercase shadow-sm backdrop-blur-sm">
+            {t("labHeroSplash")}
+          </span>
+          <span className="font-lab-mono text-fuchsia-700/90 mt-4 mb-2 block text-xs font-semibold uppercase tracking-[0.2em]">
             {t("labHeroKicker")}
           </span>
-          <h1 className="font-lab-display mb-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold text-transparent md:text-7xl lg:text-[84px] lg:leading-[90px]">
+          <h1 className="font-lab-display mb-4 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold text-transparent drop-shadow-sm md:text-7xl lg:text-[84px] lg:leading-[90px]">
             <span className="mr-2 text-[0.45em] font-semibold tracking-tight md:text-[0.5em]">
               {t("labHeroInPrefix")}
             </span>
@@ -174,18 +215,26 @@ export default function ResultClient({
           <p className="font-lab-body text-lab-on-surface-variant mx-auto max-w-2xl text-lg leading-relaxed md:text-xl">
             {seeker === "woman_seeking_man" ? t("labHeroSub_male") : t("labHeroSub_female")}
           </p>
-          <p className="font-lab-mono text-lab-on-surface-variant mx-auto mt-6 max-w-2xl text-xs uppercase tracking-wide">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.12, duration: 0.45 }}
+            className="font-lab-mono text-lab-on-surface-variant mx-auto mt-6 max-w-2xl rounded-2xl border border-pink-200/50 bg-white/70 px-5 py-4 text-xs uppercase tracking-wide shadow-sm backdrop-blur-sm"
+          >
             {t("heroChanceLine", { pct: pctLabel })}
-          </p>
-          <p className="font-lab-body text-lab-on-surface-variant mx-auto mt-3 max-w-xl text-sm">
+          </motion.div>
+          <p className="font-lab-body text-lab-on-surface-variant mx-auto mt-5 max-w-xl text-sm leading-relaxed">
             {t("poolExplainer", { count: calc.estimatedMatches })}
           </p>
-        </div>
+        </motion.div>
       </section>
 
-      <section className="grid min-h-[600px] w-full grid-cols-1 border-pink-200/35 bg-gradient-to-b from-white via-pink-50/20 to-violet-50/30 px-4 md:grid-cols-12 md:px-16">
+      <section className="grid min-h-[600px] w-full grid-cols-1 border-pink-200/35 bg-gradient-to-b from-white via-pink-50/20 to-violet-50/30 px-4 md:grid-cols-12 md:items-start md:px-16">
         <div className="border-b border-pink-200/40 py-12 md:col-span-7 md:border-r md:border-b-0 md:py-16 md:pr-12">
           <div className="mb-12">
+            <p className="font-lab-mono mb-3 text-xs font-semibold tracking-wide text-fuchsia-700 uppercase">
+              {t("labBreakdownKicker")}
+            </p>
             <h2 className="font-lab-display mb-2 text-3xl uppercase md:text-5xl md:leading-[52px]">
               {t("labDebtTitle")}
             </h2>
@@ -194,13 +243,13 @@ export default function ResultClient({
             </p>
           </div>
 
-          <div className="flex flex-col border-t border-pink-200/45">
+          <div className="flex flex-col gap-4">
             {debtRows.map((row, idx) => (
               <div
                 key={row.key}
-                className="grid grid-cols-12 items-center gap-y-3 border-b border-pink-200/35 py-6"
+                className="grid grid-cols-12 items-center gap-y-3 rounded-2xl border border-pink-200/50 bg-white/75 p-5 shadow-sm backdrop-blur-sm md:p-6"
               >
-                <div className="font-lab-display text-lab-primary col-span-12 text-2xl opacity-30 md:col-span-1">
+                <div className="font-lab-display col-span-12 text-2xl text-fuchsia-700/35 md:col-span-1">
                   {String(idx + 1).padStart(2, "0")}
                 </div>
                 <div className="col-span-12 md:col-span-5">
@@ -259,15 +308,15 @@ export default function ResultClient({
           )}
         </div>
 
-        <div className="flex flex-col py-12 md:col-span-5 md:py-16 md:pl-12">
-            <div className="md:top-28 sticky">
+        <div className="flex flex-col gap-8 py-12 md:col-span-5 md:self-start md:py-16 md:pl-12">
+          <div className="sticky top-24 z-20 md:top-28">
             <div className="mb-10 overflow-hidden rounded-3xl border-2 border-pink-200/55 bg-white/90 shadow-[0_20px_50px_-12px_rgba(236,72,153,0.2)] backdrop-blur-sm">
               <div className="border-b border-pink-200/50 bg-gradient-to-r from-pink-400 via-fuchsia-400 to-violet-400 px-6 py-3">
                 <p className="font-lab-mono text-xs font-semibold tracking-wide text-white uppercase drop-shadow-sm">
                   {t("labClinicalLabel")}
                 </p>
               </div>
-                <div className="p-8">
+              <div className="p-8">
                 <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase">
                   {tierLabel}
                 </p>
@@ -310,9 +359,7 @@ export default function ResultClient({
                     <span
                       className={cn(
                         "font-lab-mono text-sm font-bold tabular-nums drop-shadow-sm",
-                        alarming || sev > 40
-                          ? "text-white"
-                          : "text-fuchsia-950",
+                        alarming || sev > 40 ? "text-white" : "text-fuchsia-950",
                       )}
                     >
                       {sev}%
@@ -326,29 +373,29 @@ export default function ResultClient({
                 ) : null}
               </div>
             </div>
+          </div>
 
-            <div className="flex flex-col gap-4">
-              <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
-                {t("labTransmit")}
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  type="button"
-                  onClick={wa}
-                  className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
-                >
-                  <span className="material-symbols-outlined text-base">share</span>
-                  {ts("whatsapp")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void copy()}
-                  className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
-                >
-                  <span className="material-symbols-outlined text-base">content_copy</span>
-                  {ts("copy")}
-                </button>
-              </div>
+          <div className="flex flex-col gap-4">
+            <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
+              {t("labTransmit")}
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={wa}
+                className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
+              >
+                <span className="material-symbols-outlined text-base">share</span>
+                {ts("whatsapp")}
+              </button>
+              <button
+                type="button"
+                onClick={() => void copy()}
+                className="font-lab-mono flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/70 bg-white py-4 text-xs font-semibold tracking-wide text-fuchsia-900 uppercase transition-all hover:border-fuchsia-300 hover:bg-gradient-to-r hover:from-pink-50 hover:to-violet-50"
+              >
+                <span className="material-symbols-outlined text-base">content_copy</span>
+                {ts("copy")}
+              </button>
             </div>
           </div>
         </div>
@@ -406,7 +453,7 @@ export default function ResultClient({
         <div className="flex flex-wrap justify-center gap-8 md:justify-end">
           <Link
             href="/methodology"
-            className="font-lab-mono text-lab-on-surface-variant hover:text-lab-primary text-xs font-semibold uppercase tracking-wide transition-colors"
+            className="font-lab-mono text-lab-on-surface-variant hover:text-fuchsia-700 text-xs font-semibold uppercase tracking-wide transition-colors"
           >
             {t("labFooterMethodology")}
           </Link>
