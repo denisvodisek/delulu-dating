@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://delulu.dating"),
   title: "Delulu Dating",
   description: "Hong Kong dating reality calculator",
+  icons: {
+    icon: [{ url: "/brand-mark.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({
