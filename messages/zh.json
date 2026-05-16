@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "title": "妄想約會 — 你搵港男嘅條件有幾妄想？",
+    "description": "用政府統計數字，幫你計吓你個「理想BB清單」喺香港有幾多個真人。好笑、好尖、好真。"
+  },
+  "nav": {
+    "methodology": "點計㗎",
+    "start": "開始",
+    "brand": "妄想約會",
+    "howShort": "點計"
+  },
+  "landing": {
+    "badge": "香港限定",
+    "headline": "你搵港男嘅條件有幾妄想？",
+    "sub": "一個一個 filter 加上去，睇吓個池細到幾誇張。笑完記得 share 俾姐妹圍爐。",
+    "cta": "幫我計妄想指數",
+    "runsToday": "今日已有 {count, number} 個香港人玩過",
+    "disclaimer": "玩嘢 + 統計。唔係婚介。唔係你阿媽。",
+    "comingSoon": "快啲有",
+    "findGirlfriend": "搵女友（港男版）"
+  },
+  "quiz": {
+    "livePool": "估計符合人數比例",
+    "stepAge": "想要幾多歲？",
+    "stepHeight": "最矮要幾高？（cm）",
+    "stepIncome": "月入至少要幾多？（HK$）",
+    "stepMarital": "婚姻狀態",
+    "stepDistrict": "住邊區？（可唔填）",
+    "stepEducation": "學歷",
+    "stepLifestyle": "生活習慣",
+    "skip": "跳過（用預設）",
+    "next": "下一步",
+    "back": "返回",
+    "calculate": "睇我幾妄想",
+    "ageHint": "交友 app 多數人會揀 25–35。",
+    "heightHint": "香港男仔平均身高大約 170 cm（實測）。",
+    "incomeHint": "月入 HK$10 萬+ 大概係男性打工仔入面 top 2–3%。",
+    "maritalNever": "只接受未結過婚",
+    "maritalNotNow": "而家單身就得（包括離婚）",
+    "maritalAny": "唔理婚姻狀態",
+    "districtNone": "全香港都得",
+    "eduAny": "唔理學歷",
+    "eduDegree": "大學或以上",
+    "eduPostgrad": "碩士或以上",
+    "noSmoke": "唔食煙",
+    "noKids": "唔要对方有小朋友（前度）"
+  },
+  "reveal": {
+    "calculating": "計紧你幾妄想…",
+    "logIntro": "篩緊全香港…"
+  },
+  "result": {
+    "title": "你嘅妄想指數",
+    "oneIn": "大概每 {n, number} 個香港男仔，先有一個完全符合你啲 filter",
+    "tier_realistic": "好脚踏实地",
+    "tier_picky": "有要求但合理",
+    "tier_very_picky": "要求高到好有性格",
+    "tier_delulu": "正式妄想級",
+    "tier_god": "妄想之神",
+    "breakdown": "邊個 filter 最狠",
+    "tips": "小小現實貼士",
+    "share": "Share 俾朋友",
+    "again": "再玩多次",
+    "methodologyCta": "睇下點計",
+    "monetizationOff": "暫時冇廣告 — 先玩氣氛。",
+    "monetizationOn": "開咗 monetization 之後，合作位會喺呢度出現。",
+    "tipTight": "而家最狠嘅 filter 係「{label}」。鬆少少，個池就大得好快。",
+    "shareText": "我嘅妄想約會分數：{pct}% 符合率（{tier}）。你都試下 delulu.dating",
+    "estimatedPool": "模型入面大概 {count, number} 個男仔符合"
+  },
+  "share": {
+    "copy": "複製連結",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "line": "LINE",
+    "telegram": "Telegram",
+    "native": "分享…"
+  },
+  "methodology": {
+    "title": "點計㗎 / 數據來源",
+    "intro": "妄想約會用「獨立概率相乘」模型：每個條件當一個篩，全部同時成立嘅機會就係各個機會相乘。係約會版嘅費米估算 — 唔係預言你會唔會脫單。",
+    "back": "← 返主頁"
+  },
+  "district": {
+    "cw": "中西區",
+    "wc": "灣仔",
+    "eastern": "東區",
+    "southern": "南區",
+    "ytm": "油尖旺",
+    "ss": "深水埗",
+    "kt": "九龍城",
+    "kc": "觀塘",
+    "wts": "黃大仙",
+    "ktng": "葵青",
+    "n": "北區",
+    "tw": "大埔",
+    "tm": "屯門",
+    "yl": "元朗",
+    "ntl": "西貢",
+    "sk": "沙田",
+    "island": "離島",
+    "ktd": "荃灣"
+  },
+  "bd": {
+    "age": "年齡範圍",
+    "height": "身高門檻",
+    "income": "月入門檻",
+    "marital": "婚姻狀態",
+    "district": "地區",
+    "education": "學歷",
+    "smoke": "唔食煙",
+    "kids": "唔要对方有小朋友",
+    "correlation": "相關性調整 (+12%)"
+  }
+}

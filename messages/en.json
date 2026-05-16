@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "title": "Delulu Dating — How delulu is your HK boyfriend wishlist?",
+    "description": "A spicy, kawaii reality check for Hong Kong dating standards. Real census data. Zero shame (okay, maybe a little)."
+  },
+  "nav": {
+    "methodology": "How it works",
+    "start": "Start",
+    "brand": "Delulu Dating",
+    "howShort": "How"
+  },
+  "landing": {
+    "badge": "Made for Hong Kong",
+    "headline": "How delulu is your boyfriend wishlist?",
+    "sub": "Stack your filters. Watch the pool shrink. Laugh (or cry). Share with your group chat.",
+    "cta": "Calculate my delulu",
+    "runsToday": "{count, number} Hongkongers checked today",
+    "disclaimer": "Satire + statistics. Not a dating service. Not your therapist.",
+    "comingSoon": "Coming soon",
+    "findGirlfriend": "Find a girlfriend (HK edition)"
+  },
+  "quiz": {
+    "livePool": "Estimated match pool",
+    "stepAge": "What age range?",
+    "stepHeight": "Minimum height (cm)",
+    "stepIncome": "Minimum monthly income (HK$)",
+    "stepMarital": "Marital status",
+    "stepDistrict": "Where should he live? (optional)",
+    "stepEducation": "Education",
+    "stepLifestyle": "Lifestyle filters",
+    "skip": "Skip (use default)",
+    "next": "Next",
+    "back": "Back",
+    "calculate": "Reveal my delulu",
+    "ageHint": "Typical dating apps peak around 25–35.",
+    "heightHint": "HK male mean height ≈ 170 cm (measured).",
+    "incomeHint": "HK$100k+/mo is roughly top 2–3% of male earners.",
+    "maritalNever": "Never married only",
+    "maritalNotNow": "Not married now (incl. divorced)",
+    "maritalAny": "Any marital status",
+    "districtNone": "Anywhere in HK",
+    "eduAny": "Any",
+    "eduDegree": "Bachelor's or higher",
+    "eduPostgrad": "Master's or higher",
+    "noSmoke": "Non-smoker",
+    "noKids": "No kids from previous relationship"
+  },
+  "reveal": {
+    "calculating": "Calculating your delulu level…",
+    "logIntro": "Filtering Hong Kong…"
+  },
+  "result": {
+    "title": "Your delulu score",
+    "oneIn": "About 1 in {n, number} HK men match all active filters",
+    "tier_realistic": "Grounded Queen",
+    "tier_picky": "Selective but Valid",
+    "tier_very_picky": "High Standards Energy",
+    "tier_delulu": "Certified Delulu",
+    "tier_god": "妄想之神",
+    "breakdown": "What shrank your pool the most",
+    "tips": "Reality tips",
+    "share": "Share with friends",
+    "again": "Try again",
+    "methodologyCta": "How we calculated this",
+    "monetizationOff": "No ads yet — we're building the vibe first.",
+    "monetizationOn": "Partner placements load here when we flip the switch.",
+    "tipTight": "Your toughest filter right now is {label}. Loosen it a hair and the pool jumps.",
+    "shareText": "My Delulu Dating score: {pct}% match pool ({tier}). Try yours on delulu.dating",
+    "estimatedPool": "~{count, number} men in the modelled HK pool"
+  },
+  "share": {
+    "copy": "Copy link",
+    "whatsapp": "WhatsApp",
+    "threads": "Threads",
+    "line": "LINE",
+    "telegram": "Telegram",
+    "native": "Share…"
+  },
+  "methodology": {
+    "title": "Methodology & sources",
+    "intro": "Delulu Dating multiplies independent population filters. It's a Fermi estimate for dating — not a prediction about any individual human.",
+    "back": "← Home"
+  },
+  "district": {
+    "cw": "Central & Western",
+    "wc": "Wan Chai",
+    "eastern": "Eastern",
+    "southern": "Southern",
+    "ytm": "Yau Tsim Mong",
+    "ss": "Sham Shui Po",
+    "kt": "Kowloon City",
+    "kc": "Kwun Tong",
+    "wts": "Wong Tai Sin",
+    "ktng": "Kwai Tsing",
+    "n": "North",
+    "tw": "Tai Po",
+    "tm": "Tuen Mun",
+    "yl": "Yuen Long",
+    "ntl": "Sai Kung",
+    "sk": "Sha Tin",
+    "island": "Islands",
+    "ktd": "Tsuen Wan"
+  },
+  "bd": {
+    "age": "Age window",
+    "height": "Minimum height",
+    "income": "Minimum income",
+    "marital": "Marital filter",
+    "district": "District filter",
+    "education": "Education",
+    "smoke": "Non-smoker",
+    "kids": "No kids from previous relationship",
+    "correlation": "Correlation adjustment (+12%)"
+  }
+}
