@@ -12,6 +12,7 @@ const base: QuizAnswersV1 = {
   minHeightCm: 175,
   minMonthlyIncomeHKD: 40000,
   marital: "not_married_ok",
+  expatPreference: "any",
   districts: [],
   educationMin: "any",
   noSmoking: false,
@@ -43,6 +44,18 @@ describe("calculateDelulu", () => {
       Math.max(1, Math.round(r.probability * FEMALE_BASE_POOL)),
     );
     expect(r.estimatedMatches).toBe(expected);
+  });
+
+  it("narrows pool when preferring international-only slice", () => {
+    const anyPool = calculateDelulu(base).probability;
+    const intl = calculateDelulu({ ...base, expatPreference: "expat_preferred" }).probability;
+    expect(intl).toBeLessThan(anyPool);
+  });
+
+  it("narrows pool when preferring local-raised only", () => {
+    const anyPool = calculateDelulu(base).probability;
+    const local = calculateDelulu({ ...base, expatPreference: "local_only" }).probability;
+    expect(local).toBeLessThan(anyPool);
   });
 
   it("gets stricter when height increases", () => {

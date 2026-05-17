@@ -5,6 +5,7 @@ import {
   carFactor,
   districtUnionFactor,
   educationFactor,
+  expatPreferenceFactor,
   maleAgeWindowFactor,
   maleHeightTail,
   maleIncomeTail,
@@ -123,6 +124,7 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
   const fHeight = model.heightTail(answers.minHeightCm);
   const fIncome = model.incomeTail(answers.minMonthlyIncomeHKD);
   const fMarital = maritalFactor(answers.marital, answers.ageMin, answers.ageMax);
+  const fExpat = expatPreferenceFactor(answers.expatPreference);
   const fDistrict = districtUnionFactor(answers.districts);
   const fEdu = educationFactor(answers.educationMin);
   const fSmoke = smokingFactor(answers.noSmoking);
@@ -135,6 +137,7 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
     fHeight *
     fIncome *
     fMarital *
+    fExpat *
     fDistrict *
     fEdu *
     fSmoke *
@@ -150,6 +153,7 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
     { key: "height", labelKey: "height", factor: fHeight },
     { key: "income", labelKey: "income", factor: fIncome },
     { key: "marital", labelKey: "marital", factor: fMarital },
+    { key: "expat", labelKey: "expat", factor: fExpat },
     { key: "district", labelKey: "district", factor: fDistrict },
     { key: "education", labelKey: "education", factor: fEdu },
     { key: "smoke", labelKey: "smoke", factor: fSmoke },

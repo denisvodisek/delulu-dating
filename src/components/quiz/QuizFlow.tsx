@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics/events";
 import { LAB_STEP_TITLE_KEYS, quizRoastKey } from "@/lib/quiz-roast";
 
-const STEPS = 9;
+const STEPS = 10;
 
 const choiceActive =
   "bg-gradient-to-br from-pink-200 via-fuchsia-100 to-violet-100 text-fuchsia-950 ring-2 ring-pink-400/60 shadow-sm";
@@ -207,6 +207,7 @@ export default function QuizFlow() {
       tier: live.tier,
       minHeightCm: q.minHeightCm,
       minMonthlyIncomeHKD: q.minMonthlyIncomeHKD,
+      expatPreference: q.expatPreference,
     });
 
     setRevealLines(buildRevealLog());
@@ -408,6 +409,37 @@ export default function QuizFlow() {
             {step === 4 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
+                  {t("labExpatPick")}
+                </p>
+                <p className="text-lab-on-surface-variant font-lab-body text-sm">{t("expatHint")}</p>
+                <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-pink-200/60">
+                  {(
+                    [
+                      ["any", t("expatAny")],
+                      ["local_only", t("expatLocal")],
+                      ["expat_preferred", t("expatPreferred")],
+                    ] as const
+                  ).map(([key, label], idx, arr) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setQ((p) => ({ ...p, expatPreference: key }))}
+                      className={cn(
+                        "font-lab-mono text-lab-mono px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide transition-all duration-200",
+                        idx < arr.length - 1 && "border-b border-pink-100",
+                        q.expatPreference === key ? choiceActive : choiceInactive,
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {step === 5 && (
+              <div className="space-y-4">
+                <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labDistrictPick")}
                 </p>
                 <p className="text-lab-on-surface-variant font-lab-body text-sm">{t("districtNone")}</p>
@@ -434,7 +466,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 5 && (
+            {step === 6 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labEducationPick")}
@@ -464,7 +496,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 6 && (
+            {step === 7 && (
               <div className="space-y-8">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labLifestylePick")}
@@ -494,7 +526,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 7 && (
+            {step === 8 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labFlatPick")}
@@ -511,7 +543,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 8 && (
+            {step === 9 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labCarPick")}

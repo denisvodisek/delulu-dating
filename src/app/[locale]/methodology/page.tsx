@@ -28,6 +28,7 @@ export default async function MethodologyPage({
           <li>{t("b5")}</li>
           <li>{t("b6")}</li>
           <li>{t("b7")}</li>
+          <li>{t("b8")}</li>
         </ul>
         <p className="mt-6 text-sm font-semibold text-primary">{t("outro")}</p>
       </Card>

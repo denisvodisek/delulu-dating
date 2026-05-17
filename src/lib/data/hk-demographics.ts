@@ -7,6 +7,8 @@
  * - Anthropometric literature: SD ~5.8 cm for HK Chinese adult males (cityu.edu.hk anthropometry chapter)
  */
 
+import type { ExpatPreference } from "@/lib/types/quiz";
+
 /** Rough count of HK-resident males aged 18–65 in the "dating pool" universe */
 export const BASE_MALE_POOL = 1_850_000;
 
@@ -201,3 +203,20 @@ export function districtUnionFactor(selectedKeys: string[]): number {
 
 /** Mild positive correlation adjustment (documented in methodology) */
 export const CORRELATION_BOOST = 1.12;
+
+/**
+ * Approximate share of the modeled resident dating pool treated as international / non-local-raised
+ * for the expat filter. Hong Kong does not publish a clean annual “expat headcount”; we anchor to
+ * ~8% of the population identifying as ethnic minorities in the 2021 Census, then **deflate** to ~5.5%
+ * because that headline includes workers and families across ages/sexes and our base pools are already
+ * narrower. Mid‑2020s press tables add year-end population totals but not a fresh ethnic breakdown, so
+ * this prior stays illustrative until C&SD releases something finer (see /methodology).
+ */
+export const EXPAT_BACKGROUND_SHARE_DATING_POOL = 0.055;
+
+export function expatPreferenceFactor(pref: ExpatPreference): number {
+  if (pref === "any") return 1;
+  const s = EXPAT_BACKGROUND_SHARE_DATING_POOL;
+  if (pref === "local_only") return Math.max(0.03, 1 - s);
+  return Math.max(0.004, s);
+}

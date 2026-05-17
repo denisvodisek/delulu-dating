@@ -1,5 +1,7 @@
 export type MaritalPreference = "never" | "not_married_ok" | "any";
 export type EducationMin = "any" | "degree" | "postgrad";
+/** Local vs international / expat-background dating preference (illustrative prior — see /methodology). */
+export type ExpatPreference = "any" | "local_only" | "expat_preferred";
 
 export type Seeker = "woman_seeking_man" | "man_seeking_woman";
 
@@ -12,6 +14,7 @@ export type QuizAnswersV1 = {
   minHeightCm: number;
   minMonthlyIncomeHKD: number;
   marital: MaritalPreference;
+  expatPreference: ExpatPreference;
   /** District keys from hk-demographics */
   districts: string[];
   educationMin: EducationMin;
@@ -31,6 +34,7 @@ export const DEFAULT_QUIZ: QuizAnswersV1 = {
   minHeightCm: 175,
   minMonthlyIncomeHKD: 40000,
   marital: "not_married_ok",
+  expatPreference: "any",
   districts: [],
   educationMin: "any",
   noSmoking: false,
