@@ -77,7 +77,7 @@ export default async function LocaleLayout({
       <LocaleHtmlLang locale={locale} />
       <div
         lang={locale === "zh" ? "zh-HK" : "en"}
-        className={`${hanken.className} ${libreDisplay.variable} ${jetbrainsMono.variable} ${hanken.variable} candy-bg text-lab-on-surface selection:bg-lab-primary/30 selection:text-lab-on-surface flex min-h-full flex-1 flex-col overflow-x-hidden font-lab-body`}
+        className={`${hanken.className} ${libreDisplay.variable} ${jetbrainsMono.variable} ${hanken.variable} candy-bg text-lab-on-surface selection:bg-pink-200 selection:text-fuchsia-950 flex min-h-full flex-1 flex-col overflow-x-hidden font-lab-body`}
       >
         <NextIntlClientProvider messages={messages}>
           <SiteHeader />

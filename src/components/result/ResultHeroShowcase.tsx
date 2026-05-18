@@ -81,18 +81,18 @@ export function ResultHeroShowcase({
       ref={shellRef}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      className="relative w-full cursor-default overflow-hidden border-b border-lab-outline-variant bg-lab-surface px-4 pb-28 pt-12 md:px-10 md:pb-36 md:pt-16"
+      className="relative w-full cursor-default overflow-hidden border-b border-pink-200/45 bg-gradient-to-b from-[#fff5fb] via-white to-violet-50/55 px-4 pb-28 pt-12 md:px-10 md:pb-36 md:pt-16"
     >
-      <div className="pointer-events-none absolute -top-32 left-1/2 h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-lab-primary/8 blur-3xl" />
-      <div className="pointer-events-none absolute top-24 -right-20 h-72 w-72 rounded-full bg-lab-tertiary/8 blur-2xl" />
-      <div className="pointer-events-none absolute bottom-8 -left-16 h-64 w-64 rounded-full bg-lab-outline-variant/40 blur-2xl" />
+      <div className="pointer-events-none absolute -top-32 left-1/2 h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-fuchsia-400/30 via-pink-300/20 to-violet-400/25 blur-3xl" />
+      <div className="pointer-events-none absolute top-24 -right-20 h-72 w-72 rounded-full bg-gradient-to-bl from-pink-400/25 to-transparent blur-2xl" />
+      <div className="pointer-events-none absolute bottom-8 -left-16 h-64 w-64 rounded-full bg-gradient-to-tr from-violet-400/20 to-transparent blur-2xl" />
 
       <div className="relative mx-auto w-full max-w-[min(100%,420px)] md:max-w-3xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 140, damping: 22 }}
-          className="rounded-2xl border border-lab-outline-variant bg-lab-surface-container-lowest p-8 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.12)] sm:p-10 md:p-12"
+          className="rounded-[2.25rem] border border-white/80 bg-gradient-to-b from-white/70 via-white/50 to-pink-50/40 p-8 shadow-[0_28px_80px_-28px_rgba(192,38,211,0.5),inset_0_1px_0_rgba(255,255,255,0.95)] ring-1 ring-pink-200/55 backdrop-blur-md sm:p-10 md:p-12"
         >
           <motion.div
             className="flex flex-col items-center gap-1 text-center sm:gap-2"
@@ -100,10 +100,10 @@ export function ResultHeroShowcase({
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 120, damping: 20, delay: 0.05 }}
           >
-            <span className="font-lab-sans text-[11px] font-semibold tracking-[0.42em] text-lab-on-surface-variant sm:text-xs md:tracking-[0.48em]">
+            <span className="font-lab-sans text-[11px] font-semibold tracking-[0.42em] text-fuchsia-900/75 sm:text-xs md:tracking-[0.48em]">
               {t("heroPoolPre")}
             </span>
-            <span className="font-lab-sans text-lab-primary text-[clamp(2.75rem,14vw,4.85rem)] font-black leading-[0.95] tracking-tight tabular-nums">
+            <span className="font-lab-sans bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-[clamp(2.75rem,14vw,4.85rem)] font-black leading-[0.95] tracking-tight text-transparent tabular-nums drop-shadow-[0_4px_32px_rgba(217,70,239,0.22)]">
               {displayCount.toLocaleString(loc)}
             </span>
             <span
@@ -133,11 +133,11 @@ export function ResultHeroShowcase({
               className="relative w-full"
             >
               <div
-                className="absolute -inset-[1px] rounded-2xl bg-lab-primary/35 opacity-90 blur-[2px]"
+                className="absolute -inset-[1px] rounded-3xl bg-gradient-to-br from-fuchsia-400 via-pink-400 to-violet-500 opacity-85 blur-[2px]"
                 style={{ transform: "translateZ(-4px)" }}
               />
-              <div className="relative rounded-2xl border border-lab-outline-variant bg-lab-surface-container-lowest px-6 py-7 shadow-md sm:px-8 sm:py-8">
-                <p className="font-lab-mono text-[10px] font-semibold tracking-[0.22em] text-lab-on-surface-variant uppercase md:text-[11px]">
+              <div className="relative rounded-3xl border border-white/70 bg-white/88 px-6 py-7 shadow-[0_24px_64px_-20px_rgba(192,38,211,0.45)] backdrop-blur-md sm:px-8 sm:py-8">
+                <p className="font-lab-mono text-[10px] font-semibold tracking-[0.22em] text-violet-700 uppercase md:text-[11px]">
                   {t("heroOddsEyebrow")}
                 </p>
                 <p
@@ -148,7 +148,7 @@ export function ResultHeroShowcase({
                 >
                   {oneInLine}
                 </p>
-                <div className="font-lab-mono mt-5 rounded-lg border border-lab-outline-variant bg-lab-surface px-4 py-3 text-[10px] font-semibold tracking-wide text-lab-on-surface uppercase sm:text-[11px]">
+                <div className="font-lab-mono mt-5 rounded-2xl border border-pink-200/60 bg-gradient-to-r from-pink-50/90 to-violet-50/80 px-4 py-3 text-[10px] font-semibold tracking-wide text-fuchsia-950/90 uppercase sm:text-[11px]">
                   {t(
                     seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
                     { pct: pctLabel },
