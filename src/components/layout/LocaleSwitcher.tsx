@@ -25,15 +25,15 @@ export function LocaleSwitcher({ variant = "default" }: LocaleSwitcherProps) {
       >
         {LOCALES.map((code, i) => (
           <span key={code} className="flex items-center gap-1">
-            {i > 0 ? <span className="text-pink-300">|</span> : null}
+            {i > 0 ? <span className="text-lab-outline">|</span> : null}
             <button
               type="button"
               onClick={() => router.replace(pathname, { locale: code })}
               className={cn(
-                "cursor-pointer rounded-full px-3 py-1.5 uppercase transition-all",
+                "cursor-pointer rounded-sm border border-transparent px-3 py-1.5 uppercase transition-all",
                 locale === code
-                  ? "bg-gradient-to-r from-pink-200 to-violet-200 font-bold text-fuchsia-950 shadow-sm ring-2 ring-pink-300/60"
-                  : "text-fuchsia-900/70 hover:bg-pink-50 hover:text-fuchsia-900",
+                  ? "border-lab-on-surface/20 bg-lab-primary font-bold text-lab-on-primary shadow-sm"
+                  : "text-lab-on-surface-variant hover:border-lab-outline-variant hover:bg-lab-surface-container-lowest hover:text-lab-on-surface",
               )}
             >
               {code === "en" ? t("langEn") : t("langZh")}

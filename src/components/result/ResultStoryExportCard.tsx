@@ -25,29 +25,29 @@ export const ResultStoryExportCard = forwardRef<HTMLDivElement, ResultStoryExpor
       <div
         ref={ref}
         className={cn(
-          "flex flex-col items-stretch justify-between rounded-[28px] border-2 border-white/90 p-8 text-center antialiased shadow-inner",
+          "flex flex-col items-stretch justify-between rounded-[28px] border-2 border-lab-outline-variant p-8 text-center antialiased shadow-inner",
           "font-lab-sans text-lab-ink",
         )}
         style={{
           width: 360,
           height: 640,
-          background: "linear-gradient(160deg, #fff1f7 0%, #f5f0ff 42%, #eef8ff 100%)",
+          background: "linear-gradient(165deg, #f4f4f5 0%, #fafafa 45%, #ecfaf8 100%)",
         }}
       >
         <header>
-          <p className="font-lab-mono text-[9px] font-bold tracking-[0.35em] text-fuchsia-800 uppercase">
+          <p className="font-lab-mono text-[9px] font-bold tracking-[0.35em] text-lab-on-surface-variant uppercase">
             delulu.dating
           </p>
-          <p className="font-lab-mono mt-5 text-[9px] font-semibold tracking-[0.22em] text-violet-700 uppercase">
+          <p className="font-lab-mono mt-5 text-[9px] font-semibold tracking-[0.22em] text-lab-tertiary uppercase">
             {tierLabel}
           </p>
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 py-2">
-          <span className="font-lab-sans text-[11px] font-semibold tracking-[0.38em] text-fuchsia-900/78 uppercase">
+          <span className="font-lab-sans text-[11px] font-semibold tracking-[0.38em] text-lab-on-surface-variant uppercase">
             {pre}
           </span>
-          <span className="font-lab-sans bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text text-[3.25rem] font-black leading-none tracking-tight text-transparent tabular-nums">
+          <span className="font-lab-sans text-lab-primary text-[3.25rem] font-black leading-none tracking-tight tabular-nums">
             {count.toLocaleString(loc)}
           </span>
           <span
@@ -60,7 +60,7 @@ export const ResultStoryExportCard = forwardRef<HTMLDivElement, ResultStoryExpor
           </span>
         </div>
 
-        <footer className="rounded-2xl border border-pink-200/80 bg-white/85 px-3 py-3">
+        <footer className="rounded-xl border border-lab-outline-variant bg-lab-surface-container-lowest px-3 py-3">
           <p
             className={cn(
               "font-lab-display text-[1.05rem] font-bold leading-snug text-lab-ink",
@@ -69,7 +69,7 @@ export const ResultStoryExportCard = forwardRef<HTMLDivElement, ResultStoryExpor
           >
             {oneInLine}
           </p>
-          <p className="font-lab-mono mt-2 text-[8px] font-semibold leading-relaxed tracking-wide text-fuchsia-900/88 uppercase">
+          <p className="font-lab-mono mt-2 text-[8px] font-semibold leading-relaxed tracking-wide text-lab-on-surface-variant uppercase">
             {chanceLine}
           </p>
         </footer>

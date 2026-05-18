@@ -16,21 +16,21 @@ function CandyOrbit() {
       <mesh position={[0.35, 0.2, 0]}>
         <torusGeometry args={[1, 0.32, 24, 48]} />
         <meshStandardMaterial
-          color="#f472b6"
-          emissive="#a855f7"
-          emissiveIntensity={0.35}
-          roughness={0.28}
-          metalness={0.35}
+          color="#c4f312"
+          emissive="#0891b2"
+          emissiveIntensity={0.22}
+          roughness={0.32}
+          metalness={0.4}
         />
       </mesh>
       <mesh position={[-0.45, -0.15, 0.2]} scale={0.45} rotation={[0.7, 0.4, 0]}>
         <icosahedronGeometry args={[1, 0]} />
         <meshStandardMaterial
-          color="#93c5fd"
-          emissive="#ec4899"
-          emissiveIntensity={0.25}
-          roughness={0.2}
-          metalness={0.45}
+          color="#a1a1aa"
+          emissive="#52525b"
+          emissiveIntensity={0.12}
+          roughness={0.35}
+          metalness={0.35}
         />
       </mesh>
     </group>
@@ -40,16 +40,16 @@ function CandyOrbit() {
 /** Soft 3D accent for the closing CTA — pointer-events off. */
 export function CtaR3fBackdrop() {
   return (
-    <div className="pointer-events-none absolute inset-0 opacity-[0.42] md:opacity-50">
+    <div className="pointer-events-none absolute inset-0 opacity-[0.28] md:opacity-[0.36]">
       <Canvas
         camera={{ position: [0, 0, 5.2], fov: 42 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true }}
         onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
       >
-        <ambientLight intensity={0.55} />
-        <pointLight position={[5, 4, 6]} intensity={1.15} color="#fce7f3" />
-        <pointLight position={[-4, -2, 4]} intensity={0.65} color="#c084fc" />
+        <ambientLight intensity={0.65} />
+        <pointLight position={[5, 4, 6]} intensity={0.9} color="#e4e4e7" />
+        <pointLight position={[-4, -2, 4]} intensity={0.5} color="#c4f312" />
         <CandyOrbit />
       </Canvas>
     </div>
