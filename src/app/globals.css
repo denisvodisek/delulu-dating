@@ -47,32 +47,33 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Lab / clinical landing theme (paired with next/font CSS variables on locale layout) */
-  --font-family-lab-display: var(--font-lab-display), ui-serif, Georgia, serif;
+  /* Delulu: firefly text, dodger + lavender, Phudu + DM Sans via layout variables */
+  --font-family-lab-display: var(--font-lab-display), ui-sans-serif, system-ui, sans-serif;
   --font-family-lab-body: var(--font-lab-sans), ui-sans-serif, system-ui, sans-serif;
   --font-family-lab-mono: var(--font-lab-mono), ui-monospace, monospace;
-  --color-lab-surface: #fff8f6;
+  --color-lab-surface: #eef9ff;
   --color-lab-surface-container-lowest: #ffffff;
-  --color-lab-on-surface: #281712;
-  --color-lab-on-surface-variant: #5c4037;
-  --color-lab-primary: #a93100;
-  --color-lab-on-primary: #ffffff;
-  --color-lab-primary-container: #d34000;
-  --color-lab-on-primary-container: #fffbff;
-  --color-lab-outline: #916f65;
-  --color-lab-outline-variant: #e6beb2;
-  --color-lab-error: #ba1a1a;
-  --color-lab-secondary: #5f5e5e;
-  --color-lab-tertiary: #005da8;
-  --color-lab-on-inverse: #fff8f6;
-  --color-lab-ink: #1a1a1a;
-  --color-lab-error-container: #ffdad6;
-  --color-lab-on-error-container: #93000a;
-  --color-lab-primary-fixed: #ffdbd0;
-  --color-lab-secondary-fixed: #e5e2e1;
-  --color-lab-tertiary-fixed: #d4e3ff;
-  --color-lab-surface-container: #ffe9e3;
-  --color-lab-surface-container-high: #ffe2da;
+  --color-lab-on-surface: #0a1f2d;
+  --color-lab-on-surface-variant: #3d5a6c;
+  --color-lab-primary: #30c7ff;
+  --color-lab-on-primary: #0a1f2d;
+  --color-lab-primary-container: #b8ecff;
+  --color-lab-on-primary-container: #0a1f2d;
+  --color-lab-secondary: #ff8add;
+  --color-lab-on-secondary: #0a1f2d;
+  --color-lab-outline: #0a1f2d;
+  --color-lab-outline-variant: #c5e8f5;
+  --color-lab-error: #dc2626;
+  --color-lab-tertiary: #1ba8d4;
+  --color-lab-on-inverse: #f4fbff;
+  --color-lab-ink: #0a1f2d;
+  --color-lab-error-container: #fee2e2;
+  --color-lab-on-error-container: #7f1d1d;
+  --color-lab-primary-fixed: #8adfff;
+  --color-lab-secondary-fixed: #ffd0f0;
+  --color-lab-tertiary-fixed: #cdeff7;
+  --color-lab-surface-container: #dff4fc;
+  --color-lab-surface-container-high: #cceefb;
   --spacing-lab-mobile: 16px;
   --spacing-lab-desktop: 64px;
   --spacing-lab-section: 80px;
@@ -163,10 +164,10 @@
 @layer utilities {
   .gentle-bg {
     background:
-      radial-gradient(1200px 800px at 18% 16%, #ffd6ea 0%, transparent 62%),
-      radial-gradient(900px 720px at 86% 24%, #e5d7ff 0%, transparent 58%),
-      radial-gradient(820px 640px at 58% 92%, #ffe2cf 0%, transparent 58%),
-      #fff8fb;
+      radial-gradient(1200px 800px at 18% 16%, rgba(48, 199, 255, 0.2) 0%, transparent 62%),
+      radial-gradient(900px 720px at 86% 24%, rgba(255, 138, 221, 0.18) 0%, transparent 58%),
+      radial-gradient(820px 640px at 58% 92%, rgba(48, 199, 255, 0.12) 0%, transparent 58%),
+      #eef9ff;
   }
 
   /** Wider readable column on phones + desktop — avoid “narrow card in the middle” */
@@ -182,14 +183,14 @@
     background-blend-mode: overlay;
   }
 
-  /** Soft ice-cream / cotton candy atmosphere */
+  /** Sky + lavender atmosphere (dodger / lavender brand) */
   .candy-bg {
-    background-color: #fff9fc;
+    background-color: #eef9ff;
     background-image:
-      radial-gradient(ellipse 130% 90% at 0% -10%, rgba(253, 186, 216, 0.55) 0%, transparent 52%),
-      radial-gradient(ellipse 110% 80% at 100% 0%, rgba(216, 201, 255, 0.5) 0%, transparent 50%),
-      radial-gradient(ellipse 90% 60% at 50% 110%, rgba(186, 230, 253, 0.4) 0%, transparent 48%),
-      radial-gradient(ellipse 70% 50% at 80% 60%, rgba(254, 215, 226, 0.35) 0%, transparent 45%);
+      radial-gradient(ellipse 130% 90% at 0% -10%, rgba(48, 199, 255, 0.42) 0%, transparent 52%),
+      radial-gradient(ellipse 110% 80% at 100% 0%, rgba(255, 138, 221, 0.35) 0%, transparent 50%),
+      radial-gradient(ellipse 90% 60% at 50% 110%, rgba(48, 199, 255, 0.2) 0%, transparent 48%),
+      radial-gradient(ellipse 70% 50% at 80% 60%, rgba(255, 138, 221, 0.18) 0%, transparent 45%);
     background-attachment: fixed;
   }
 
@@ -204,21 +205,84 @@
   .quiz-flow-root [data-slot="slider-track"] {
     border-radius: 9999px !important;
     height: 6px !important;
-    background: rgba(253, 186, 216, 0.45) !important;
+    background: rgba(10, 31, 45, 0.12) !important;
   }
 
   .quiz-flow-root [data-slot="slider-range"] {
     border-radius: 9999px !important;
-    background: linear-gradient(90deg, #f472b6 0%, #c084fc 60%, #93c5fd 100%) !important;
+    background: linear-gradient(90deg, #30c7ff 0%, #ff8add 100%) !important;
   }
 
   .quiz-flow-root [data-slot="slider-thumb"] {
     width: 24px !important;
     height: 24px !important;
     border-radius: 9999px !important;
-    border: 2px solid rgba(255, 255, 255, 0.95) !important;
-    background: linear-gradient(135deg, #f472b6 0%, #c084fc 50%, #93c5fd 100%) !important;
-    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.35) !important;
+    border: 2px solid #0a1f2d !important;
+    background: #30c7ff !important;
+    box-shadow: 0 3px 0 #0a1f2d !important;
+  }
+
+  .font-lab-display {
+    font-family: var(--font-family-lab-display);
+  }
+  .font-lab-body {
+    font-family: var(--font-family-lab-body);
+  }
+  .font-lab-mono {
+    font-family: var(--font-family-lab-mono);
+  }
+
+  /**
+   * 3D “pencil” pill buttons — thick outline + extruded bottom (neubrutalist).
+   */
+  .puffy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    border: 2px solid #0a1f2d;
+    border-bottom-width: 5px;
+    font-family: var(--font-family-lab-body);
+    font-weight: 700;
+    color: #0a1f2d;
+    background: #30c7ff;
+    transition:
+      transform 0.12s ease,
+      border-bottom-width 0.12s ease;
+  }
+  .puffy-btn:hover {
+    transform: translateY(1px);
+    border-bottom-width: 4px;
+  }
+  .puffy-btn:active {
+    transform: translateY(3px);
+    border-bottom-width: 2px;
+  }
+  .puffy-btn-sm {
+    padding: 0.4rem 0.95rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom-width: 4px;
+  }
+  .puffy-btn-sm:hover {
+    border-bottom-width: 3px;
+  }
+  .puffy-btn-sm:active {
+    border-bottom-width: 2px;
+  }
+  .puffy-btn-lg {
+    padding: 1.15rem 2.85rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .puffy-btn-lavender {
+    background: #ff8add;
+  }
+  .puffy-btn-soft {
+    background: #f4fbff;
   }
 }
 

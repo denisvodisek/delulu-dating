@@ -142,7 +142,7 @@ export function LandingLiveCounter() {
   if (target == null) {
     return (
       <div
-        className="h-28 w-full max-w-lg rounded-2xl bg-gradient-to-br from-pink-100/80 to-violet-100/60 px-6 py-5 shadow-inner md:h-32"
+        className="h-28 w-full max-w-lg rounded-2xl border-2 border-lab-on-surface bg-lab-surface-container-lowest px-6 py-5 md:h-32"
         aria-hidden
       />
     );
@@ -153,22 +153,20 @@ export function LandingLiveCounter() {
       <div
         role="status"
         aria-live="polite"
-        className="relative w-full overflow-hidden rounded-2xl border-2 border-pink-200/60 bg-gradient-to-br from-white/95 via-pink-50/90 to-violet-50/85 px-5 py-5 text-left shadow-[0_16px_40px_-12px_rgba(217,70,239,0.35)] md:px-7 md:py-6"
+        className="relative w-full overflow-hidden rounded-2xl border-2 border-lab-on-surface bg-lab-surface-container-lowest px-5 py-5 text-left shadow-[0_6px_0_rgba(10,31,45,0.12)] md:px-7 md:py-6"
       >
-        <div className="pointer-events-none absolute -top-12 -right-8 h-32 w-32 rounded-full bg-fuchsia-400/25 blur-2xl" data-float />
-        <div className="pointer-events-none absolute -bottom-10 -left-6 h-28 w-28 rounded-full bg-pink-400/25 blur-2xl" data-float />
-        <p className="font-lab-mono relative text-[10px] font-semibold tracking-[0.18em] text-fuchsia-800 uppercase md:text-xs">
+        <div className="pointer-events-none absolute -top-12 -right-8 h-32 w-32 rounded-full bg-[#30c7ff]/25 blur-2xl" data-float />
+        <div className="pointer-events-none absolute -bottom-10 -left-6 h-28 w-28 rounded-full bg-[#ff8add]/22 blur-2xl" data-float />
+        <p className="font-lab-mono text-lab-on-surface-variant relative text-[10px] font-semibold tracking-[0.18em] uppercase md:text-xs">
           {t("liveCounterLabel")}
         </p>
-        <p className="font-lab-display relative mt-1 text-[2.75rem] leading-none font-extrabold tracking-tight text-transparent tabular-nums md:text-[3.5rem]">
-          <span className="bg-gradient-to-r from-fuchsia-600 via-pink-600 to-violet-600 bg-clip-text">
-            <span ref={valueRef} className="inline-block">
-              {target.toLocaleString(locale === "zh" ? "zh-HK" : "en-US")}
-            </span>
+        <p className="font-lab-display relative mt-1 text-[2.75rem] leading-none font-extrabold tracking-tight tabular-nums text-lab-primary md:text-[3.5rem]">
+          <span ref={valueRef} className="inline-block">
+            {target.toLocaleString(locale === "zh" ? "zh-HK" : "en-US")}
           </span>
         </p>
         {hint ? (
-          <p className="font-lab-mono relative mt-2 text-[10px] text-fuchsia-900/70 md:text-[11px]">
+          <p className="font-lab-mono text-lab-on-surface-variant relative mt-2 text-[10px] md:text-[11px]">
             {hint}
           </p>
         ) : null}

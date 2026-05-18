@@ -16,7 +16,7 @@ const HERO_IMAGE = "/hero-hk-street.png";
 
 function specimenStripClasses(tier: SavedRun["tier"]) {
   if (tier === "god" || tier === "delulu") {
-    return "bg-lab-error text-lab-on-primary";
+    return "bg-lab-error text-white";
   }
   if (tier === "very_picky" || tier === "picky") {
     return "bg-lab-primary text-lab-on-primary";
@@ -61,13 +61,13 @@ export default function LandingClient() {
   return (
     <main className="pt-20">
       {/* Hero */}
-      <section className="grid min-h-[calc(100dvh-5rem)] w-full grid-cols-1 overflow-hidden rounded-b-3xl border-b border-pink-200/50 shadow-[0_12px_40px_rgba(236,72,153,0.08)] md:grid-cols-2 md:grid-rows-1">
-        <div className="flex min-h-0 flex-col border-b border-pink-200/45 p-4 md:border-r md:border-b-0 md:p-16">
+      <section className="grid min-h-[calc(100dvh-5rem)] w-full grid-cols-1 overflow-hidden rounded-b-3xl border-b-2 border-lab-on-surface shadow-[0_6px_0_rgba(10,31,45,0.08)] md:grid-cols-2 md:grid-rows-1">
+        <div className="flex min-h-0 flex-col border-b-2 border-lab-on-surface/15 p-4 md:border-r md:border-b-0 md:p-16">
           <div className="mt-6 md:mt-10">
-            <h1 className="font-lab-display mb-10 bg-gradient-to-br from-fuchsia-700 via-pink-600 to-violet-600 bg-clip-text text-5xl leading-none font-extrabold tracking-tight text-transparent uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
+            <h1 className="font-lab-display text-lab-on-surface mb-10 text-5xl leading-none font-extrabold tracking-tight uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
               {t("heroTitle1")}
               <br />
-              <span className="from-pink-400 to-violet-500 bg-gradient-to-r bg-clip-text opacity-95">{t("heroTitle2")}</span>
+              <span className="text-lab-primary">{t("heroTitle2")}</span>
             </h1>
             <div className="max-w-md space-y-8">
               <p className="text-lab-on-surface-variant font-lab-body text-xl leading-relaxed md:text-[20px] md:leading-[30px]">
@@ -75,16 +75,14 @@ export default function LandingClient() {
               </p>
               <Link
                 href="/quiz"
-                className="group font-lab-mono text-lab-mono relative inline-flex items-center overflow-hidden rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-12 py-6 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-pink-300/40 transition-all duration-300 hover:scale-[1.03] hover:shadow-pink-300/60 active:scale-[0.98]"
+                className="puffy-btn puffy-btn-lg group inline-flex items-center gap-2"
               >
-                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative flex items-center gap-2">
+                <span className="flex items-center gap-2">
                   {t("heroCta")}
                   <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
                     arrow_forward
                   </span>
                 </span>
-                <span className="pointer-events-none absolute top-2 right-3 h-2 w-2 rounded-full bg-white/80 shadow-[0_0_12px_rgba(255,255,255,0.8)]" />
               </Link>
             </div>
           </div>
@@ -103,13 +101,13 @@ export default function LandingClient() {
             sizes="(min-width: 768px) 50vw, 100vw"
             priority
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pink-300/50 via-fuchsia-200/25 to-violet-200/35 mix-blend-soft-light" />
-          <div className="from-fuchsia-950/55 pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#30c7ff]/35 via-[#ff8add]/15 to-transparent mix-blend-multiply" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a1f2d]/40 to-transparent" />
         </div>
       </section>
 
       {/* Process */}
-      <section className="grid grid-cols-1 divide-y divide-pink-200/45 border-b border-pink-200/45 md:grid-cols-3 md:divide-x md:divide-y-0">
+      <section className="grid grid-cols-1 divide-y divide-lab-outline-variant border-b-2 border-lab-on-surface/15 md:grid-cols-3 md:divide-x md:divide-y-0">
         {(
           [
             { step: "01", icon: "input", titleKey: "process1Title", bodyKey: "process1Body" },
@@ -119,16 +117,16 @@ export default function LandingClient() {
         ).map(({ step, icon, titleKey, bodyKey }) => (
           <div
             key={step}
-            className="group flex flex-col gap-6 bg-gradient-to-b from-white/80 to-pink-50/40 p-4 transition-all duration-300 hover:from-pink-50 hover:to-violet-50/50 md:p-16"
+            className="group flex flex-col gap-6 bg-lab-surface-container-lowest/80 p-4 transition-all duration-300 hover:bg-lab-primary/10 md:p-16"
           >
             <div className="flex items-start justify-between">
-              <span className="font-lab-display text-6xl leading-none opacity-20 transition-opacity group-hover:opacity-100">
+              <span className="font-lab-display text-6xl leading-none text-lab-outline-variant transition-opacity group-hover:text-lab-on-surface">
                 {step}
               </span>
-              <span className="material-symbols-outlined text-4xl text-fuchsia-600">{icon}</span>
+              <span className="material-symbols-outlined text-4xl text-lab-primary">{icon}</span>
             </div>
             <div>
-              <h3 className="font-lab-mono text-lab-mono mb-4 text-xs font-semibold tracking-widest text-fuchsia-700 uppercase">
+              <h3 className="font-lab-mono text-lab-mono text-lab-on-surface mb-4 text-xs font-semibold tracking-widest uppercase">
                 {t(titleKey)}
               </h3>
               <p className="text-lab-on-surface-variant font-lab-body text-base leading-relaxed">
@@ -152,7 +150,7 @@ export default function LandingClient() {
             <p className="text-lab-on-surface-variant font-lab-body mb-10 text-base leading-relaxed">
               {t("specimensSub")}
             </p>
-            <div className="rounded-2xl border border-pink-200/55 bg-gradient-to-br from-pink-50 to-violet-50/70 p-6">
+            <div className="rounded-2xl border-2 border-lab-on-surface bg-lab-secondary/15 p-6">
               <p className="font-lab-mono text-lab-mono text-sm italic">{t("specimenQuote")}</p>
             </div>
           </div>
@@ -174,7 +172,7 @@ export default function LandingClient() {
                     key={run.id}
                     type="button"
                     onClick={() => openRun(run)}
-                    className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl border-2 border-pink-200/50 bg-white/70 text-left shadow-sm transition-all hover:border-fuchsia-300/70 hover:shadow-md md:flex-row"
+                    className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl border-2 border-lab-on-surface bg-lab-surface-container-lowest/95 text-left shadow-[0_4px_0_#0a1f2d]/12 transition-all hover:border-lab-primary hover:shadow-md md:flex-row"
                   >
                     <div
                       className={cn(
@@ -197,7 +195,7 @@ export default function LandingClient() {
                           {oneLine} · {tResult("estimatedPool", { count: pool })}
                         </p>
                       </div>
-                      <span className="material-symbols-outlined shrink-0 text-slate-400 transition-colors group-hover:text-fuchsia-600">
+                      <span className="material-symbols-outlined shrink-0 text-lab-on-surface/35 transition-colors group-hover:text-lab-primary">
                         arrow_forward
                       </span>
                     </div>

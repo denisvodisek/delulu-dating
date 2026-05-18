@@ -3,19 +3,15 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import {
-  Hanken_Grotesk,
-  JetBrains_Mono,
-  Libre_Caslon_Text,
-} from "next/font/google";
+import { DM_Sans, JetBrains_Mono, Phudu } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { ClientAnalytics } from "@/components/analytics/ClientAnalytics";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LocaleHtmlLang } from "@/components/i18n/LocaleHtmlLang";
 
-const libreDisplay = Libre_Caslon_Text({
-  weight: ["400", "700"],
-  subsets: ["latin"],
+const phudu = Phudu({
+  weight: ["500", "600", "700"],
+  subsets: ["latin", "vietnamese"],
   variable: "--font-lab-display",
   display: "swap",
 });
@@ -27,9 +23,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const hanken = Hanken_Grotesk({
-  weight: ["400", "500", "600"],
-  subsets: ["latin"],
+const dmSans = DM_Sans({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-lab-sans",
   display: "swap",
 });
@@ -77,7 +73,7 @@ export default async function LocaleLayout({
       <LocaleHtmlLang locale={locale} />
       <div
         lang={locale === "zh" ? "zh-HK" : "en"}
-        className={`${hanken.className} ${libreDisplay.variable} ${jetbrainsMono.variable} ${hanken.variable} candy-bg text-lab-on-surface selection:bg-pink-200 selection:text-fuchsia-950 flex min-h-full flex-1 flex-col overflow-x-hidden font-lab-body`}
+        className={`${dmSans.className} ${phudu.variable} ${jetbrainsMono.variable} ${dmSans.variable} candy-bg text-lab-on-surface selection:bg-[#30c7ff]/40 selection:text-lab-on-surface flex min-h-full flex-1 flex-col overflow-x-hidden font-lab-body`}
       >
         <NextIntlClientProvider messages={messages}>
           <SiteHeader />

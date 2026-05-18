@@ -49,32 +49,28 @@ export function LandingCtaSection() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden px-4 py-20 text-center text-white md:py-28"
+      className="relative overflow-hidden border-y-2 border-lab-on-surface bg-[#0a1f2d] px-4 py-20 text-center text-white md:py-28"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-950 via-pink-900 to-violet-950" />
-      <div className="orb absolute top-10 left-[8%] h-40 w-40 rounded-full bg-pink-500/30 blur-3xl" />
-      <div className="orb absolute right-[5%] bottom-16 h-52 w-52 rounded-full bg-violet-500/25 blur-3xl" />
+      <div className="orb absolute top-10 left-[8%] h-40 w-40 rounded-full bg-[#30c7ff]/35 blur-3xl" />
+      <div className="orb absolute right-[5%] bottom-16 h-52 w-52 rounded-full bg-[#ff8add]/30 blur-3xl" />
       <div className="absolute inset-0 hidden md:block">
         <CtaR3fBackdrop />
       </div>
       <div className="relative z-10 mx-auto max-w-3xl">
         <h2
           data-cta-reveal
-          className="font-lab-display text-4xl leading-[1.05] font-extrabold tracking-tight uppercase drop-shadow-sm md:text-6xl md:leading-[1.02] lg:text-7xl"
+          className="font-lab-display text-4xl leading-[1.05] font-extrabold tracking-tight uppercase md:text-6xl md:leading-[1.02] lg:text-7xl"
         >
           {t("ctaClosingTitle")}
         </h2>
         <p
           data-cta-reveal
-          className="font-lab-body mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/80 md:text-lg"
+          className="font-lab-body mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/85 md:text-lg"
         >
           {t("ctaClosingSub")}
         </p>
         <div data-cta-reveal className="mt-10">
-          <Link
-            href="/quiz"
-            className="font-lab-mono inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-300 via-fuchsia-200 to-violet-200 px-12 py-5 text-xs font-extrabold tracking-[0.2em] text-fuchsia-950 uppercase shadow-[0_12px_40px_rgba(0,0,0,0.35)] transition-transform hover:scale-[1.04] active:scale-[0.98] md:px-16 md:py-6"
-          >
+          <Link href="/quiz" className="puffy-btn puffy-btn-lg puffy-btn-lavender inline-flex">
             {t("ctaEnterLab")}
           </Link>
         </div>
