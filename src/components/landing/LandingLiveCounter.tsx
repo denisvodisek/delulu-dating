@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useLocale, useTranslations } from "next-intl";
-import { FlipCounter } from "@/components/ui/FlipCounter";
+import { AnalogCounter } from "@/components/ui/AnalogCounter";
 
 const LS_KEY = "delulu-landing-run-display-v2";
 
@@ -117,9 +117,9 @@ export function LandingLiveCounter() {
         <p className="font-lab-mono text-lab-on-surface-variant relative text-[10px] font-semibold tracking-[0.18em] uppercase md:text-xs">
           {t("liveCounterLabel")}
         </p>
-        <p className="font-lab-display relative mt-1 text-[2.75rem] leading-none font-bold tracking-tight text-lab-primary md:text-[3.5rem]">
-          <FlipCounter value={display} locale={loc} />
-        </p>
+        <div className="relative mt-3">
+          <AnalogCounter value={display} locale={loc} size="md" />
+        </div>
         {hint ? (
           <p className="font-lab-mono text-lab-on-surface-variant relative mt-2 text-[10px] md:text-[11px]">
             {hint}

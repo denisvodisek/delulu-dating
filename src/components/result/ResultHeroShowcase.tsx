@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { motion, useSpring } from "motion/react";
 import { useTranslations } from "next-intl";
-import { FlipCounter } from "@/components/ui/FlipCounter";
+import { AnalogCounter } from "@/components/ui/AnalogCounter";
 import { cn } from "@/lib/utils";
 import type { Seeker } from "@/lib/types/quiz";
 
@@ -104,8 +104,8 @@ export function ResultHeroShowcase({
             <span className="font-lab-body text-[11px] font-semibold tracking-[0.42em] text-lab-on-surface-variant sm:text-xs md:tracking-[0.48em]">
               {t("heroPoolPre")}
             </span>
-            <span className="font-lab-display text-[clamp(2.75rem,14vw,4.85rem)] font-bold leading-[0.95] tracking-tight text-lab-primary drop-shadow-[0_4px_28px_rgba(48,199,255,0.28)]">
-              <FlipCounter value={displayCount} locale={loc} />
+            <span className="mt-1 inline-flex justify-center">
+              <AnalogCounter value={displayCount} locale={loc} size="lg" />
             </span>
             <span
               className={cn(

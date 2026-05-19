@@ -81,6 +81,11 @@
 }
 
 :root {
+  /* next/font variables land on <html>; these stacks are what utilities reference */
+  --font-family-lab-display: var(--font-lab-display), "Phudu", ui-sans-serif, system-ui, sans-serif;
+  --font-family-lab-body: var(--font-lab-sans), "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-family-lab-mono: var(--font-lab-mono), ui-monospace, monospace;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -227,45 +232,35 @@
     font-weight: 700;
   }
 
-  /** Header wordmark — “Delulu” as soft, cloudy type (Phudu + gradient + puff shadows). */
+  /** Header wordmark — clean Phudu, soft cloud glow (no gradient clip). */
   .delulu-wordmark {
     font-family: var(--font-family-lab-display);
-    font-weight: 800;
-    font-size: 1.65rem;
+    font-weight: 700;
+    font-size: 1.5rem;
     line-height: 1;
-    letter-spacing: 0.06em;
-    text-transform: none;
-    background: linear-gradient(
-      165deg,
-      #ffffff 0%,
-      #d4f4ff 22%,
-      #30c7ff 48%,
-      #a8e8ff 62%,
-      #ff8add 88%,
-      #ffd8f3 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-stroke: 1.25px rgba(10, 31, 45, 0.88);
-    paint-order: stroke fill;
-    filter: drop-shadow(0 2px 0 rgba(10, 31, 45, 0.2))
-      drop-shadow(0 5px 14px rgba(48, 199, 255, 0.38))
-      drop-shadow(0 0 22px rgba(255, 138, 221, 0.28));
-    transition: filter 0.2s ease;
+    letter-spacing: -0.02em;
+    color: #0a1f2d;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9),
+      0 0 24px rgba(48, 199, 255, 0.45),
+      0 0 40px rgba(255, 138, 221, 0.22);
+    transition:
+      color 0.2s ease,
+      text-shadow 0.2s ease;
   }
 
   a:hover .delulu-wordmark,
   a:focus-visible .delulu-wordmark {
-    filter: drop-shadow(0 2px 0 rgba(10, 31, 45, 0.22))
-      drop-shadow(0 6px 18px rgba(48, 199, 255, 0.48))
-      drop-shadow(0 0 28px rgba(255, 138, 221, 0.38));
+    color: #1ba8d4;
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95),
+      0 0 28px rgba(48, 199, 255, 0.55),
+      0 0 48px rgba(255, 138, 221, 0.32);
   }
 
   @media (min-width: 768px) {
     .delulu-wordmark {
-      font-size: 1.85rem;
-      letter-spacing: 0.07em;
+      font-size: 1.65rem;
     }
   }
 
@@ -316,6 +311,10 @@
   }
   .font-lab-mono {
     font-family: var(--font-family-lab-mono);
+  }
+
+  .analog-counter {
+    line-height: 0;
   }
 
   /**
