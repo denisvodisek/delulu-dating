@@ -26,7 +26,7 @@ export async function generateMetadata({
     openGraph: {
       title: t("title"),
       description: t("description"),
-      locale: locale === "zh" ? "zh_HK" : "en_HK",
+      locale: locale === "zh-HK" ? "zh_HK" : "en_HK",
       type: "website",
     },
   };
@@ -40,7 +40,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!routing.locales.includes(locale as "en" | "zh")) {
+  if (!routing.locales.includes(locale as "en" | "zh-HK")) {
     notFound();
   }
   setRequestLocale(locale);
@@ -50,7 +50,7 @@ export default async function LocaleLayout({
     <>
       <LocaleHtmlLang locale={locale} />
       <div
-        lang={locale === "zh" ? "zh-HK" : "en"}
+        lang={locale === "zh-HK" ? "zh-HK" : "en"}
         className="candy-bg text-lab-on-surface selection:bg-[#30c7ff]/40 selection:text-lab-on-surface flex min-h-full flex-1 flex-col overflow-x-hidden font-lab-body"
       >
         <NextIntlClientProvider messages={messages}>

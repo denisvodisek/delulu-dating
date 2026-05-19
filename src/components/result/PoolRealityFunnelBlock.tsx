@@ -10,7 +10,7 @@ type Props = {
 
 export function PoolRealityFunnelBlock({ steps, locale }: Props) {
   const t = useTranslations("result");
-  const loc = locale === "zh" ? "zh-HK" : "en-US";
+  const loc = locale === "zh-HK" ? "zh-HK" : "en-US";
   const maxCount = steps[0]?.count ?? 1;
 
   return (

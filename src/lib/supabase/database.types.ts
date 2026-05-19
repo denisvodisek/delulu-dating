@@ -9,6 +9,6 @@ export type RunRow = {
 };
 
 export type RunInsert = {
-  locale: "en" | "zh";
+  locale: "en" | "zh-HK";
   created_at?: string;
 };

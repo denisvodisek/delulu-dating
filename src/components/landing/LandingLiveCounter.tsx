@@ -40,7 +40,7 @@ function randomTickStep(): number {
 export function LandingLiveCounter() {
   const t = useTranslations("landing");
   const locale = useLocale();
-  const loc = locale === "zh" ? "zh-HK" : "en-US";
+  const loc = locale === "zh-HK" ? "zh-HK" : "en-US";
   const baselineRef = useRef(0);
   const sessionExtraRef = useRef(0);
   const [display, setDisplay] = useState<number | null>(null);

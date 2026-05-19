@@ -5,7 +5,7 @@ import type { RunInsert } from "@/lib/supabase/database.types";
 import { createServiceSupabase } from "@/lib/supabase/service";
 
 const bodySchema = z.object({
-  locale: z.enum(["en", "zh"]).optional(),
+  locale: z.enum(["en", "zh-HK"]).optional(),
 });
 
 const MAX_BODY = 512;

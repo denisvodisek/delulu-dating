@@ -49,7 +49,7 @@ export default function LandingClient() {
 
   function formatWhen(iso: string) {
     try {
-      return new Date(iso).toLocaleString(locale === "zh" ? "zh-HK" : "en-GB", {
+      return new Date(iso).toLocaleString(locale === "zh-HK" ? "zh-HK" : "en-GB", {
         dateStyle: "medium",
         timeStyle: "short",
       });

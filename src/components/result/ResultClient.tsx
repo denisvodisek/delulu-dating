@@ -315,7 +315,7 @@ export default function ResultClient({
                     {poolPre}
                   </p>
                   <p className="font-lab-display mt-1 text-3xl font-bold tabular-nums text-lab-primary">
-                    {calc.estimatedMatches.toLocaleString(locale === "zh" ? "zh-HK" : "en-US")}
+                    {calc.estimatedMatches.toLocaleString(locale === "zh-HK" ? "zh-HK" : "en-US")}
                   </p>
                   <p className="font-lab-display text-lab-on-surface mt-1 text-sm font-bold uppercase">
                     {poolPost}

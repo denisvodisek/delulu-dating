@@ -37,7 +37,7 @@ export const ResultDiagnosisExportCard = forwardRef<HTMLDivElement, ResultDiagno
     },
     ref,
   ) {
-    const loc = locale === "zh" ? "zh-HK" : "en-US";
+    const loc = locale === "zh-HK" ? "zh-HK" : "en-US";
     const latinCaps = locale === "en";
 
     return (

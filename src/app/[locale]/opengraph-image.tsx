@@ -10,9 +10,9 @@ export default async function OpenGraphImage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const brand = locale === "zh" ? "妄想約會" : "Delulu Dating";
+  const brand = "Delulu Dating";
   const tagline =
-    locale === "zh"
+    locale === "zh-HK"
       ? "你嘅港男濾鏡有幾妄想？"
       : "How delulu is your HK boyfriend wishlist?";
 

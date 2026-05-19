@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-const LOCALES = ["en", "zh"] as const;
+const LOCALES = ["en", "zh-HK"] as const;
 
 type LocaleSwitcherProps = {
   variant?: "default" | "lab";

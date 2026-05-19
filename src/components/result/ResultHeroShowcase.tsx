@@ -39,7 +39,7 @@ export function ResultHeroShowcase({
   exportWorkingLabel,
 }: Props) {
   const t = useTranslations("result");
-  const loc = locale === "zh" ? "zh-HK" : "en-US";
+  const loc = locale === "zh-HK" ? "zh-HK" : "en-US";
   const latinCaps = locale === "en";
   const [displayCount, setDisplayCount] = useState(0);
   const shellRef = useRef<HTMLElement>(null);
