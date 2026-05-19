@@ -14,6 +14,7 @@ import { trackEvent } from "@/lib/analytics/events";
 import { pushRun } from "@/lib/run-history";
 import { ResultHeroShowcase } from "@/components/result/ResultHeroShowcase";
 import { ResultStoryExportCard } from "@/components/result/ResultStoryExportCard";
+import { formatFiltrationSelection } from "@/lib/quiz-filtration-selection";
 import { basePoolForSeeker, buildFiltrationDebt } from "@/lib/result-filtration";
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
@@ -37,6 +38,8 @@ export default function ResultClient({
   locale: string;
 }) {
   const t = useTranslations("result");
+  const tQuiz = useTranslations("quiz");
+  const td = useTranslations("district");
   const tb = useTranslations("bd");
   const ts = useTranslations("share");
   const router = useRouter();
@@ -202,6 +205,9 @@ export default function ResultClient({
   const sev = severityPercent(calc.tier);
   const alarming = sev >= 74;
 
+  const answers = loadQuiz();
+  const plainHeadline = t(`labPlainHeadline_${calc.tier}` as "labPlainHeadline_realistic");
+  const plainExplain = t(`labPlainExplain_${calc.tier}` as "labPlainExplain_realistic");
   const stageTitle = t(`labStageTitle_${calc.tier}` as "labStageTitle_realistic");
   const stageBody = t(`labStageBody_${calc.tier}` as "labStageBody_realistic");
   const tagsRaw = t(`labTags_${calc.tier}` as "labTags_realistic");
@@ -237,7 +243,95 @@ export default function ResultClient({
       />
 
       <section className="grid min-h-[600px] w-full grid-cols-1 border-lab-outline-variant bg-lab-surface/80 px-4 md:grid-cols-12 md:items-start md:px-16">
-        <div className="border-b border-lab-outline-variant py-12 md:col-span-7 md:border-r md:border-b-0 md:py-16 md:pr-12">
+        <aside className="order-1 border-b border-lab-outline-variant py-8 md:order-2 md:col-span-5 md:border-b-0 md:border-l md:py-16 md:pl-12">
+          <div className="sticky top-20 z-20 w-full md:top-28">
+            <div className="overflow-hidden rounded-3xl border-2 border-lab-on-surface bg-lab-surface-container-lowest shadow-[0_8px_0_rgba(10,31,45,0.08)] backdrop-blur-sm">
+              <div className="border-b-2 border-lab-on-surface bg-gradient-to-r from-[#30c7ff] to-[#ff8add] px-6 py-3">
+                <p className="font-lab-mono text-xs font-semibold tracking-wide text-lab-on-surface uppercase drop-shadow-sm">
+                  {t("labClinicalLabel")}
+                </p>
+              </div>
+              <div className="p-8">
+                <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase">
+                  {tierLabel}
+                </p>
+                <h3 className="font-lab-display text-lab-on-surface mb-2 text-3xl font-bold leading-tight md:text-4xl">
+                  {plainHeadline}
+                </h3>
+                <p className="font-lab-body text-lab-on-surface mb-3 text-sm leading-relaxed">{plainExplain}</p>
+                <p className="font-lab-mono text-lab-on-surface-variant/80 mb-4 text-[11px] font-medium italic">
+                  {stageTitle}
+                </p>
+                <div className="mb-6 flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-lab-mono rounded-full border-2 border-lab-on-surface bg-lab-secondary/25 px-3 py-1 text-[10px] font-semibold tracking-wide text-lab-on-surface uppercase"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <p className="font-lab-body text-lab-on-surface-variant mb-8 text-sm leading-relaxed">{stageBody}</p>
+                <p className="font-lab-mono text-lab-on-surface-variant mb-2 text-xs font-semibold uppercase tracking-wide">
+                  {t("labSeverityLabel")}
+                </p>
+                <div
+                  className={cn(
+                    "relative h-10 w-full overflow-hidden rounded-full border-2 border-lab-on-surface bg-lab-surface-container-lowest",
+                    alarming && "ring-2 ring-lab-error/50 ring-offset-2 ring-offset-lab-surface-container-lowest",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out",
+                      alarming
+                        ? "animate-pulse bg-gradient-to-r from-rose-500 to-red-600"
+                        : "bg-gradient-to-r from-[#30c7ff] to-[#ff8add]",
+                    )}
+                    style={{ width: `${sev}%` }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-end px-4">
+                    <span
+                      className={cn(
+                        "font-lab-mono text-sm font-bold tabular-nums drop-shadow-sm",
+                        alarming || sev > 40 ? "text-white" : "text-lab-on-surface",
+                      )}
+                    >
+                      {sev}%
+                    </span>
+                  </div>
+                </div>
+                {alarming ? (
+                  <p className="font-lab-mono text-lab-error mt-3 text-center text-[10px] font-bold uppercase tracking-widest">
+                    {t("labSeverityCritical")}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 flex flex-col gap-4">
+            <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
+              {t("labTransmit")}
+            </p>
+            <button
+              type="button"
+              disabled={shareBusy}
+              onClick={() => void shareStoryImage()}
+              className="puffy-btn puffy-btn-lg flex w-full flex-col gap-1 disabled:cursor-wait disabled:opacity-70"
+            >
+              <span className="flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-base">share</span>
+                {shareBusy ? ts("storyImageWorking") : ts("storyImage")}
+              </span>
+            </button>
+            <p className="text-lab-on-surface-variant text-center font-lab-body text-[11px] leading-relaxed opacity-90">
+              {ts("storyImageHint")}
+            </p>
+          </div>
+        </aside>
+
+        <div className="order-2 border-b border-lab-outline-variant py-12 md:order-1 md:col-span-7 md:border-r md:border-b-0 md:py-16 md:pr-12">
           <div className="mb-12">
             <p className="font-lab-mono text-lab-primary mb-3 text-xs font-semibold tracking-wide uppercase">
               {t("labBreakdownKicker")}
@@ -264,6 +358,15 @@ export default function ResultClient({
                     {row.isBoost ? t("labBoostLabel") : t("labColFilter")}
                   </p>
                   <p className="font-lab-body text-lg font-bold">{tb(row.labelKey)}</p>
+                  {answers ? (
+                    <p className="font-lab-mono text-lab-primary mt-1.5 text-[11px] font-semibold tracking-wide uppercase">
+                      {t("labYourPick")}:{" "}
+                      {formatFiltrationSelection(row.key, answers, {
+                        quiz: (k) => tQuiz(k as Parameters<typeof tQuiz>[0]),
+                        district: (k) => td(k as Parameters<typeof td>[0]),
+                      })}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="col-span-6 text-left md:col-span-3 md:text-right">
                   <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
@@ -315,93 +418,6 @@ export default function ResultClient({
           )}
         </div>
 
-        <div className="flex flex-col gap-8 py-12 md:col-span-5 md:py-16 md:pl-12">
-          <div className="sticky top-24 z-20 self-start md:top-28">
-            <div className="mb-10 overflow-hidden rounded-3xl border-2 border-lab-on-surface bg-lab-surface-container-lowest shadow-[0_8px_0_rgba(10,31,45,0.08)] backdrop-blur-sm">
-              <div className="border-b-2 border-lab-on-surface bg-gradient-to-r from-[#30c7ff] to-[#ff8add] px-6 py-3">
-                <p className="font-lab-mono text-xs font-semibold tracking-wide text-lab-on-surface uppercase drop-shadow-sm">
-                  {t("labClinicalLabel")}
-                </p>
-              </div>
-              <div className="p-8">
-                <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase">
-                  {tierLabel}
-                </p>
-                <h3 className="font-lab-display text-lab-on-surface mb-4 text-3xl font-bold uppercase md:text-4xl">
-                  {stageTitle}
-                </h3>
-                <div className="mb-6 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-lab-mono rounded-full border-2 border-lab-on-surface bg-lab-secondary/25 px-3 py-1 text-[10px] font-semibold tracking-wide text-lab-on-surface uppercase"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <p className="font-lab-body text-lab-on-surface-variant mb-8 text-sm leading-relaxed">
-                  {stageBody}
-                </p>
-
-                <p className="font-lab-mono text-lab-on-surface-variant mb-2 text-xs font-semibold uppercase tracking-wide">
-                  {t("labSeverityLabel")}
-                </p>
-                <div
-                  className={cn(
-                    "relative h-10 w-full overflow-hidden rounded-full border-2 border-lab-on-surface bg-lab-surface-container-lowest",
-                    alarming && "ring-2 ring-lab-error/50 ring-offset-2 ring-offset-lab-surface-container-lowest",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "absolute inset-y-0 left-0 transition-all duration-700 ease-out rounded-full",
-                      alarming
-                        ? "animate-pulse bg-gradient-to-r from-rose-500 to-red-600"
-                        : "bg-gradient-to-r from-[#30c7ff] to-[#ff8add]",
-                    )}
-                    style={{ width: `${sev}%` }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-end px-4">
-                    <span
-                      className={cn(
-                        "font-lab-mono text-sm font-bold tabular-nums drop-shadow-sm",
-                        alarming || sev > 40 ? "text-white" : "text-lab-on-surface",
-                      )}
-                    >
-                      {sev}%
-                    </span>
-                  </div>
-                </div>
-                {alarming ? (
-                  <p className="font-lab-mono text-lab-error mt-3 text-center text-[10px] font-bold uppercase tracking-widest">
-                    {t("labSeverityCritical")}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
-              {t("labTransmit")}
-            </p>
-            <button
-              type="button"
-              disabled={shareBusy}
-              onClick={() => void shareStoryImage()}
-              className="puffy-btn puffy-btn-lg flex w-full flex-col gap-1 disabled:cursor-wait disabled:opacity-70"
-            >
-              <span className="flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-base">share</span>
-                {shareBusy ? ts("storyImageWorking") : ts("storyImage")}
-              </span>
-            </button>
-            <p className="text-lab-on-surface-variant text-center font-lab-body text-[11px] leading-relaxed opacity-90">
-              {ts("storyImageHint")}
-            </p>
-          </div>
-        </div>
       </section>
 
       <section className="w-full border-t-2 border-lab-on-surface bg-lab-surface-container-lowest px-4 py-16 md:px-16 md:py-24">

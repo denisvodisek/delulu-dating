@@ -224,6 +224,92 @@
 
   .font-lab-display {
     font-family: var(--font-family-lab-display);
+    font-weight: 700;
+  }
+
+  /** Header wordmark — “Delulu” as soft, cloudy type (Phudu + gradient + puff shadows). */
+  .delulu-wordmark {
+    font-family: var(--font-family-lab-display);
+    font-weight: 800;
+    font-size: 1.65rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    background: linear-gradient(
+      165deg,
+      #ffffff 0%,
+      #d4f4ff 22%,
+      #30c7ff 48%,
+      #a8e8ff 62%,
+      #ff8add 88%,
+      #ffd8f3 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1.25px rgba(10, 31, 45, 0.88);
+    paint-order: stroke fill;
+    filter: drop-shadow(0 2px 0 rgba(10, 31, 45, 0.2))
+      drop-shadow(0 5px 14px rgba(48, 199, 255, 0.38))
+      drop-shadow(0 0 22px rgba(255, 138, 221, 0.28));
+    transition: filter 0.2s ease;
+  }
+
+  a:hover .delulu-wordmark,
+  a:focus-visible .delulu-wordmark {
+    filter: drop-shadow(0 2px 0 rgba(10, 31, 45, 0.22))
+      drop-shadow(0 6px 18px rgba(48, 199, 255, 0.48))
+      drop-shadow(0 0 28px rgba(255, 138, 221, 0.38));
+  }
+
+  @media (min-width: 768px) {
+    .delulu-wordmark {
+      font-size: 1.85rem;
+      letter-spacing: 0.07em;
+    }
+  }
+
+  @keyframes pump-cta {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.045);
+    }
+  }
+
+  .animate-pump-cta {
+    animation: pump-cta 2.2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-pump-cta {
+      animation: none;
+    }
+  }
+
+  @keyframes quiz-slider-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(48, 199, 255, 0.45);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(48, 199, 255, 0);
+      transform: scale(1.012);
+    }
+  }
+
+  .quiz-slider-pulse {
+    border-radius: 9999px;
+    animation: quiz-slider-pulse 1.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quiz-slider-pulse {
+      animation: none;
+    }
   }
   .font-lab-body {
     font-family: var(--font-family-lab-body);

@@ -47,7 +47,7 @@ export const ResultStoryExportCard = forwardRef<HTMLDivElement, ResultStoryExpor
           <span className="font-lab-body text-lab-on-surface-variant text-[11px] font-semibold tracking-[0.38em] uppercase">
             {pre}
           </span>
-          <span className="font-lab-body bg-gradient-to-r from-[#1ba8d4] via-[#30c7ff] to-[#ff8add] bg-clip-text text-[3.25rem] font-black leading-none tracking-tight text-transparent tabular-nums">
+          <span className="font-lab-display text-[3.25rem] font-bold leading-none tracking-tight text-lab-primary tabular-nums">
             {count.toLocaleString(loc)}
           </span>
           <span

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CircleNotch } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
@@ -120,6 +120,8 @@ export default function QuizFlow() {
   const [revealLines, setRevealLines] = useState<string[]>([]);
   const [revealIndex, setRevealIndex] = useState(0);
   const [revealPct, setRevealPct] = useState(8);
+  const quizCardRef = useRef<HTMLDivElement>(null);
+  const [sliderPulse, setSliderPulse] = useState({ age: true, height: true, income: true });
 
   const live = useMemo(() => calculateDelulu(q), [q]);
   const districtKeys = Object.keys(DISTRICT_MALE_SHARE);
@@ -133,6 +135,15 @@ export default function QuizFlow() {
   useEffect(() => {
     void trackEvent("quiz_viewed", { locale, seeker: q.seeker });
   }, [locale, q.seeker]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const el = quizCardRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 88;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  }, [step]);
 
   useEffect(() => {
     if (!isRevealing || revealLines.length === 0) return;
@@ -231,7 +242,10 @@ export default function QuizFlow() {
       </div>
 
       <main className="flex min-h-[calc(100dvh-5rem-6px)] items-start justify-center px-4 pt-28 pb-28 md:px-16">
-        <div className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border-2 border-lab-on-surface bg-lab-surface-container-lowest/95 shadow-[0_12px_0_rgba(10,31,45,0.08)] backdrop-blur-xl md:grid-cols-12">
+        <div
+          ref={quizCardRef}
+          className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border-2 border-lab-on-surface bg-lab-surface-container-lowest/95 shadow-[0_12px_0_rgba(10,31,45,0.08)] backdrop-blur-xl md:grid-cols-12"
+        >
           {/* Left: question + roast + stats */}
           <div className="flex flex-col justify-center gap-8 border-b border-lab-outline-variant bg-lab-surface/90 p-8 md:col-span-5 md:border-r md:border-b-0 md:p-12">
             <div className="space-y-2">
@@ -239,7 +253,7 @@ export default function QuizFlow() {
                 {t("labQuestionKicker")}{" "}
                 {String(step + 1).padStart(2, "0")}/{String(STEPS).padStart(2, "0")}
               </span>
-              <h1 className="font-lab-display text-lab-on-surface text-3xl leading-tight font-normal uppercase md:text-5xl md:leading-[52px]">
+              <h1 className="font-lab-display text-lab-on-surface text-3xl leading-tight font-bold uppercase md:text-5xl md:leading-[52px]">
                 {t(titleKeys[0])}
                 <br />
                 <span className="text-lab-on-surface-variant text-xl normal-case italic md:text-2xl">
@@ -295,19 +309,22 @@ export default function QuizFlow() {
                     {q.ageMin}–{q.ageMax}
                   </span>
                 </div>
-                <Slider
-                  value={[q.ageMin, q.ageMax]}
-                  min={18}
-                  max={55}
-                  step={1}
-                  onValueChange={(v) => {
-                    const arr = Array.isArray(v) ? v : [v, v];
-                    const lo = Math.min(arr[0]!, arr[1]!);
-                    const hi = Math.max(arr[0]!, arr[1]!);
-                    setQ((p) => ({ ...p, ageMin: lo, ageMax: hi }));
-                  }}
-                  className="w-full"
-                />
+                <div className={cn("rounded-full px-1 py-2", sliderPulse.age && "quiz-slider-pulse")}>
+                  <Slider
+                    value={[q.ageMin, q.ageMax]}
+                    min={18}
+                    max={55}
+                    step={1}
+                    onValueChange={(v) => {
+                      setSliderPulse((p) => ({ ...p, age: false }));
+                      const arr = Array.isArray(v) ? v : [v, v];
+                      const lo = Math.min(arr[0]!, arr[1]!);
+                      const hi = Math.max(arr[0]!, arr[1]!);
+                      setQ((prev) => ({ ...prev, ageMin: lo, ageMax: hi }));
+                    }}
+                    className="w-full"
+                  />
+                </div>
                 <div className="font-lab-mono text-lab-on-surface-variant flex justify-between text-[10px] uppercase tracking-widest">
                   <span>{t("labAgeTickLo")}</span>
                   <span>{t("labAgeTickHi")}</span>
@@ -325,17 +342,20 @@ export default function QuizFlow() {
                     ≥ {q.minHeightCm} cm
                   </span>
                 </div>
-                <Slider
-                  value={[q.minHeightCm]}
-                  min={160}
-                  max={195}
-                  step={1}
-                  onValueChange={(v) => {
-                    const h = Array.isArray(v) ? v[0]! : v;
-                    setQ((p) => ({ ...p, minHeightCm: h }));
-                  }}
-                  className="w-full"
-                />
+                <div className={cn("rounded-full px-1 py-2", sliderPulse.height && "quiz-slider-pulse")}>
+                  <Slider
+                    value={[q.minHeightCm]}
+                    min={160}
+                    max={195}
+                    step={1}
+                    onValueChange={(v) => {
+                      setSliderPulse((p) => ({ ...p, height: false }));
+                      const h = Array.isArray(v) ? v[0]! : v;
+                      setQ((prev) => ({ ...prev, minHeightCm: h }));
+                    }}
+                    className="w-full"
+                  />
+                </div>
                 <div className="font-lab-mono text-lab-on-surface-variant flex justify-between text-[10px] uppercase tracking-widest">
                   <span>{t("labHeightTickLo")}</span>
                   <span>{t("labHeightTickHi")}</span>
@@ -356,17 +376,20 @@ export default function QuizFlow() {
                     HK${q.minMonthlyIncomeHKD.toLocaleString()}
                   </span>
                 </div>
-                <Slider
-                  value={[q.minMonthlyIncomeHKD]}
-                  min={15000}
-                  max={200000}
-                  step={1000}
-                  onValueChange={(v) => {
-                    const n = Array.isArray(v) ? v[0]! : v;
-                    setQ((p) => ({ ...p, minMonthlyIncomeHKD: n }));
-                  }}
-                  className="w-full"
-                />
+                <div className={cn("rounded-full px-1 py-2", sliderPulse.income && "quiz-slider-pulse")}>
+                  <Slider
+                    value={[q.minMonthlyIncomeHKD]}
+                    min={15000}
+                    max={200000}
+                    step={1000}
+                    onValueChange={(v) => {
+                      setSliderPulse((p) => ({ ...p, income: false }));
+                      const n = Array.isArray(v) ? v[0]! : v;
+                      setQ((prev) => ({ ...prev, minMonthlyIncomeHKD: n }));
+                    }}
+                    className="w-full"
+                  />
+                </div>
                 <div className="font-lab-mono text-lab-on-surface-variant flex justify-between text-[10px] uppercase tracking-widest">
                   <span>{t("labIncomeTick15")}</span>
                   <span>{t("labIncomeTick100")}</span>

@@ -70,9 +70,11 @@ export function LandingCtaSection() {
           {t("ctaClosingSub")}
         </p>
         <div data-cta-reveal className="mt-10">
-          <Link href="/quiz" className="puffy-btn puffy-btn-lg puffy-btn-lavender inline-flex">
-            {t("ctaEnterLab")}
-          </Link>
+          <span className="inline-block animate-pump-cta">
+            <Link href="/quiz" className="puffy-btn puffy-btn-lg puffy-btn-lavender inline-flex">
+              {t("ctaEnterLab")}
+            </Link>
+          </span>
         </div>
       </div>
     </section>

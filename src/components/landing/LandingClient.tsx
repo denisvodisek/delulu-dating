@@ -64,7 +64,7 @@ export default function LandingClient() {
       <section className="grid min-h-[calc(100dvh-5rem)] w-full grid-cols-1 overflow-hidden rounded-b-3xl border-b-2 border-lab-on-surface shadow-[0_6px_0_rgba(10,31,45,0.08)] md:grid-cols-2 md:grid-rows-1">
         <div className="flex min-h-0 flex-col border-b-2 border-lab-on-surface/15 p-4 md:border-r md:border-b-0 md:p-16">
           <div className="mt-6 md:mt-10">
-            <h1 className="font-lab-display text-lab-on-surface mb-10 text-5xl leading-none font-extrabold tracking-tight uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
+            <h1 className="font-lab-display text-lab-on-surface mb-10 text-5xl leading-none font-bold tracking-tight uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
               {t("heroTitle1")}
               <br />
               <span className="text-lab-primary">{t("heroTitle2")}</span>
@@ -73,6 +73,7 @@ export default function LandingClient() {
               <p className="text-lab-on-surface-variant font-lab-body text-xl leading-relaxed md:text-[20px] md:leading-[30px]">
                 {t("heroBody")}
               </p>
+              <span className="inline-block animate-pump-cta">
               <Link
                 href="/quiz"
                 className="puffy-btn puffy-btn-lg group inline-flex items-center gap-2"
@@ -84,6 +85,7 @@ export default function LandingClient() {
                   </span>
                 </span>
               </Link>
+              </span>
             </div>
           </div>
 

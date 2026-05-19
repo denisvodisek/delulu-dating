@@ -3,113 +3,70 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useLocale, useTranslations } from "next-intl";
+import { FlipCounter } from "@/components/ui/FlipCounter";
 
-const LS_KEY = "delulu-landing-run-display-v1";
-const MIN_DISPLAY = 10_000;
-const MAX_DISPLAY = 98_000;
+const LS_KEY = "delulu-landing-run-display-v2";
 
-function clampDisplay(n: number): number {
-  return Math.max(MIN_DISPLAY, Math.min(MAX_DISPLAY, n));
+/** Small session bump on top of API baseline so the counter keeps climbing. */
+function sessionBump(): number {
+  try {
+    const raw = sessionStorage.getItem(LS_KEY);
+    const n = raw != null ? parseInt(raw, 10) : 0;
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  } catch {
+    return 0;
+  }
 }
 
-/** Seed display in a believable 10k-range based on live-ish API baseline. */
-function newPersistedValue(apiRuns: number): number {
-  const base = Math.max(2000, Math.floor(apiRuns));
-  const boosted = base * 1.9 + Math.floor(Math.random() * 5500);
-  const rounded = Math.round(boosted / 100) * 100;
-  return clampDisplay(rounded);
+function persistSessionBump(n: number) {
+  try {
+    sessionStorage.setItem(LS_KEY, String(n));
+  } catch {
+    /* noop */
+  }
 }
 
-function nextTickValue(current: number): number {
-  const step = 100 + Math.floor(Math.random() * 700);
-  return clampDisplay(current + step);
+function randomTickStep(): number {
+  return 37 + Math.floor(Math.random() * 91);
 }
 
 export function LandingLiveCounter() {
   const t = useTranslations("landing");
   const hint = t("liveCounterHint").trim();
   const locale = useLocale();
+  const loc = locale === "zh" ? "zh-HK" : "en-US";
   const wrapRef = useRef<HTMLDivElement>(null);
-  const valueRef = useRef<HTMLSpanElement>(null);
-  const prevTargetRef = useRef<number | null>(null);
-  const [target, setTarget] = useState<number | null>(null);
+  const [display, setDisplay] = useState<number | null>(null);
+  const apiBaseRef = useRef(0);
+  const sessionExtraRef = useRef(0);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw != null) {
-        const p = parseInt(raw, 10);
-        if (Number.isFinite(p) && p > 0) {
-          setTarget(p);
-          return;
-        }
-      }
-    } catch {
-      /* noop */
-    }
+    sessionExtraRef.current = sessionBump();
 
     fetch("/api/stats")
       .then((r) => r.json())
       .then((d: { runsToday?: number }) => {
-        const base = typeof d.runsToday === "number" ? d.runsToday : 8840;
-        const n = newPersistedValue(base);
-        try {
-          localStorage.setItem(LS_KEY, String(n));
-        } catch {
-          /* noop */
-        }
-        setTarget(n);
+        const base = typeof d.runsToday === "number" && d.runsToday > 0 ? d.runsToday : 8840;
+        apiBaseRef.current = base;
+        setDisplay(base + sessionExtraRef.current);
       })
       .catch(() => {
-        const n = newPersistedValue(8840);
-        try {
-          localStorage.setItem(LS_KEY, String(n));
-        } catch {
-          /* noop */
-        }
-        setTarget(n);
+        apiBaseRef.current = 8840;
+        setDisplay(8840 + sessionExtraRef.current);
       });
   }, []);
 
   useEffect(() => {
-    if (target == null || !valueRef.current) return;
-    const el = valueRef.current;
-    const loc = locale === "zh" ? "zh-HK" : "en-US";
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const prev = prevTargetRef.current;
-    const start = prefersReduced || prev == null ? target : prev;
-    const o = { val: start };
-    gsap.to(o, {
-      val: target,
-      duration: prefersReduced ? 0 : 0.9,
-      ease: "power3.out",
-      onUpdate: () => {
-        el.textContent = Math.round(o.val).toLocaleString(loc);
-      },
-    });
-    prevTargetRef.current = target;
-  }, [target, locale]);
-
-  /** Keep interval stable: do not depend on `target` or every tick clears the pending timeout and never reschedules. */
-  const targetReady = target != null;
-  useEffect(() => {
-    if (!targetReady) return;
+    if (display == null) return;
     let cancelled = false;
     let timer: number | null = null;
 
     const schedule = () => {
-      const delay = 3000 + Math.floor(Math.random() * 7001);
+      const delay = 2800 + Math.floor(Math.random() * 5200);
       timer = window.setTimeout(() => {
-        setTarget((prev) => {
-          if (prev == null) return prev;
-          const next = nextTickValue(prev);
-          try {
-            localStorage.setItem(LS_KEY, String(next));
-          } catch {
-            /* noop */
-          }
-          return next;
-        });
+        sessionExtraRef.current += randomTickStep();
+        persistSessionBump(sessionExtraRef.current);
+        setDisplay(apiBaseRef.current + sessionExtraRef.current);
         if (!cancelled) schedule();
       }, delay);
     };
@@ -119,10 +76,10 @@ export function LandingLiveCounter() {
       cancelled = true;
       if (timer != null) window.clearTimeout(timer);
     };
-  }, [targetReady]);
+  }, [display != null]);
 
   useEffect(() => {
-    if (!wrapRef.current || target == null) return;
+    if (!wrapRef.current || display == null) return;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
     const el = wrapRef.current;
@@ -137,9 +94,9 @@ export function LandingLiveCounter() {
       });
     }, el);
     return () => ctx.revert();
-  }, [target]);
+  }, [display]);
 
-  if (target == null) {
+  if (display == null) {
     return (
       <div
         className="h-28 w-full max-w-lg rounded-2xl border-2 border-lab-on-surface bg-lab-surface-container-lowest px-6 py-5 md:h-32"
@@ -160,10 +117,8 @@ export function LandingLiveCounter() {
         <p className="font-lab-mono text-lab-on-surface-variant relative text-[10px] font-semibold tracking-[0.18em] uppercase md:text-xs">
           {t("liveCounterLabel")}
         </p>
-        <p className="font-lab-display relative mt-1 text-[2.75rem] leading-none font-extrabold tracking-tight tabular-nums text-lab-primary md:text-[3.5rem]">
-          <span ref={valueRef} className="inline-block">
-            {target.toLocaleString(locale === "zh" ? "zh-HK" : "en-US")}
-          </span>
+        <p className="font-lab-display relative mt-1 text-[2.75rem] leading-none font-bold tracking-tight text-lab-primary md:text-[3.5rem]">
+          <FlipCounter value={display} locale={loc} />
         </p>
         {hint ? (
           <p className="font-lab-mono text-lab-on-surface-variant relative mt-2 text-[10px] md:text-[11px]">

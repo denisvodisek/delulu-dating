@@ -10,10 +10,11 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LocaleHtmlLang } from "@/components/i18n/LocaleHtmlLang";
 
 const phudu = Phudu({
-  weight: ["500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
   subsets: ["latin", "vietnamese"],
   variable: "--font-lab-display",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const jetbrainsMono = JetBrains_Mono({

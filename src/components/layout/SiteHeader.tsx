@@ -12,8 +12,8 @@ export function SiteHeader() {
 
   return (
     <header className="fixed top-0 z-50 flex h-20 w-full items-center justify-between border-b-2 border-lab-on-surface bg-lab-surface-container-lowest/95 px-4 shadow-[0_4px_0_rgba(10,31,45,0.07)] backdrop-blur-xl md:px-16">
-      <Link href="/" className="group min-w-0 shrink">
-        <DeluluCloudLogo label={t("brand")} />
+      <Link href="/" className="group min-w-0 shrink" aria-label={t("brand")}>
+        <DeluluCloudLogo />
       </Link>
       <nav className="hidden items-center gap-2 md:flex md:gap-2">
         <Link
