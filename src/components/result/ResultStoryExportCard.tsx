@@ -28,7 +28,7 @@ export const ResultStoryExportCard = forwardRef<HTMLDivElement, ResultStoryExpor
         style={{ width: 360, height: 640 }}
       >
         <div
-          className="flex min-h-0 flex-1 flex-col items-stretch justify-between overflow-hidden rounded-b-[28px] rounded-t-none border-2 border-white/90 p-8 text-center"
+          className="flex min-h-0 flex-1 flex-col items-stretch justify-between overflow-hidden border-2 border-white/90 p-8 text-center"
           style={{
             background: "linear-gradient(160deg, #eaf7ff 0%, #f6edff 42%, #dff4fc 100%)",
           }}

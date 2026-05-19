@@ -4,51 +4,33 @@ const PNG_OPTS = {
   backgroundColor: undefined as string | undefined,
 };
 
-/** Unhide off-screen export nodes so html-to-image can paint pixels. */
+/** Ensure export node is paintable without moving it into the viewport (avoids scroll jump). */
 function revealForCapture(el: HTMLElement): () => void {
-  const chain: HTMLElement[] = [];
-  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
-    chain.push(node);
-  }
+  const nodes: HTMLElement[] = [el];
+  const host = el.parentElement;
+  if (host) nodes.push(host);
 
-  const snapshot = chain.map((node) => ({
+  const snapshot = nodes.map((node) => ({
     opacity: node.style.opacity,
     visibility: node.style.visibility,
-    position: node.style.position,
-    left: node.style.left,
-    top: node.style.top,
-    zIndex: node.style.zIndex,
-    pointerEvents: node.style.pointerEvents,
   }));
 
-  for (const node of chain) {
+  for (const node of nodes) {
     node.style.opacity = "1";
     node.style.visibility = "visible";
-    node.style.pointerEvents = "none";
-  }
-  const root = chain[chain.length - 1];
-  if (root) {
-    root.style.position = "fixed";
-    root.style.left = "0";
-    root.style.top = "0";
-    root.style.zIndex = "-1";
   }
 
   return () => {
-    chain.forEach((node, i) => {
-      const s = snapshot[i];
-      node.style.opacity = s.opacity;
-      node.style.visibility = s.visibility;
-      node.style.position = s.position;
-      node.style.left = s.left;
-      node.style.top = s.top;
-      node.style.zIndex = s.zIndex;
-      node.style.pointerEvents = s.pointerEvents;
+    nodes.forEach((node, i) => {
+      node.style.opacity = snapshot[i].opacity;
+      node.style.visibility = snapshot[i].visibility;
     });
   };
 }
 
 async function renderPng(el: HTMLElement): Promise<string | null> {
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
   const restore = revealForCapture(el);
   try {
     const { toPng } = await import("html-to-image");
@@ -57,6 +39,7 @@ async function renderPng(el: HTMLElement): Promise<string | null> {
     return null;
   } finally {
     restore();
+    window.scrollTo(scrollX, scrollY);
   }
 }
 
@@ -68,10 +51,17 @@ async function pngBlob(el: HTMLElement): Promise<Blob | null> {
 }
 
 function triggerDownload(dataUrl: string, filename: string) {
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
   const a = document.createElement("a");
   a.href = dataUrl;
   a.download = filename;
+  a.rel = "noopener";
+  a.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0;";
+  document.body.appendChild(a);
   a.click();
+  a.remove();
+  window.scrollTo(scrollX, scrollY);
 }
 
 async function copyPngToClipboard(blob: Blob): Promise<boolean> {

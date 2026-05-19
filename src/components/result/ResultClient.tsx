@@ -293,12 +293,12 @@ export default function ResultClient({
                 </p>
               </div>
               <div className="p-8">
-                <h3 className="font-lab-display text-lab-primary mb-1 text-3xl font-bold leading-tight md:text-4xl">
+                <p className="font-lab-mono text-lab-primary mb-2 text-xs font-semibold tracking-wide uppercase">
                   {tierLabel}
-                </h3>
-                <p className="font-lab-mono text-lab-on-surface-variant mb-3 text-[11px] font-semibold tracking-wide uppercase">
-                  {stageTitle}
                 </p>
+                <h3 className="font-lab-display text-lab-on-surface mb-3 text-2xl font-bold leading-tight md:text-3xl">
+                  {stageTitle}
+                </h3>
                 <p className="font-lab-body text-lab-on-surface mb-4 text-sm leading-relaxed">{plainExplain}</p>
                 <div className="mb-6 flex flex-wrap gap-2">
                   {tags.map((tag) => (

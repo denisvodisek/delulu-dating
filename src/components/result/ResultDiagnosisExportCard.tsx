@@ -47,7 +47,7 @@ export const ResultDiagnosisExportCard = forwardRef<HTMLDivElement, ResultDiagno
         style={{ width: 360, height: 640 }}
       >
         <div
-          className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-b-[28px] rounded-t-none border-2 border-[#0a1f2d]"
+          className="flex min-h-0 flex-1 flex-col overflow-hidden border-2 border-[#0a1f2d]"
           style={{
             background: "linear-gradient(165deg, #ffffff 0%, #eef9ff 45%, #ffe8f7 100%)",
           }}
@@ -60,17 +60,12 @@ export const ResultDiagnosisExportCard = forwardRef<HTMLDivElement, ResultDiagno
 
           <div className="flex min-h-0 flex-1 flex-col gap-4 p-6">
             <div>
-              <h2
-                className={cn(
-                  "font-lab-display text-[1.75rem] font-bold leading-tight text-lab-primary",
-                  latinCaps && "uppercase",
-                )}
-              >
+              <p className="font-lab-mono text-[10px] font-semibold tracking-[0.16em] text-lab-primary uppercase">
                 {tierLabel}
-              </h2>
-              <p className="font-lab-mono mt-2 text-[10px] font-semibold tracking-[0.14em] text-lab-on-surface-variant uppercase">
-                {stageTitle}
               </p>
+              <h2 className="font-lab-display mt-1.5 text-[1.5rem] font-bold leading-tight text-lab-ink">
+                {stageTitle}
+              </h2>
               <p className="font-lab-body mt-3 text-[13px] leading-relaxed text-lab-on-surface">{explain}</p>
             </div>
 

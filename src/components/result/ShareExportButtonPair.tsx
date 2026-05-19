@@ -26,7 +26,10 @@ export function ShareExportButtonPair({
       <button
         type="button"
         disabled={busy}
-        onClick={onDownload}
+        onClick={(e) => {
+          e.preventDefault();
+          onDownload();
+        }}
         className={
           soft
             ? "puffy-btn puffy-btn-lg puffy-btn-soft flex w-full items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-70"
@@ -39,7 +42,10 @@ export function ShareExportButtonPair({
       <button
         type="button"
         disabled={busy}
-        onClick={onShare}
+        onClick={(e) => {
+          e.preventDefault();
+          onShare();
+        }}
         className={
           soft
             ? "puffy-btn puffy-btn-lg flex w-full items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-70"
