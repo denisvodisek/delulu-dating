@@ -189,6 +189,27 @@
   }
 
   /** Sky + lavender atmosphere (dodger / lavender brand) */
+  .methodology-lab-tube {
+    box-shadow: 0 4px 0 rgba(10, 31, 45, 0.12);
+  }
+
+  @keyframes methodology-shimmer {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .methodology-lab-tube {
+      animation: methodology-shimmer 6s ease-in-out infinite;
+      background-size: 200% 200%;
+    }
+  }
+
   .candy-bg {
     background-color: #eef9ff;
     background-image:

@@ -433,7 +433,6 @@ export default function QuizFlow() {
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labExpatPick")}
                 </p>
-                <p className="text-lab-on-surface-variant font-lab-body text-sm">{t("expatHint")}</p>
                 <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-lab-on-surface/25">
                   {(
                     [

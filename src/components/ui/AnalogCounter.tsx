@@ -25,9 +25,10 @@ function tokenize(value: number, locale: string): { formatted: string; tokens: T
 }
 
 const SLOT = {
-  sm: { h: 48, w: "w-[1.65rem]", text: "text-[1.75rem]" },
-  md: { h: 56, w: "w-[1.85rem] sm:w-9", text: "text-4xl md:text-[2.65rem]" },
-  lg: { h: 64, w: "w-10 sm:w-11", text: "text-[2.35rem] sm:text-5xl" },
+  xs: { h: 36, w: "w-7", sepW: "w-2", text: "text-2xl" },
+  sm: { h: 48, w: "w-[1.65rem]", sepW: "w-2.5", text: "text-[1.75rem]" },
+  md: { h: 56, w: "w-[1.85rem] sm:w-9", sepW: "w-2.5", text: "text-4xl md:text-[2.65rem]" },
+  lg: { h: 64, w: "w-10 sm:w-11", sepW: "w-3", text: "text-[2.35rem] sm:text-5xl" },
 } as const;
 
 function DigitSlot({
@@ -80,6 +81,8 @@ export type AnalogCounterProps = {
   value: number;
   locale?: string;
   size?: keyof typeof SLOT;
+  /** When true, commas sit on the same black bar as digits (default). */
+  darkSeparators?: boolean;
   className?: string;
 };
 
@@ -88,6 +91,7 @@ export function AnalogCounter({
   value,
   locale = "en-US",
   size = "md",
+  darkSeparators = true,
   className,
 }: AnalogCounterProps) {
   const { formatted, tokens } = useMemo(() => tokenize(value, locale), [value, locale]);
@@ -103,7 +107,8 @@ export function AnalogCounter({
       <span className="sr-only">{formatted}</span>
       <span
         className={cn(
-          "analog-counter inline-flex overflow-hidden rounded-lg border-2 border-lab-on-surface shadow-[0_5px_0_rgba(10,31,45,0.18)]",
+          "analog-counter inline-flex overflow-hidden rounded-md",
+          darkSeparators && "border-2 border-[#0a1f2d] bg-[#0a1f2d]",
         )}
         style={{ height: slot.h }}
         aria-hidden
@@ -115,10 +120,13 @@ export function AnalogCounter({
             <span
               key={token.key}
               className={cn(
-                "font-lab-display flex shrink-0 items-center justify-center bg-lab-surface-container-lowest font-bold leading-none text-lab-on-surface",
+                "font-lab-display flex shrink-0 items-center justify-center font-bold leading-none tabular-nums",
                 slot.text,
+                darkSeparators
+                  ? cn("bg-[#0a1f2d] text-white", slot.sepW)
+                  : "min-w-[0.55rem] bg-lab-surface-container-lowest text-lab-on-surface",
               )}
-              style={{ height: slot.h, minWidth: "0.55rem" }}
+              style={{ height: slot.h }}
             >
               {token.char}
             </span>

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { formatMatchPercent } from "@/lib/format-match";
 import { MAX_ONE_IN_DISPLAY } from "@/lib/format-one-in";
 import { oneInN } from "@/lib/calc/probability";
+import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
 
 export default async function SharedResultPage({
   params,
@@ -38,7 +39,9 @@ export default async function SharedResultPage({
         <p className="font-lab-display mt-6 text-5xl font-black tracking-tight text-primary sm:text-6xl">
           {oddsPastUiCeil ? t("oneInCapped", { n }) : t("oneIn", { n })}
         </p>
-        <p className="mt-3 text-sm text-muted-foreground">{t("heroChanceLine_male", { pct: pctLabel })}</p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("heroChanceLine_male", { pct: pctLabel, total: BASE_MALE_POOL })}
+        </p>
         <p className="mx-auto mt-5 max-w-md text-pretty text-sm text-muted-foreground">
           {t("poolExplainer", { count: data.n })}
         </p>

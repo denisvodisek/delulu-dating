@@ -15,6 +15,7 @@ import { pushRun } from "@/lib/run-history";
 import { ResultHeroShowcase } from "@/components/result/ResultHeroShowcase";
 import { ResultStoryExportCard } from "@/components/result/ResultStoryExportCard";
 import { formatFiltrationSelection } from "@/lib/quiz-filtration-selection";
+import { buildPoolRealityFunnel } from "@/lib/pool-reality-funnel";
 import { basePoolForSeeker, buildFiltrationDebt } from "@/lib/result-filtration";
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
@@ -202,6 +203,8 @@ export default function ResultClient({
 
   const debtRows = buildFiltrationDebt(seeker, calc.breakdown);
   const basePool = basePoolForSeeker(seeker);
+  const funnelSteps = buildPoolRealityFunnel(seeker);
+  const loc = locale === "zh" ? "zh-HK" : "en-US";
   const sev = severityPercent(calc.tier);
   const alarming = sev >= 74;
 
@@ -228,7 +231,7 @@ export default function ResultClient({
       : t("oneIn_female", { n });
   const storyChance = t(
     seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
-    { pct: pctLabel },
+    { pct: pctLabel, total: basePool },
   );
 
   return (
@@ -240,6 +243,7 @@ export default function ResultClient({
         n={n}
         oddsPastUiCeil={oddsPastUiCeil}
         pctLabel={pctLabel}
+        poolTotal={basePool}
       />
 
       <section className="grid min-h-[600px] w-full grid-cols-1 border-lab-outline-variant bg-lab-surface/80 px-4 md:grid-cols-12 md:items-start md:px-16">
@@ -341,6 +345,36 @@ export default function ResultClient({
             </h2>
             <p className="text-lab-on-surface-variant font-lab-body text-base leading-relaxed">
               {t("labDebtSub", { base: basePool })}
+            </p>
+          </div>
+
+          <div className="mb-10 rounded-2xl border-2 border-lab-on-surface/12 bg-lab-primary/8 p-5 md:p-6">
+            <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase tracking-wide">
+              {t("labFunnelTitle")}
+            </p>
+            <p className="font-lab-body text-lab-on-surface mb-4 text-sm leading-relaxed">
+              {t("labFunnelIntro")}
+            </p>
+            <ol className="space-y-3">
+              {funnelSteps.map((step, idx) => (
+                <li
+                  key={step.key}
+                  className="flex items-baseline justify-between gap-4 border-b border-lab-on-surface/10 pb-3 last:border-0 last:pb-0"
+                >
+                  <span className="font-lab-body text-sm text-lab-on-surface">
+                    <span className="font-lab-mono text-lab-on-surface-variant mr-2 text-[10px] font-semibold tabular-nums">
+                      {idx + 1}.
+                    </span>
+                    {t(step.labelKey as "funnelHkTotal")}
+                  </span>
+                  <span className="font-lab-mono shrink-0 text-sm font-semibold tabular-nums text-lab-on-surface">
+                    {step.count.toLocaleString(loc)}
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p className="font-lab-body text-lab-on-surface-variant mt-4 text-sm leading-relaxed">
+              {t("labFunnelReassurance")}
             </p>
           </div>
 

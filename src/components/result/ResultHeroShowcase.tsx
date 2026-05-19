@@ -15,6 +15,8 @@ type Props = {
   n: number;
   oddsPastUiCeil: boolean;
   pctLabel: string;
+  /** 18–65 dating-universe headcount (before user's filters). */
+  poolTotal: number;
 };
 
 export function ResultHeroShowcase({
@@ -24,6 +26,7 @@ export function ResultHeroShowcase({
   n,
   oddsPastUiCeil,
   pctLabel,
+  poolTotal,
 }: Props) {
   const t = useTranslations("result");
   const loc = locale === "zh" ? "zh-HK" : "en-US";
@@ -152,7 +155,7 @@ export function ResultHeroShowcase({
                 <div className="font-lab-mono mt-5 rounded-2xl border-2 border-lab-on-surface/12 bg-gradient-to-r from-[#30c7ff]/14 to-[#ff8add]/18 px-4 py-3 text-[10px] font-semibold tracking-wide text-lab-on-surface uppercase sm:text-[11px]">
                   {t(
                     seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
-                    { pct: pctLabel },
+                    { pct: pctLabel, total: poolTotal },
                   )}
                 </div>
               </div>

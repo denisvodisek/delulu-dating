@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -12,7 +11,8 @@ import { LandingLiveCounter } from "@/components/landing/LandingLiveCounter";
 import { LandingCtaSection } from "@/components/landing/LandingCtaSection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
-const HERO_IMAGE = "/hero-hk-street.png";
+const HERO_POSTER = "/hero-hk-street.png";
+const HERO_VIDEO = "/hero-loop.mp4";
 
 function specimenStripClasses(tier: SavedRun["tier"]) {
   if (tier === "god" || tier === "delulu") {
@@ -64,10 +64,13 @@ export default function LandingClient() {
       <section className="grid min-h-[calc(100dvh-5rem)] w-full grid-cols-1 overflow-hidden rounded-b-3xl border-b-2 border-lab-on-surface shadow-[0_6px_0_rgba(10,31,45,0.08)] md:grid-cols-2 md:grid-rows-1">
         <div className="flex min-h-0 flex-col border-b-2 border-lab-on-surface/15 p-4 md:border-r md:border-b-0 md:p-16">
           <div className="mt-6 md:mt-10">
-            <h1 className="font-lab-display text-lab-on-surface mb-10 text-5xl leading-none font-bold tracking-tight uppercase md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
-              {t("heroTitle1")}
-              <br />
-              <span className="text-lab-primary">{t("heroTitle2")}</span>
+            <h1 className="font-lab-display text-lab-on-surface mb-10 font-bold tracking-tight uppercase">
+              <span className="block text-5xl leading-none md:text-7xl md:leading-[0.95] lg:text-[84px] lg:leading-[90px]">
+                {t("heroTitle1")}
+              </span>
+              <span className="text-lab-primary mt-3 block text-2xl leading-tight font-bold md:mt-4 md:text-3xl lg:text-[2.5rem] lg:leading-[1.1]">
+                {t("heroTitle2")}
+              </span>
             </h1>
             <div className="max-w-md space-y-8">
               <p className="text-lab-on-surface-variant font-lab-body text-xl leading-relaxed md:text-[20px] md:leading-[30px]">
@@ -95,14 +98,18 @@ export default function LandingClient() {
         </div>
 
         <div className="relative min-h-[min(28rem,55dvh)] w-full min-w-0 md:min-h-[min(calc(100dvh-5rem),56rem)]">
-          <Image
-            src={HERO_IMAGE}
-            alt={t("heroImageAlt")}
-            fill
-            className="object-cover opacity-95 saturate-[1.05]"
-            sizes="(min-width: 768px) 50vw, 100vw"
-            priority
-          />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster={HERO_POSTER}
+            aria-label={t("heroImageAlt")}
+            className="absolute inset-0 h-full w-full object-cover opacity-95 saturate-[1.05]"
+          >
+            <source src={HERO_VIDEO} type="video/mp4" />
+          </video>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#30c7ff]/35 via-[#ff8add]/15 to-transparent mix-blend-multiply" />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a1f2d]/40 to-transparent" />
         </div>
