@@ -33,25 +33,19 @@ export function quizRoastKey(step: number, q: QuizAnswersV1): string {
       return "roastExpat_any";
     }
     case 5: {
-      const n = q.districts.length;
-      if (n === 0) return "roastDistrict_any";
-      if (n <= 3) return "roastDistrict_few";
-      return "roastDistrict_many";
-    }
-    case 6: {
       if (q.educationMin === "postgrad") return "roastEdu_postgrad";
       if (q.educationMin === "degree") return "roastEdu_degree";
       return "roastEdu_any";
     }
-    case 7: {
+    case 6: {
       if (q.noSmoking && q.noKidsFromPrev) return "roastLife_both";
       if (q.noSmoking && !q.noKidsFromPrev) return "roastLife_smokeOnly";
       if (!q.noSmoking && q.noKidsFromPrev) return "roastLife_kidsOnly";
       return "roastLife_chaos";
     }
-    case 8:
+    case 7:
       return q.requiresOwnFlat ? "roastFlat_must" : "roastFlat_ok";
-    case 9:
+    case 8:
       return q.requiresCar ? "roastCar_must" : "roastCar_ok";
     default:
       return "roastAge_mid";
@@ -64,7 +58,6 @@ export const LAB_STEP_TITLE_KEYS = [
   ["labStepIncome_line1", "labStepIncome_line2"],
   ["labStepMarital_line1", "labStepMarital_line2"],
   ["labStepExpat_line1", "labStepExpat_line2"],
-  ["labStepDistrict_line1", "labStepDistrict_line2"],
   ["labStepEducation_line1", "labStepEducation_line2"],
   ["labStepLifestyle_line1", "labStepLifestyle_line2"],
   ["labStepFlat_line1", "labStepFlat_line2"],

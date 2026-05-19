@@ -6,14 +6,14 @@ import { CircleNotch } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import { Slider } from "@/components/ui/slider";
 import { calculateDelulu } from "@/lib/calc/probability";
-import { BASE_MALE_POOL, DISTRICT_MALE_SHARE } from "@/lib/data/hk-demographics";
+import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
 import { DEFAULT_QUIZ, type CalculationResult, type QuizAnswersV1 } from "@/lib/types/quiz";
 import { saveQuiz } from "@/lib/quiz-storage";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics/events";
 import { LAB_STEP_TITLE_KEYS, quizRoastKey } from "@/lib/quiz-roast";
 
-const STEPS = 10;
+const STEPS = 9;
 
 const choiceActive =
   "bg-lab-primary/35 text-lab-on-surface ring-2 ring-lab-on-surface/25 shadow-sm";
@@ -109,7 +109,6 @@ function SegmentedTwo({
 
 export default function QuizFlow() {
   const t = useTranslations("quiz");
-  const td = useTranslations("district");
   const tb = useTranslations("bd");
   const tr = useTranslations("reveal");
   const locale = useLocale();
@@ -124,8 +123,6 @@ export default function QuizFlow() {
   const [sliderPulse, setSliderPulse] = useState({ age: true, height: true, income: true });
 
   const live = useMemo(() => calculateDelulu(q), [q]);
-  const districtKeys = Object.keys(DISTRICT_MALE_SHARE);
-
   const progressPct = ((step + 1) / STEPS) * 100;
   const roastKey = quizRoastKey(step, q);
   const roastText = t(roastKey as Parameters<typeof t>[0]);
@@ -167,16 +164,6 @@ export default function QuizFlow() {
       clearTimeout(done);
     };
   }, [isRevealing, revealLines, router]);
-
-  function toggleDistrict(key: string) {
-    setQ((prev) => {
-      const has = prev.districts.includes(key);
-      return {
-        ...prev,
-        districts: has ? prev.districts.filter((k) => k !== key) : [...prev.districts, key],
-      };
-    });
-  }
 
   function buildRevealLog() {
     const lines = [tr("logIntro")];
@@ -461,35 +448,6 @@ export default function QuizFlow() {
             {step === 5 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
-                  {t("labDistrictPick")}
-                </p>
-                <p className="text-lab-on-surface-variant font-lab-body text-sm">{t("districtNone")}</p>
-                <div className="grid max-h-[min(22rem,calc(100dvh-15.5rem))] grid-cols-2 gap-0 overflow-y-auto overscroll-contain rounded-2xl border-2 border-lab-on-surface/25 sm:grid-cols-3">
-                  {districtKeys.map((key) => {
-                    const on = q.districts.includes(key);
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => toggleDistrict(key)}
-                        className={cn(
-                          "font-lab-mono min-h-11 border-b border-r border-lab-outline-variant px-2 py-2.5 text-left text-[11px] font-semibold uppercase leading-tight transition-all duration-200 sm:text-xs",
-                          on
-                            ? "bg-lab-secondary/90 text-lab-on-surface shadow-inner ring-2 ring-lab-surface-container-lowest ring-inset"
-                            : "bg-lab-surface-container-lowest text-lab-on-surface-variant hover:bg-lab-primary/10",
-                        )}
-                      >
-                        {td(key)}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {step === 6 && (
-              <div className="space-y-4">
-                <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labEducationPick")}
                 </p>
                 <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-lab-on-surface/25">
@@ -517,7 +475,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 7 && (
+            {step === 6 && (
               <div className="space-y-8">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labLifestylePick")}
@@ -547,7 +505,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 8 && (
+            {step === 7 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labFlatPick")}
@@ -564,7 +522,7 @@ export default function QuizFlow() {
               </div>
             )}
 
-            {step === 9 && (
+            {step === 8 && (
               <div className="space-y-4">
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labCarPick")}

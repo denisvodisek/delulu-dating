@@ -69,7 +69,7 @@ export const ResultStoryExportCard = forwardRef<HTMLDivElement, ResultStoryExpor
           >
             {oneInLine}
           </p>
-          <p className="font-lab-mono text-lab-on-surface-variant mt-2 text-[8px] font-semibold leading-relaxed tracking-wide uppercase">
+          <p className="font-lab-body text-lab-on-surface-variant mt-2 text-[11px] leading-relaxed">
             {chanceLine}
           </p>
         </footer>

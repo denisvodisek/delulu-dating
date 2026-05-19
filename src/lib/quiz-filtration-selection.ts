@@ -2,7 +2,6 @@ import type { QuizAnswersV1 } from "@/lib/types/quiz";
 
 export type FiltrationFormatters = {
   quiz: (key: string) => string;
-  district: (key: string) => string;
 };
 
 /** Human-readable summary of what the user picked for each filtration gate. */
@@ -26,9 +25,6 @@ export function formatFiltrationSelection(
       if (answers.expatPreference === "local_only") return f.quiz("expatLocal");
       if (answers.expatPreference === "expat_preferred") return f.quiz("expatPreferred");
       return f.quiz("expatAny");
-    case "district":
-      if (answers.districts.length === 0) return f.quiz("districtNone");
-      return answers.districts.map((d) => f.district(d)).join(" · ");
     case "education":
       if (answers.educationMin === "degree") return f.quiz("eduDegree");
       if (answers.educationMin === "postgrad") return f.quiz("eduPostgrad");

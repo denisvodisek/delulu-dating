@@ -29,6 +29,7 @@ const SLOT = {
   sm: { h: 48, w: "w-[1.65rem]", sepW: "w-2.5", text: "text-[1.75rem]" },
   md: { h: 56, w: "w-[1.85rem] sm:w-9", sepW: "w-2.5", text: "text-4xl md:text-[2.65rem]" },
   lg: { h: 64, w: "w-10 sm:w-11", sepW: "w-3", text: "text-[2.35rem] sm:text-5xl" },
+  hero: { h: 69, w: "w-11 sm:w-12", sepW: "w-3", text: "text-[2.65rem] sm:text-5xl" },
 } as const;
 
 function DigitSlot({

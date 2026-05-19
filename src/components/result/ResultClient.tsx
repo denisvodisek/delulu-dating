@@ -13,7 +13,10 @@ import type { CalculationResult, Seeker } from "@/lib/types/quiz";
 import { trackEvent } from "@/lib/analytics/events";
 import { pushRun } from "@/lib/run-history";
 import { ResultHeroShowcase } from "@/components/result/ResultHeroShowcase";
+import { PoolRealityFunnelBlock } from "@/components/result/PoolRealityFunnelBlock";
+import { ResultDiagnosisExportCard } from "@/components/result/ResultDiagnosisExportCard";
 import { ResultStoryExportCard } from "@/components/result/ResultStoryExportCard";
+import { shareExportImage } from "@/lib/share-export-image";
 import { formatFiltrationSelection } from "@/lib/quiz-filtration-selection";
 import { buildPoolRealityFunnel } from "@/lib/pool-reality-funnel";
 import { basePoolForSeeker, buildFiltrationDebt } from "@/lib/result-filtration";
@@ -40,16 +43,17 @@ export default function ResultClient({
 }) {
   const t = useTranslations("result");
   const tQuiz = useTranslations("quiz");
-  const td = useTranslations("district");
   const tb = useTranslations("bd");
   const ts = useTranslations("share");
   const router = useRouter();
   const historySaved = useRef(false);
   const footerRef = useRef<HTMLElement>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
-  const [shareBusy, setShareBusy] = useState(false);
+  const [shareResultsBusy, setShareResultsBusy] = useState(false);
+  const [shareDiagnosisBusy, setShareDiagnosisBusy] = useState(false);
   const confettiLaunched = useRef(false);
   const storyExportRef = useRef<HTMLDivElement>(null);
+  const diagnosisExportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const q = loadQuiz();
@@ -148,38 +152,26 @@ export default function ResultClient({
     return () => observer.disconnect();
   }, []);
 
-  async function shareStoryImage() {
+  async function shareResultsImage() {
     if (!snap || !storyExportRef.current) return;
-    const el = storyExportRef.current;
-    setShareBusy(true);
-    try {
-      const { toPng } = await import("html-to-image");
-      const dataUrl = await toPng(el, {
-        pixelRatio: 3,
-        cacheBust: true,
-      });
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const file = new File([blob], "delulu-story.png", { type: "image/png" });
-      if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: "Delulu Dating",
-          text: "Delulu Dating",
-        });
-        void trackEvent("result_share_clicked", { channel: "story_image_share", locale });
-      } else {
-        const a = document.createElement("a");
-        a.href = dataUrl;
-        a.download = "delulu-story.png";
-        a.click();
-        void trackEvent("result_share_clicked", { channel: "story_image_download", locale });
-      }
-    } catch {
-      void trackEvent("result_share_clicked", { channel: "story_image_error", locale });
-    } finally {
-      setShareBusy(false);
-    }
+    setShareResultsBusy(true);
+    const outcome = await shareExportImage(storyExportRef.current, "delulu-results.png");
+    void trackEvent("result_share_clicked", {
+      channel: `results_${outcome}`,
+      locale,
+    });
+    setShareResultsBusy(false);
+  }
+
+  async function shareDiagnosisImage() {
+    if (!snap || !diagnosisExportRef.current) return;
+    setShareDiagnosisBusy(true);
+    const outcome = await shareExportImage(diagnosisExportRef.current, "delulu-diagnosis.png");
+    void trackEvent("result_share_clicked", {
+      channel: `diagnosis_${outcome}`,
+      locale,
+    });
+    setShareDiagnosisBusy(false);
   }
 
   if (!snap) {
@@ -204,7 +196,6 @@ export default function ResultClient({
   const debtRows = buildFiltrationDebt(seeker, calc.breakdown);
   const basePool = basePoolForSeeker(seeker);
   const funnelSteps = buildPoolRealityFunnel(seeker);
-  const loc = locale === "zh" ? "zh-HK" : "en-US";
   const sev = severityPercent(calc.tier);
   const alarming = sev >= 74;
 
@@ -231,7 +222,7 @@ export default function ResultClient({
       : t("oneIn_female", { n });
   const storyChance = t(
     seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
-    { pct: pctLabel, total: basePool },
+    { pct: pctLabel },
   );
 
   return (
@@ -244,6 +235,11 @@ export default function ResultClient({
         oddsPastUiCeil={oddsPastUiCeil}
         pctLabel={pctLabel}
         poolTotal={basePool}
+        onShareResults={() => void shareResultsImage()}
+        shareResultsBusy={shareResultsBusy}
+        shareResultsLabel={ts("shareResults")}
+        shareResultsHint={ts("shareResultsHint")}
+        shareResultsWorkingLabel={ts("storyImageWorking")}
       />
 
       <section className="grid min-h-[600px] w-full grid-cols-1 border-lab-outline-variant bg-lab-surface/80 px-4 md:grid-cols-12 md:items-start md:px-16">
@@ -320,17 +316,15 @@ export default function ResultClient({
             </p>
             <button
               type="button"
-              disabled={shareBusy}
-              onClick={() => void shareStoryImage()}
-              className="puffy-btn puffy-btn-lg flex w-full flex-col gap-1 disabled:cursor-wait disabled:opacity-70"
+              disabled={shareDiagnosisBusy}
+              onClick={() => void shareDiagnosisImage()}
+              className="puffy-btn puffy-btn-lg puffy-btn-soft flex w-full items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-70"
             >
-              <span className="flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-base">share</span>
-                {shareBusy ? ts("storyImageWorking") : ts("storyImage")}
-              </span>
+              <span className="material-symbols-outlined text-base">medical_services</span>
+              {shareDiagnosisBusy ? ts("storyImageWorking") : ts("shareDiagnosis")}
             </button>
             <p className="text-lab-on-surface-variant text-center font-lab-body text-[11px] leading-relaxed opacity-90">
-              {ts("storyImageHint")}
+              {ts("shareDiagnosisHint")}
             </p>
           </div>
         </aside>
@@ -345,36 +339,6 @@ export default function ResultClient({
             </h2>
             <p className="text-lab-on-surface-variant font-lab-body text-base leading-relaxed">
               {t("labDebtSub", { base: basePool })}
-            </p>
-          </div>
-
-          <div className="mb-10 rounded-2xl border-2 border-lab-on-surface/12 bg-lab-primary/8 p-5 md:p-6">
-            <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase tracking-wide">
-              {t("labFunnelTitle")}
-            </p>
-            <p className="font-lab-body text-lab-on-surface mb-4 text-sm leading-relaxed">
-              {t("labFunnelIntro")}
-            </p>
-            <ol className="space-y-3">
-              {funnelSteps.map((step, idx) => (
-                <li
-                  key={step.key}
-                  className="flex items-baseline justify-between gap-4 border-b border-lab-on-surface/10 pb-3 last:border-0 last:pb-0"
-                >
-                  <span className="font-lab-body text-sm text-lab-on-surface">
-                    <span className="font-lab-mono text-lab-on-surface-variant mr-2 text-[10px] font-semibold tabular-nums">
-                      {idx + 1}.
-                    </span>
-                    {t(step.labelKey as "funnelHkTotal")}
-                  </span>
-                  <span className="font-lab-mono shrink-0 text-sm font-semibold tabular-nums text-lab-on-surface">
-                    {step.count.toLocaleString(loc)}
-                  </span>
-                </li>
-              ))}
-            </ol>
-            <p className="font-lab-body text-lab-on-surface-variant mt-4 text-sm leading-relaxed">
-              {t("labFunnelReassurance")}
             </p>
           </div>
 
@@ -397,7 +361,6 @@ export default function ResultClient({
                       {t("labYourPick")}:{" "}
                       {formatFiltrationSelection(row.key, answers, {
                         quiz: (k) => tQuiz(k as Parameters<typeof tQuiz>[0]),
-                        district: (k) => td(k as Parameters<typeof td>[0]),
                       })}
                     </p>
                   ) : null}
@@ -452,6 +415,12 @@ export default function ResultClient({
           )}
         </div>
 
+      </section>
+
+      <section className="w-full border-t-2 border-lab-on-surface/12 bg-lab-surface/50 px-4 py-12 md:px-16 md:py-16">
+        <div className="mx-auto max-w-3xl">
+          <PoolRealityFunnelBlock steps={funnelSteps} locale={locale} />
+        </div>
       </section>
 
       <section className="w-full border-t-2 border-lab-on-surface bg-lab-surface-container-lowest px-4 py-16 md:px-16 md:py-24">
@@ -564,6 +533,20 @@ export default function ResultClient({
           oneInLine={storyOneIn}
           chanceLine={storyChance}
           tierLabel={tierLabel}
+        />
+        <ResultDiagnosisExportCard
+          ref={diagnosisExportRef}
+          locale={locale}
+          clinicalLabel={t("labClinicalLabel")}
+          tierLabel={tierLabel}
+          headline={plainHeadline}
+          explain={plainExplain}
+          stageTitle={stageTitle}
+          stageBody={stageBody}
+          tags={tags}
+          severityLabel={t("labSeverityLabel")}
+          severityPct={sev}
+          alarming={alarming}
         />
       </div>
     </main>

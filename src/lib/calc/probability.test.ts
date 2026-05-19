@@ -13,7 +13,6 @@ const base: QuizAnswersV1 = {
   minMonthlyIncomeHKD: 40000,
   marital: "not_married_ok",
   expatPreference: "any",
-  districts: [],
   educationMin: "any",
   noSmoking: false,
   noKidsFromPrev: false,

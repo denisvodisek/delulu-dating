@@ -15,8 +15,6 @@ export type QuizAnswersV1 = {
   minMonthlyIncomeHKD: number;
   marital: MaritalPreference;
   expatPreference: ExpatPreference;
-  /** District keys from hk-demographics */
-  districts: string[];
   educationMin: EducationMin;
   noSmoking: boolean;
   noKidsFromPrev: boolean;
@@ -35,7 +33,6 @@ export const DEFAULT_QUIZ: QuizAnswersV1 = {
   minMonthlyIncomeHKD: 40000,
   marital: "not_married_ok",
   expatPreference: "any",
-  districts: [],
   educationMin: "any",
   noSmoking: false,
   noKidsFromPrev: false,

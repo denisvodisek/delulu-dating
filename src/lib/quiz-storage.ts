@@ -11,7 +11,6 @@ export function normalizeQuiz(raw: Partial<QuizAnswersV1> | null | undefined): Q
     ...DEFAULT_QUIZ,
     ...raw,
     version: 1,
-    districts: Array.isArray(raw.districts) ? raw.districts : [],
   };
 }
 

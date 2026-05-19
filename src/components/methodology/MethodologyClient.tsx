@@ -10,7 +10,6 @@ const SECTIONS = [
   { id: "b2", icon: "height", hue: "from-[#ff8add]/35 to-[#ff8add]/8", tilt: 2 },
   { id: "b3", icon: "payments", hue: "from-[#30c7ff]/30 to-[#ff8add]/12", tilt: -1 },
   { id: "b4", icon: "cake", hue: "from-[#ff8add]/32 to-[#30c7ff]/10", tilt: 3 },
-  { id: "b5", icon: "map", hue: "from-[#30c7ff]/28 to-[#ff8add]/14", tilt: -2 },
   { id: "b6", icon: "smoke_free", hue: "from-[#ff8add]/30 to-[#30c7ff]/10", tilt: 1 },
   { id: "b7", icon: "apartment", hue: "from-[#30c7ff]/32 to-[#ff8add]/10", tilt: -3 },
   { id: "b8", icon: "public", hue: "from-[#ff8add]/34 to-[#30c7ff]/12", tilt: 2 },

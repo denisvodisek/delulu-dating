@@ -39,7 +39,6 @@ function randomTickStep(): number {
 
 export function LandingLiveCounter() {
   const t = useTranslations("landing");
-  const hint = t("liveCounterHint").trim();
   const locale = useLocale();
   const loc = locale === "zh" ? "zh-HK" : "en-US";
   const baselineRef = useRef(0);
@@ -92,21 +91,26 @@ export function LandingLiveCounter() {
 
   if (display == null) {
     return (
-      <div className="h-9 w-40 rounded-md bg-[#0a1f2d]/15" aria-hidden />
+      <div
+        className="h-[69px] w-full max-w-[280px] rounded-2xl border-2 border-lab-on-surface/10 bg-lab-surface-container-lowest"
+        aria-hidden
+      />
     );
   }
 
   return (
-    <div className="select-none" role="status" aria-live="polite">
-      <p className="font-lab-mono text-lab-on-surface-variant mb-2 text-[10px] font-semibold tracking-[0.18em] uppercase md:text-xs">
+    <div
+      className="w-full max-w-[min(100%,20rem)] rounded-2xl border-2 border-lab-on-surface/12 bg-lab-surface-container-lowest/90 p-4 shadow-[0_4px_0_rgba(10,31,45,0.06)] sm:p-5"
+      role="status"
+      aria-live="polite"
+    >
+      <p className="font-lab-mono text-lab-on-surface-variant mb-3 text-[10px] font-semibold tracking-[0.16em] uppercase">
         {t("liveCounterLabel")}
       </p>
-      <AnalogCounter value={display} locale={loc} size="xs" darkSeparators />
-      {hint ? (
-        <p className="font-lab-mono text-lab-on-surface-variant mt-2 text-[10px] md:text-[11px]">
-          {hint}
-        </p>
-      ) : null}
+      <AnalogCounter value={display} locale={loc} size="hero" darkSeparators />
+      <p className="font-lab-body text-lab-on-surface-variant mt-3 text-sm leading-relaxed">
+        {t("liveCounterSub")}
+      </p>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { motion, useSpring } from "motion/react";
 import { useTranslations } from "next-intl";
 import { AnalogCounter } from "@/components/ui/AnalogCounter";
 import { cn } from "@/lib/utils";
+import { HK_TOTAL_POPULATION } from "@/lib/pool-reality-funnel";
 import type { Seeker } from "@/lib/types/quiz";
 
 type Props = {
@@ -17,6 +18,11 @@ type Props = {
   pctLabel: string;
   /** 18–65 dating-universe headcount (before user's filters). */
   poolTotal: number;
+  onShareResults?: () => void;
+  shareResultsBusy?: boolean;
+  shareResultsLabel: string;
+  shareResultsHint: string;
+  shareResultsWorkingLabel: string;
 };
 
 export function ResultHeroShowcase({
@@ -27,6 +33,11 @@ export function ResultHeroShowcase({
   oddsPastUiCeil,
   pctLabel,
   poolTotal,
+  onShareResults,
+  shareResultsBusy = false,
+  shareResultsLabel,
+  shareResultsHint,
+  shareResultsWorkingLabel,
 }: Props) {
   const t = useTranslations("result");
   const loc = locale === "zh" ? "zh-HK" : "en-US";
@@ -71,6 +82,14 @@ export function ResultHeroShowcase({
 
   const post =
     seeker === "woman_seeking_man" ? t("heroPoolPost_male") : t("heroPoolPost_female");
+  const poolContext =
+    seeker === "woman_seeking_man"
+      ? t("heroPoolContext_male", { total: poolTotal, city: HK_TOTAL_POPULATION })
+      : t("heroPoolContext_female", { total: poolTotal, city: HK_TOTAL_POPULATION });
+  const chanceLine = t(
+    seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
+    { pct: pctLabel },
+  );
 
   const oneInLine = oddsPastUiCeil
     ? seeker === "woman_seeking_man"
@@ -99,25 +118,26 @@ export function ResultHeroShowcase({
           className="rounded-[2.25rem] border-2 border-lab-on-surface/10 bg-gradient-to-b from-white/82 via-white/62 to-[#30c7ff]/12 p-8 shadow-[0_28px_80px_-28px_rgba(48,199,255,0.38),0_18px_48px_-24px_rgba(255,138,221,0.22),inset_0_1px_0_rgba(255,255,255,0.95)] ring-1 ring-lab-on-surface/8 backdrop-blur-md sm:p-10 md:p-12"
         >
           <motion.div
-            className="flex flex-col items-center gap-1 text-center sm:gap-2"
+            className="flex flex-col items-center gap-3 text-center sm:gap-4"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 120, damping: 20, delay: 0.05 }}
           >
-            <span className="font-lab-body text-[11px] font-semibold tracking-[0.42em] text-lab-on-surface-variant sm:text-xs md:tracking-[0.48em]">
-              {t("heroPoolPre")}
-            </span>
-            <span className="mt-1 inline-flex justify-center">
-              <AnalogCounter value={displayCount} locale={loc} size="lg" />
-            </span>
-            <span
+            <p className="font-lab-mono text-lab-on-surface-variant text-[10px] font-semibold tracking-[0.2em] uppercase sm:text-[11px]">
+              {t("heroPoolKicker")}
+            </p>
+            <AnalogCounter value={displayCount} locale={loc} size="hero" />
+            <p
               className={cn(
-                "font-lab-display text-[clamp(1.15rem,4.8vw,2.1rem)] font-semibold leading-[1.15] text-lab-ink",
-                latinCaps && "italic",
+                "font-lab-display max-w-md text-[clamp(1.25rem,4.5vw,2rem)] leading-tight font-bold text-lab-ink",
+                latinCaps && "uppercase",
               )}
             >
               {post}
-            </span>
+            </p>
+            <p className="font-lab-body text-lab-on-surface-variant max-w-lg text-sm leading-relaxed sm:text-base">
+              {poolContext}
+            </p>
           </motion.div>
 
           <motion.div
@@ -152,15 +172,29 @@ export function ResultHeroShowcase({
                 >
                   {oneInLine}
                 </p>
-                <div className="font-lab-mono mt-5 rounded-2xl border-2 border-lab-on-surface/12 bg-gradient-to-r from-[#30c7ff]/14 to-[#ff8add]/18 px-4 py-3 text-[10px] font-semibold tracking-wide text-lab-on-surface uppercase sm:text-[11px]">
-                  {t(
-                    seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
-                    { pct: pctLabel, total: poolTotal },
-                  )}
-                </div>
+                <p className="font-lab-body text-lab-on-surface mt-5 text-center text-sm leading-relaxed sm:text-base">
+                  {chanceLine}
+                </p>
               </div>
             </motion.div>
           </motion.div>
+
+          {onShareResults ? (
+            <div className="mt-8 flex flex-col items-center gap-2">
+              <button
+                type="button"
+                disabled={shareResultsBusy}
+                onClick={onShareResults}
+                className="puffy-btn puffy-btn-lg flex w-full max-w-sm items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-70"
+              >
+                <span className="material-symbols-outlined text-base">share</span>
+                {shareResultsBusy ? shareResultsWorkingLabel : shareResultsLabel}
+              </button>
+              <p className="font-lab-body text-lab-on-surface-variant max-w-sm text-center text-xs leading-relaxed">
+                {shareResultsHint}
+              </p>
+            </div>
+          ) : null}
 
           <motion.p
             initial={{ opacity: 0 }}
