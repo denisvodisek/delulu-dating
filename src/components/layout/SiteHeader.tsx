@@ -34,6 +34,15 @@ export function SiteHeader() {
         >
           {t("methodology")}
         </Link>
+        <Link
+          href="/crowd"
+          className={cn(
+            "puffy-btn puffy-btn-sm",
+            pathname === "/crowd" ? "puffy-btn-lavender" : "puffy-btn-soft",
+          )}
+        >
+          {t("crowd")}
+        </Link>
         <Link href="/#specimens" className="puffy-btn puffy-btn-sm puffy-btn-soft">
           {t("archive")}
         </Link>

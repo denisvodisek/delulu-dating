@@ -28,7 +28,7 @@ When Supabase env is set, the route validates JSON (`locale` ∈ `en`|`zh` only)
 
 Schema is versioned in **`supabase/migrations/`**. With the [Supabase GitHub integration](https://supabase.com/docs/guides/deployment/database-github-actions), linking this repo applies migrations on push.
 
-The app expects a **`public.runs`** table (see migration files). `POST /api/run` inserts a row when env vars are set. **`GET /api/stats`** returns a deterministic theatrical `runsToday` for the landing page (Hong Kong day + intraday drift); it does not read the database.
+The app expects a **`public.runs`** table (see migration files). `POST /api/run` inserts anonymous tier + filter snapshots when env vars are set (apply `supabase/migrations/20250519120000_runs_leaderboard_fields.sql` for crowd stats). **`GET /api/stats`** returns a deterministic theatrical `runsToday` for the landing page (Hong Kong day + intraday drift); it does not read the database. **`GET /api/leaderboard`** aggregates logged runs for `/crowd`.
 
 ## Licence
 

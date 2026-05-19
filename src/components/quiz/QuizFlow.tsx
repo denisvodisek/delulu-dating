@@ -195,7 +195,23 @@ export default function QuizFlow() {
     void fetch("/api/run", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ locale }),
+      body: JSON.stringify({
+        locale,
+        tier: live.tier,
+        seeker: q.seeker,
+        probability: Number(live.probability.toFixed(6)),
+        ageMin: q.ageMin,
+        ageMax: q.ageMax,
+        minHeightCm: q.minHeightCm,
+        minMonthlyIncomeHKD: q.minMonthlyIncomeHKD,
+        marital: q.marital,
+        expatPreference: q.expatPreference,
+        educationMin: q.educationMin,
+        noSmoking: q.noSmoking,
+        noKidsFromPrev: q.noKidsFromPrev,
+        requiresOwnFlat: q.requiresOwnFlat,
+        requiresCar: q.requiresCar,
+      }),
     }).catch(() => {});
 
     void trackEvent("quiz_completed", {
