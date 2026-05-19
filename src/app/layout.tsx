@@ -6,17 +6,28 @@ const OG_HERO_IMAGE = "/hero-hk-street.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://delulu.dating"),
-  title: "Delulu Dating",
-  description: "Hong Kong dating reality calculator",
+  title: {
+    default: "Delulu Dating",
+    template: "%s",
+  },
+  description: "Hong Kong dating reality calculator — how delulu is your boyfriend wishlist?",
+  applicationName: "Delulu Dating",
+  category: "entertainment",
   icons: {
     icon: [{ url: "/brand-mark.svg", type: "image/svg+xml" }],
   },
   openGraph: {
-    images: [{ url: OG_HERO_IMAGE, width: 1024, height: 1024 }],
+    siteName: "Delulu Dating",
+    type: "website",
+    images: [{ url: OG_HERO_IMAGE, width: 1024, height: 1024, alt: "Delulu Dating" }],
   },
   twitter: {
     card: "summary_large_image",
     images: [OG_HERO_IMAGE],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

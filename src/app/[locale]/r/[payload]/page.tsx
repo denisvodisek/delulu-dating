@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { Link } from "@/i18n/navigation";
 import { Card } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
@@ -8,6 +10,22 @@ import { cn } from "@/lib/utils";
 import { formatMatchPercent } from "@/lib/format-match";
 import { MAX_ONE_IN_DISPLAY } from "@/lib/format-one-in";
 import { oneInN } from "@/lib/calc/probability";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; payload: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "result" });
+  return buildPageMetadata({
+    locale,
+    title: t("sharedMetaTitle"),
+    description: t("sharedMetaDescription"),
+    noIndex: true,
+  });
+}
 
 export default async function SharedResultPage({
   params,

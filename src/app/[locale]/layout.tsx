@@ -3,12 +3,11 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { routing } from "@/i18n/routing";
 import { ClientAnalytics } from "@/components/analytics/ClientAnalytics";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { LocaleHtmlLang } from "@/components/i18n/LocaleHtmlLang";
-
-const OG_HERO_IMAGE = "/hero-hk-street.png";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -23,30 +22,13 @@ export async function generateMetadata({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "meta" });
   const tLanding = await getTranslations({ locale, namespace: "landing" });
-  return {
+  return buildPageMetadata({
+    locale,
+    path: "",
     title: t("title"),
     description: t("description"),
-    openGraph: {
-      title: t("title"),
-      description: t("description"),
-      locale: locale === "zh-HK" ? "zh_HK" : "en_HK",
-      type: "website",
-      images: [
-        {
-          url: OG_HERO_IMAGE,
-          width: 1024,
-          height: 1024,
-          alt: tLanding("heroImageAlt"),
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: t("title"),
-      description: t("description"),
-      images: [OG_HERO_IMAGE],
-    },
-  };
+    heroImageAlt: tLanding("heroImageAlt"),
+  });
 }
 
 export default async function LocaleLayout({

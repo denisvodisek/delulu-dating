@@ -1,7 +1,13 @@
 {
   "meta": {
     "title": "Delulu Dating — 你搵港男嘅條件有幾妄想？",
-    "description": "用政府統計數字，幫你計吓你個「理想 BB 清單」喺香港有幾多個真人。好笑、好尖、好真。"
+    "description": "用政府統計數字，幫你計吓你個「理想 BB 清單」喺香港有幾多個真人。好笑、好尖、好真。",
+    "quizTitle": "擇偶條件測驗 — Delulu Dating",
+    "quizDescription": "年齡、身高、收入、硬性條件逐項揀，睇香港仲有幾多個男符合，同你屬於邊個 delulu 等級。",
+    "methodologyTitle": "點樣計算機率 — Delulu Dating",
+    "methodologyDescription": "人口統計、篩選同機率門檻點計。透明嘅港式擇偶現實數學（唔係交友平台）。",
+    "crowdTitle": "群眾數據 — Delulu Dating 大家點揀",
+    "crowdDescription": "匿名等級分佈同平均條件，來自真實測驗。只顯示百分比，唔使登記。"
   },
   "nav": {
     "methodology": "方法",
@@ -196,6 +202,10 @@
     "logIntro": "篩緊全香港…"
   },
   "result": {
+    "metaTitle": "你嘅結果 — Delulu Dating",
+    "metaDescription": "你嘅香港擇偶現實等級同粗略機率。",
+    "sharedMetaTitle": "分享嘅 delulu 結果 — Delulu Dating",
+    "sharedMetaDescription": "有人分享咗香港擇偶現實分數。去 delulu.dating 做測驗。",
     "title": "你嘅妄想指數",
     "heroKicker": "粗略中獎機會",
     "heroPoolPre": "一共有",

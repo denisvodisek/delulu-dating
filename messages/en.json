@@ -1,7 +1,13 @@
 {
   "meta": {
     "title": "Delulu Dating — How delulu is your HK boyfriend wishlist?",
-    "description": "Stack dating deal-breakers against Hong Kong stats. Sharp, dumb, not a matchmaker."
+    "description": "Stack dating deal-breakers against Hong Kong stats. Sharp, dumb, not a matchmaker.",
+    "quizTitle": "Dating wishlist quiz — Delulu Dating",
+    "quizDescription": "Set age, height, income and deal-breakers. See how many Hong Kong men still fit — and your delulu tier.",
+    "methodologyTitle": "How we calculate odds — Delulu Dating",
+    "methodologyDescription": "Census stats, filters, and probability floors explained. Transparent HK dating reality math (not a matchmaker).",
+    "crowdTitle": "Crowd stats — what HK picked on Delulu Dating",
+    "crowdDescription": "Anonymous tier spread and average filters from real quiz runs. Percentages only — no signup."
   },
   "nav": {
     "methodology": "Methodology",
@@ -196,6 +202,10 @@
     "logIntro": "Filtering Hong Kong…"
   },
   "result": {
+    "metaTitle": "Your result — Delulu Dating",
+    "metaDescription": "Your Hong Kong dating reality tier and match odds.",
+    "sharedMetaTitle": "Shared delulu result — Delulu Dating",
+    "sharedMetaDescription": "Someone shared their Hong Kong dating reality score. Take the quiz on delulu.dating.",
     "title": "Your delulu score",
     "heroKicker": "Rough match odds",
     "heroPoolPre": "There are",

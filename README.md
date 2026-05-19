@@ -30,6 +30,15 @@ Schema is versioned in **`supabase/migrations/`**. With the [Supabase GitHub int
 
 The app expects a **`public.runs`** table (see migration files). `POST /api/run` inserts anonymous tier + filter snapshots when env vars are set (apply `supabase/migrations/20250519120000_runs_leaderboard_fields.sql` for crowd stats). **`GET /api/stats`** returns a deterministic theatrical `runsToday` for the landing page (Hong Kong day + intraday drift); it does not read the database. **`GET /api/leaderboard`** aggregates logged runs for `/crowd`.
 
+## SEO
+
+- **`/sitemap.xml`** — indexable locale routes: home, quiz, methodology, crowd (`en` + `zh-HK`) with `hreflang` alternates
+- **`/robots.txt`** — allows crawlers; blocks `/api/`, `/[locale]/result`, `/[locale]/r/` (dynamic share links)
+- **`/manifest.webmanifest`** — install metadata + theme colours
+- Per-page titles/descriptions in `messages/*/meta` + JSON-LD (`WebSite`, `WebApplication`, `FAQPage`) on the home page
+
+After deploy, submit `https://delulu.dating/sitemap.xml` in [Google Search Console](https://search.google.com/search-console).
+
 ## Licence
 
 Private / all rights reserved unless you say otherwise.
