@@ -29,7 +29,7 @@ export const DEFAULT_QUIZ: QuizAnswersV1 = {
   version: 1,
   seeker: "woman_seeking_man",
   ageMin: 25,
-  ageMax: 30,
+  ageMax: 35,
   minHeightCm: 170,
   minMonthlyIncomeHKD: 24000,
   marital: "any",
