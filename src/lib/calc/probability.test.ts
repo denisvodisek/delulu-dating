@@ -1,24 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
 import { MAX_POOL_COUNT_DISPLAY } from "@/lib/format-one-in";
-import { calculateDelulu, calculateForSeeker, FEMALE_BASE_POOL } from "@/lib/calc/probability";
-import type { QuizAnswersV1 } from "@/lib/types/quiz";
+import {
+  calculateDelulu,
+  calculateForSeeker,
+  FEMALE_BASE_POOL,
+  tierFromProbability,
+} from "@/lib/calc/probability";
+import { DEFAULT_QUIZ, type QuizAnswersV1 } from "@/lib/types/quiz";
 
-const base: QuizAnswersV1 = {
-  version: 1,
-  seeker: "woman_seeking_man",
-  ageMin: 25,
-  ageMax: 35,
-  minHeightCm: 175,
-  minMonthlyIncomeHKD: 40000,
-  marital: "not_married_ok",
-  expatPreference: "any",
-  educationMin: "any",
-  noSmoking: false,
-  noKidsFromPrev: false,
-  requiresOwnFlat: false,
-  requiresCar: false,
-};
+const base: QuizAnswersV1 = { ...DEFAULT_QUIZ };
 
 describe("calculateDelulu", () => {
   it("returns probability between 0 and 1", () => {
@@ -76,5 +67,30 @@ describe("calculateDelulu", () => {
     expect(man.probability).toBeGreaterThan(0);
     expect(woman.tier).toBeDefined();
     expect(man.tier).toBeDefined();
+  });
+
+  it("tap-through defaults land in picky (Stage 2), not delulu", () => {
+    const r = calculateDelulu(DEFAULT_QUIZ);
+    expect(r.tier).toBe("picky");
+    expect(r.probability).toBeGreaterThanOrEqual(0.02);
+    expect(r.probability).toBeLessThan(0.08);
+  });
+
+  it("aspirational filters can reach very_picky or delulu", () => {
+    const stricter = calculateDelulu({
+      ...DEFAULT_QUIZ,
+      minHeightCm: 175,
+      minMonthlyIncomeHKD: 40000,
+      marital: "not_married_ok",
+    });
+    expect(["very_picky", "delulu", "god"]).toContain(stricter.tier);
+  });
+
+  it("tierFromProbability uses recalibrated floors", () => {
+    expect(tierFromProbability(0.09)).toBe("realistic");
+    expect(tierFromProbability(0.03)).toBe("picky");
+    expect(tierFromProbability(0.005)).toBe("very_picky");
+    expect(tierFromProbability(0.001)).toBe("delulu");
+    expect(tierFromProbability(0.0001)).toBe("god");
   });
 });

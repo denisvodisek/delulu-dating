@@ -6,7 +6,6 @@ import { motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { AnalogCounter } from "@/components/ui/AnalogCounter";
 import { TIER_ORDER, type LeaderboardStats } from "@/lib/runs-leaderboard";
 import type { DeluluTier } from "@/lib/supabase/database.types";
 
@@ -48,6 +47,13 @@ const FILTER_KEYS = [
 ] as const;
 
 type FilterKey = (typeof FILTER_KEYS)[number];
+
+const FILTER_ICONS: Record<FilterKey, string> = {
+  noSmoking: "smoke_free",
+  noKidsFromPrev: "child_care",
+  requiresOwnFlat: "apartment",
+  requiresCar: "directions_car",
+};
 
 function formatHkd(n: number | null, locale: string) {
   if (n == null) return "—";
@@ -125,7 +131,6 @@ export function LeaderboardClient() {
   const t = useTranslations("leaderboard");
   const tResult = useTranslations("result");
   const locale = useLocale();
-  const loc = locale === "zh-HK" ? "zh-HK" : "en-US";
   const reduced = useReducedMotion() ?? false;
   const tierListRef = useRef<HTMLUListElement>(null);
 
@@ -134,7 +139,6 @@ export function LeaderboardClient() {
   const [stats, setStats] = useState<LeaderboardStats | null>(null);
   const [activeTier, setActiveTier] = useState<DeluluTier | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterKey | null>(null);
-  const [seekerFocus, setSeekerFocus] = useState<"women" | "men" | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -177,12 +181,6 @@ export function LeaderboardClient() {
   const topEducation = stats ? topKey(stats.educationMin) : null;
   const topExpat = stats ? topKey(stats.expatPreference) : null;
 
-  const womenPct =
-    stats && stats.total > 0
-      ? Math.round((stats.seekerCounts.woman_seeking_man / stats.total) * 100)
-      : 0;
-  const menPct = stats && stats.total > 0 ? 100 - womenPct : 0;
-
   const filterLabel: Record<FilterKey, string> = {
     noSmoking: t("filterNoSmoking"),
     noKidsFromPrev: t("filterNoKids"),
@@ -196,18 +194,21 @@ export function LeaderboardClient() {
   };
 
   return (
-    <main className="relative mx-auto w-full max-w-4xl overflow-x-hidden px-4 pt-24 pb-24 md:px-8">
-      <FloatingBlob
-        reduced={reduced}
-        className="top-12 -left-10 h-32 w-32 bg-[#30c7ff]/35"
-        delay={0}
-      />
-      <FloatingBlob
-        reduced={reduced}
-        className="top-48 -right-8 h-24 w-24 bg-[#ff8add]/40"
-        delay={1.4}
-      />
+    <main className="relative mx-auto w-full max-w-4xl px-4 pt-24 pb-24 md:px-8">
+      <div className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden>
+        <FloatingBlob
+          reduced={reduced}
+          className="top-12 -left-6 h-32 w-32 bg-[#30c7ff]/35 md:-left-12"
+          delay={0}
+        />
+        <FloatingBlob
+          reduced={reduced}
+          className="top-48 -right-4 h-24 w-24 bg-[#ff8add]/40 md:-right-10"
+          delay={1.4}
+        />
+      </div>
 
+      <div className="relative z-10">
       <header className="relative mb-14 text-center">
         <motion.p
           initial={reduced ? false : { opacity: 0, y: 8 }}
@@ -305,15 +306,11 @@ export function LeaderboardClient() {
             <p className="font-lab-mono text-xs font-semibold tracking-[0.2em] text-white/70 uppercase">
               {t("hallLabel")}
             </p>
-            <div className="mt-4 flex flex-wrap items-end gap-4">
-              <AnalogCounter value={stats.total} locale={loc} size="hero" darkSeparators />
-              <p className="font-lab-body pb-2 text-sm text-white/75 md:text-base">{t("totalLabel")}</p>
-            </div>
             <motion.p
               key={stats.topTier}
               initial={reduced ? false : { opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              className="font-lab-display mt-6 text-2xl font-extrabold tracking-tight uppercase md:text-3xl"
+              className="font-lab-display mt-4 text-2xl font-extrabold tracking-tight uppercase md:text-4xl"
             >
               {t("topTierLine", { tier: tResult(`tier_${stats.topTier}`) })}
               <span className="text-lab-primary ml-2 text-lg md:text-xl">
@@ -333,7 +330,7 @@ export function LeaderboardClient() {
               {TIER_ORDER.map((tier, index) => {
                 const active = activeTier === tier;
                 const pct = stats.tierPercents[tier];
-                const count = stats.tierCounts[tier];
+                const hasTier = stats.tierCounts[tier] > 0;
                 return (
                   <li key={tier}>
                     <motion.button
@@ -372,7 +369,7 @@ export function LeaderboardClient() {
                             TIER_BAR[tier],
                           )}
                           style={{
-                            width: `${Math.max(pct, count > 0 ? 6 : 0)}%`,
+                            width: `${Math.max(pct, hasTier ? 6 : 0)}%`,
                           }}
                         />
                       </div>
@@ -385,8 +382,7 @@ export function LeaderboardClient() {
                         }}
                         className="overflow-hidden font-lab-body text-sm leading-relaxed text-lab-on-surface-variant"
                       >
-                        {t(`tierRoast_${tier}` as "tierRoast_god")} · {count}{" "}
-                        {t("specimens")}
+                        {t(`tierRoast_${tier}` as "tierRoast_god")}
                       </motion.p>
                     </motion.button>
                   </li>
@@ -426,60 +422,6 @@ export function LeaderboardClient() {
                 reduced={reduced}
               />
             </div>
-          </section>
-
-          {/* Seeker split — click to spotlight */}
-          <section className="rounded-3xl border-4 border-lab-on-surface/15 bg-white/95 p-6 shadow-[0_10px_0_rgba(10,31,45,0.07)] md:p-8">
-            <h2 className="font-lab-display text-2xl font-black tracking-tight uppercase">
-              {t("seekerSplit")}
-            </h2>
-            <p className="text-lab-on-surface-variant font-lab-body mt-2 text-sm">{t("seekerTap")}</p>
-            <div className="mt-6 flex h-14 overflow-hidden rounded-2xl border-2 border-lab-on-surface">
-              <motion.button
-                type="button"
-                onClick={() => setSeekerFocus(seekerFocus === "women" ? null : "women")}
-                className={cn(
-                  "flex flex-col items-center justify-center font-bold transition-colors",
-                  seekerFocus === "women"
-                    ? "bg-[#ff8add] text-white"
-                    : "bg-[#ff8add]/35 text-lab-on-surface hover:bg-[#ff8add]/55",
-                )}
-                style={{ width: `${Math.max(womenPct, 8)}%` }}
-                whileTap={reduced ? undefined : { scale: 0.98 }}
-              >
-                <span className="text-xs uppercase">♀</span>
-                <span className="font-lab-display text-sm tabular-nums">{womenPct}%</span>
-              </motion.button>
-              <motion.button
-                type="button"
-                onClick={() => setSeekerFocus(seekerFocus === "men" ? null : "men")}
-                className={cn(
-                  "flex flex-1 flex-col items-center justify-center font-bold transition-colors",
-                  seekerFocus === "men"
-                    ? "bg-[#30c7ff] text-white"
-                    : "bg-[#30c7ff]/35 text-lab-on-surface hover:bg-[#30c7ff]/55",
-                )}
-                whileTap={reduced ? undefined : { scale: 0.98 }}
-              >
-                <span className="text-xs uppercase">♂</span>
-                <span className="font-lab-display text-sm tabular-nums">{menPct}%</span>
-              </motion.button>
-            </div>
-            <motion.p
-              key={seekerFocus ?? "all"}
-              initial={reduced ? false : { opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="font-lab-body mt-4 text-center text-lg font-medium"
-            >
-              {seekerFocus === "women"
-                ? t("seekerWomenDetail", { n: stats.seekerCounts.woman_seeking_man })
-                : seekerFocus === "men"
-                  ? t("seekerMenDetail", { n: stats.seekerCounts.man_seeking_woman })
-                  : t("seekerLine", {
-                      women: stats.seekerCounts.woman_seeking_man,
-                      men: stats.seekerCounts.man_seeking_woman,
-                    })}
-            </motion.p>
           </section>
 
           {/* Harsh-o-meter filters */}
@@ -529,20 +471,51 @@ export function LeaderboardClient() {
               })}
             </ul>
 
-            <div className="mt-8 flex flex-wrap gap-2">
-              {topMarital && (
-                <VibeChip label={t("topMarital", { choice: t(`marital_${topMarital}` as "marital_any") })} />
-              )}
-              {topEducation && (
-                <VibeChip
-                  label={t("topEducation", {
-                    choice: t(`education_${topEducation}` as "education_any"),
-                  })}
-                />
-              )}
-              {topExpat && (
-                <VibeChip label={t("topExpat", { choice: t(`expat_${topExpat}` as "expat_any") })} />
-              )}
+            <div className="mt-10 space-y-8 border-t border-lab-outline-variant/40 pt-8">
+              <h3 className="font-lab-display text-lg font-bold tracking-tight uppercase">
+                {t("popularPicksTitle")}
+              </h3>
+              <motion.div className="grid gap-4 sm:grid-cols-3">
+                {topMarital && (
+                  <PickCard
+                    icon="favorite"
+                    kicker={t("topMaritalKicker")}
+                    value={t(`marital_${topMarital}` as "marital_any")}
+                    reduced={reduced}
+                  />
+                )}
+                {topEducation && (
+                  <PickCard
+                    icon="school"
+                    kicker={t("topEducationKicker")}
+                    value={t(`education_${topEducation}` as "education_any")}
+                    reduced={reduced}
+                  />
+                )}
+                {topExpat && (
+                  <PickCard
+                    icon="public"
+                    kicker={t("topExpatKicker")}
+                    value={t(`expat_${topExpat}` as "expat_any")}
+                    reduced={reduced}
+                  />
+                )}
+              </motion.div>
+
+              <h3 className="font-lab-display text-lg font-bold tracking-tight uppercase">
+                {t("filterCardsTitle")}
+              </h3>
+              <motion.div className="grid gap-4 sm:grid-cols-2">
+                {FILTER_KEYS.map((key) => (
+                  <PickCard
+                    key={key}
+                    icon={FILTER_ICONS[key]}
+                    kicker={filterLabel[key]}
+                    value={`${filterPct(key)}%`}
+                    reduced={reduced}
+                  />
+                ))}
+              </motion.div>
             </div>
           </section>
 
@@ -562,6 +535,7 @@ export function LeaderboardClient() {
           </motion.div>
         </motion.div>
       )}
+      </div>
     </main>
   );
 }
@@ -595,10 +569,29 @@ function StatCard({
   );
 }
 
-function VibeChip({ label }: { label: string }) {
+function PickCard({
+  icon,
+  kicker,
+  value,
+  reduced,
+}: {
+  icon: string;
+  kicker: string;
+  value: string;
+  reduced: boolean;
+}) {
   return (
-    <span className="rounded-full border-2 border-lab-on-surface/15 bg-white/90 px-3 py-1.5 text-xs font-medium shadow-[0_3px_0_rgba(10,31,45,0.05)]">
-      {label}
-    </span>
+    <motion.div
+      whileHover={reduced ? undefined : { y: -3, boxShadow: "0 12px 0 rgba(10,31,45,0.09)" }}
+      className="rounded-2xl border-2 border-lab-on-surface/15 bg-white/95 p-5 shadow-[0_8px_0_rgba(10,31,45,0.06)]"
+    >
+      <span className="material-symbols-outlined text-lab-primary mb-3 block text-2xl">{icon}</span>
+      <p className="text-lab-on-surface-variant text-xs leading-snug font-semibold tracking-wide uppercase">
+        {kicker}
+      </p>
+      <p className="font-lab-body text-lab-on-surface mt-2 text-base leading-snug font-semibold md:text-lg">
+        {value}
+      </p>
+    </motion.div>
   );
 }

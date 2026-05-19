@@ -24,14 +24,15 @@ export type QuizAnswersV1 = {
   requiresCar: boolean;
 };
 
+/** HK-average tap-through baseline — ~median wage, mean height, normal dating age band. */
 export const DEFAULT_QUIZ: QuizAnswersV1 = {
   version: 1,
   seeker: "woman_seeking_man",
   ageMin: 25,
-  ageMax: 35,
-  minHeightCm: 175,
-  minMonthlyIncomeHKD: 40000,
-  marital: "not_married_ok",
+  ageMax: 30,
+  minHeightCm: 170,
+  minMonthlyIncomeHKD: 24000,
+  marital: "any",
   expatPreference: "any",
   educationMin: "any",
   noSmoking: false,

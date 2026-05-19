@@ -168,11 +168,22 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
   return { probability, breakdown, tier, estimatedMatches };
 }
 
+/**
+ * Tier labels from estimated match probability (share of pool still eligible).
+ * Recalibrated so a normal tap-through (DEFAULT_QUIZ) lands ~Stage 2, not Stage 4.
+ */
+export const TIER_PROBABILITY_FLOORS = {
+  realistic: 0.08,
+  picky: 0.02,
+  very_picky: 0.004,
+  delulu: 0.0007,
+} as const;
+
 export function tierFromProbability(p: number): CalculationResult["tier"] {
-  if (p >= 0.12) return "realistic";
-  if (p >= 0.04) return "picky";
-  if (p >= 0.008) return "very_picky";
-  if (p >= 0.001) return "delulu";
+  if (p >= TIER_PROBABILITY_FLOORS.realistic) return "realistic";
+  if (p >= TIER_PROBABILITY_FLOORS.picky) return "picky";
+  if (p >= TIER_PROBABILITY_FLOORS.very_picky) return "very_picky";
+  if (p >= TIER_PROBABILITY_FLOORS.delulu) return "delulu";
   return "god";
 }
 
