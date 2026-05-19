@@ -52,6 +52,7 @@ export default function ResultClient({
   const [snap, setSnap] = useState<Snapshot | null>(null);
   const [resultsExportBusy, setResultsExportBusy] = useState(false);
   const [diagnosisExportBusy, setDiagnosisExportBusy] = useState(false);
+  const [shareNotice, setShareNotice] = useState<string | null>(null);
   const confettiLaunched = useRef(false);
   const storyExportRef = useRef<HTMLDivElement>(null);
   const diagnosisExportRef = useRef<HTMLDivElement>(null);
@@ -164,10 +165,18 @@ export default function ResultClient({
     setResultsExportBusy(false);
   }
 
+  function showShareNotice(outcome: Awaited<ReturnType<typeof shareExportImage>>) {
+    if (outcome === "clipboard") {
+      setShareNotice(ts("shareClipboardHint"));
+      window.setTimeout(() => setShareNotice(null), 5000);
+    }
+  }
+
   async function shareResultsImage() {
     if (!snap || !storyExportRef.current) return;
     setResultsExportBusy(true);
     const outcome = await shareExportImage(storyExportRef.current, "delulu-results.png");
+    showShareNotice(outcome);
     void trackEvent("result_share_clicked", {
       channel: `results_${outcome}`,
       locale,
@@ -190,6 +199,7 @@ export default function ResultClient({
     if (!snap || !diagnosisExportRef.current) return;
     setDiagnosisExportBusy(true);
     const outcome = await shareExportImage(diagnosisExportRef.current, "delulu-diagnosis.png");
+    showShareNotice(outcome);
     void trackEvent("result_share_clicked", {
       channel: `diagnosis_${outcome}`,
       locale,
@@ -250,6 +260,14 @@ export default function ResultClient({
 
   return (
     <main className="flex flex-1 flex-col pt-20">
+      {shareNotice ? (
+        <div
+          role="status"
+          className="font-lab-body fixed top-20 left-1/2 z-50 max-w-sm -translate-x-1/2 rounded-2xl border-2 border-lab-on-surface bg-lab-surface-container-lowest px-4 py-3 text-center text-sm shadow-lg"
+        >
+          {shareNotice}
+        </div>
+      ) : null}
       <ResultHeroShowcase
         seeker={seeker}
         locale={locale}
@@ -275,12 +293,12 @@ export default function ResultClient({
                 </p>
               </div>
               <div className="p-8">
-                <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase">
+                <h3 className="font-lab-display text-lab-primary mb-1 text-3xl font-bold leading-tight md:text-4xl">
                   {tierLabel}
-                </p>
-                <h3 className="font-lab-display text-lab-on-surface mb-3 text-2xl font-bold leading-tight md:text-3xl">
-                  {stageTitle}
                 </h3>
+                <p className="font-lab-mono text-lab-on-surface-variant mb-3 text-[11px] font-semibold tracking-wide uppercase">
+                  {stageTitle}
+                </p>
                 <p className="font-lab-body text-lab-on-surface mb-4 text-sm leading-relaxed">{plainExplain}</p>
                 <div className="mb-6 flex flex-wrap gap-2">
                   {tags.map((tag) => (
@@ -551,7 +569,7 @@ export default function ResultClient({
           </div>
         </div>
       </footer>
-      <div className="pointer-events-none fixed top-0 left-[-10000px] opacity-0" aria-hidden>
+      <div className="pointer-events-none fixed top-0 -left-[10000px] z-[-1]" aria-hidden>
         <ResultStoryExportCard
           ref={storyExportRef}
           locale={locale}
@@ -567,7 +585,7 @@ export default function ResultClient({
           locale={locale}
           clinicalLabel={t("labClinicalLabel")}
           tierLabel={tierLabel}
-          headline={stageTitle}
+          stageTitle={stageTitle}
           explain={plainExplain}
           poolPre={poolPre}
           poolCount={calc.estimatedMatches}

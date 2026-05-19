@@ -7,7 +7,7 @@ export type ResultDiagnosisExportCardProps = {
   locale: string;
   clinicalLabel: string;
   tierLabel: string;
-  headline: string;
+  stageTitle: string;
   explain: string;
   poolPre: string;
   poolCount: number;
@@ -25,7 +25,7 @@ export const ResultDiagnosisExportCard = forwardRef<HTMLDivElement, ResultDiagno
       locale,
       clinicalLabel,
       tierLabel,
-      headline,
+      stageTitle,
       explain,
       poolPre,
       poolCount,
@@ -60,18 +60,18 @@ export const ResultDiagnosisExportCard = forwardRef<HTMLDivElement, ResultDiagno
 
           <div className="flex min-h-0 flex-1 flex-col gap-4 p-6">
             <div>
-              <p className="font-lab-mono text-[9px] font-semibold tracking-[0.18em] text-lab-on-surface-variant uppercase">
-                {tierLabel}
-              </p>
               <h2
                 className={cn(
-                  "font-lab-display mt-2 text-[1.65rem] font-bold leading-tight text-lab-ink",
+                  "font-lab-display text-[1.75rem] font-bold leading-tight text-lab-primary",
                   latinCaps && "uppercase",
                 )}
               >
-                {headline}
+                {tierLabel}
               </h2>
-              <p className="font-lab-body mt-2 text-[13px] leading-relaxed text-lab-on-surface">{explain}</p>
+              <p className="font-lab-mono mt-2 text-[10px] font-semibold tracking-[0.14em] text-lab-on-surface-variant uppercase">
+                {stageTitle}
+              </p>
+              <p className="font-lab-body mt-3 text-[13px] leading-relaxed text-lab-on-surface">{explain}</p>
             </div>
 
             <div className="flex flex-wrap gap-1.5">
