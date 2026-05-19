@@ -15,6 +15,10 @@ export function ClientAnalytics() {
         person_profiles: "identified_only",
         capture_pageview: true,
         capture_pageleave: true,
+        disable_session_recording: false,
+        session_recording: {
+          maskAllInputs: true,
+        },
       });
     });
   }, []);

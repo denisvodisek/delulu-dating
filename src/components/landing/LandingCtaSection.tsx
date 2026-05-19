@@ -2,7 +2,8 @@
 
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { trackEvent } from "@/lib/analytics/events";
 import { Link } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 
@@ -13,6 +14,7 @@ const CtaR3fBackdrop = dynamic(
 
 export function LandingCtaSection() {
   const t = useTranslations("landing");
+  const locale = useLocale();
   const rootRef = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
@@ -71,7 +73,11 @@ export function LandingCtaSection() {
         </p>
         <div data-cta-reveal className="mt-10">
           <span className="inline-block animate-pump-cta">
-            <Link href="/quiz" className="puffy-btn puffy-btn-lg puffy-btn-lavender inline-flex">
+            <Link
+              href="/quiz"
+              onClick={() => void trackEvent("landing_cta_clicked", { locale })}
+              className="puffy-btn puffy-btn-lg puffy-btn-lavender inline-flex"
+            >
               {t("ctaEnterLab")}
             </Link>
           </span>

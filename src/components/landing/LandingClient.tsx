@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { listRecentRuns, type SavedRun } from "@/lib/run-history";
 import { saveQuiz } from "@/lib/quiz-storage";
 import { safeOneInInverse, safePoolCountDisplay } from "@/lib/format-one-in";
+import { trackEvent } from "@/lib/analytics/events";
 import { LandingLiveCounter } from "@/components/landing/LandingLiveCounter";
 import { LandingCtaSection } from "@/components/landing/LandingCtaSection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
@@ -79,6 +80,7 @@ export default function LandingClient() {
               <span className="inline-block animate-pump-cta">
               <Link
                 href="/quiz"
+                onClick={() => void trackEvent("landing_hero_cta_clicked", { locale })}
                 className="puffy-btn puffy-btn-lg group inline-flex items-center gap-2"
               >
                 <span className="flex items-center gap-2">

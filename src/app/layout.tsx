@@ -2,12 +2,21 @@ import type { Metadata } from "next";
 import { dmSans, fontVariables } from "@/lib/fonts";
 import "./globals.css";
 
+const OG_HERO_IMAGE = "/hero-hk-street.png";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://delulu.dating"),
   title: "Delulu Dating",
   description: "Hong Kong dating reality calculator",
   icons: {
     icon: [{ url: "/brand-mark.svg", type: "image/svg+xml" }],
+  },
+  openGraph: {
+    images: [{ url: OG_HERO_IMAGE, width: 1024, height: 1024 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [OG_HERO_IMAGE],
   },
 };
 
