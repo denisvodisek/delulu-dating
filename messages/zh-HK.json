@@ -375,7 +375,6 @@
     "badge": "即時群眾數據",
     "loading": "正在統計群眾…",
     "hallLabel": "群眾判詞",
-    "tapTierHint": "㩒任何等級睇八卦 ☕",
     "averagesTitle": "群眾平均要求",
     "seekerTap": "㩒一邊睇邊個喺搵",
     "seekerWomenDetail": "{n} 次：女搵男",
@@ -421,7 +420,6 @@
     "filterRoast_noKidsFromPrev": "前任小朋友：出局。",
     "filterRoast_requiresOwnFlat": "要有私樓，唔係租。",
     "filterRoast_requiresCar": "香港都要車。好敢。",
-    "disclaimer": "只顯示百分比同平均數 — 永遠唔會顯示有幾多人做過測驗。",
     "cta": "開始計算"
   },
   "bd": {

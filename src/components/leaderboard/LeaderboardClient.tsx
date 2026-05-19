@@ -194,7 +194,7 @@ export function LeaderboardClient() {
   };
 
   return (
-    <main className="relative mx-auto w-full max-w-4xl px-4 pt-24 pb-24 md:px-8">
+    <main className="relative mx-auto w-full max-w-4xl px-4 pt-32 pb-24 md:px-8 md:pt-36">
       <div className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden>
         <FloatingBlob
           reduced={reduced}
@@ -317,7 +317,6 @@ export function LeaderboardClient() {
                 ({stats.tierPercents[stats.topTier!]}%)
               </span>
             </motion.p>
-            <p className="font-lab-body mt-3 text-sm text-white/70">{t("tapTierHint")}</p>
           </motion.section>
 
           {/* Interactive tier board */}
@@ -518,8 +517,6 @@ export function LeaderboardClient() {
               </motion.div>
             </div>
           </section>
-
-          <p className="text-lab-on-surface-variant text-center text-sm leading-relaxed">{t("disclaimer")}</p>
 
           <motion.div
             className="text-center"

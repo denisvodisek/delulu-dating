@@ -104,7 +104,7 @@ export function MethodologyClient() {
   const reduced = useReducedMotion() ?? false;
 
   return (
-    <main className="relative mx-auto flex w-full max-w-[min(100%,40rem)] flex-1 flex-col gap-10 px-4 pt-24 pb-16 sm:gap-12 sm:px-6 md:max-w-3xl lg:max-w-[56rem] lg:px-8 lg:pb-20">
+    <main className="relative mx-auto flex w-full max-w-[min(100%,40rem)] flex-1 flex-col gap-10 px-4 pt-32 pb-16 sm:gap-12 sm:px-6 md:max-w-3xl md:pt-36 lg:max-w-[56rem] lg:px-8 lg:pb-20">
       <FloatingBlob
         reduced={reduced}
         className="top-8 -left-8 h-28 w-28 bg-[#30c7ff]/40"

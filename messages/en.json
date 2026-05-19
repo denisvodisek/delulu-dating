@@ -375,7 +375,6 @@
     "badge": "Live crowd data",
     "loading": "Crunching the crowd…",
     "hallLabel": "Crowd verdict",
-    "tapTierHint": "Tap any tier for the tea ☕",
     "averagesTitle": "What the crowd demands (on average)",
     "seekerTap": "Tap a side to spotlight who’s searching",
     "seekerWomenDetail": "{n} runs: women filtering men",
@@ -421,7 +420,6 @@
     "filterRoast_noKidsFromPrev": "Baggage filter: activated.",
     "filterRoast_requiresOwnFlat": "Property ladder or bust.",
     "filterRoast_requiresCar": "Yes, a car. In Hong Kong. Bold.",
-    "disclaimer": "Percentages and averages only — we never show how many people took the quiz.",
     "cta": "Run the calculator"
   },
   "bd": {
