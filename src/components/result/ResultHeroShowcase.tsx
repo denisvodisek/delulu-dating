@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { motion, useSpring } from "motion/react";
 import { useTranslations } from "next-intl";
+import { ShareExportButtonPair } from "@/components/result/ShareExportButtonPair";
 import { AnalogCounter } from "@/components/ui/AnalogCounter";
 import { cn } from "@/lib/utils";
-import { HK_TOTAL_POPULATION } from "@/lib/pool-reality-funnel";
 import type { Seeker } from "@/lib/types/quiz";
 
 type Props = {
@@ -16,13 +16,12 @@ type Props = {
   n: number;
   oddsPastUiCeil: boolean;
   pctLabel: string;
-  /** 18–65 dating-universe headcount (before user's filters). */
-  poolTotal: number;
+  onDownloadResults?: () => void;
   onShareResults?: () => void;
-  shareResultsBusy?: boolean;
-  shareResultsLabel: string;
-  shareResultsHint: string;
-  shareResultsWorkingLabel: string;
+  exportBusy?: boolean;
+  downloadLabel: string;
+  shareLabel: string;
+  exportWorkingLabel: string;
 };
 
 export function ResultHeroShowcase({
@@ -32,12 +31,12 @@ export function ResultHeroShowcase({
   n,
   oddsPastUiCeil,
   pctLabel,
-  poolTotal,
+  onDownloadResults,
   onShareResults,
-  shareResultsBusy = false,
-  shareResultsLabel,
-  shareResultsHint,
-  shareResultsWorkingLabel,
+  exportBusy = false,
+  downloadLabel,
+  shareLabel,
+  exportWorkingLabel,
 }: Props) {
   const t = useTranslations("result");
   const loc = locale === "zh" ? "zh-HK" : "en-US";
@@ -82,10 +81,6 @@ export function ResultHeroShowcase({
 
   const post =
     seeker === "woman_seeking_man" ? t("heroPoolPost_male") : t("heroPoolPost_female");
-  const poolContext =
-    seeker === "woman_seeking_man"
-      ? t("heroPoolContext_male", { total: poolTotal, city: HK_TOTAL_POPULATION })
-      : t("heroPoolContext_female", { total: poolTotal, city: HK_TOTAL_POPULATION });
   const chanceLine = t(
     seeker === "woman_seeking_man" ? "heroChanceLine_male" : "heroChanceLine_female",
     { pct: pctLabel },
@@ -135,9 +130,6 @@ export function ResultHeroShowcase({
             >
               {post}
             </p>
-            <p className="font-lab-body text-lab-on-surface-variant max-w-lg text-sm leading-relaxed sm:text-base">
-              {poolContext}
-            </p>
           </motion.div>
 
           <motion.div
@@ -160,7 +152,7 @@ export function ResultHeroShowcase({
                 className="absolute -inset-[1px] rounded-3xl bg-gradient-to-br from-[#30c7ff] via-[#7ddcff] to-[#ff8add] opacity-90 blur-[2px]"
                 style={{ transform: "translateZ(-4px)" }}
               />
-              <div className="relative rounded-3xl border-2 border-lab-on-surface/12 bg-white/90 px-6 py-7 shadow-[0_24px_64px_-20px_rgba(48,199,255,0.35),0_12px_40px_-16px_rgba(255,138,221,0.2)] backdrop-blur-md sm:px-8 sm:py-8">
+              <div className="relative rounded-3xl border-2 border-lab-on-surface/12 bg-white/90 px-6 py-7 text-left shadow-[0_24px_64px_-20px_rgba(48,199,255,0.35),0_12px_40px_-16px_rgba(255,138,221,0.2)] backdrop-blur-md sm:px-8 sm:py-8">
                 <p className="font-lab-mono text-lab-on-surface-variant text-[10px] font-semibold tracking-[0.22em] uppercase md:text-[11px]">
                   {t("heroOddsEyebrow")}
                 </p>
@@ -172,27 +164,23 @@ export function ResultHeroShowcase({
                 >
                   {oneInLine}
                 </p>
-                <p className="font-lab-body text-lab-on-surface mt-5 text-center text-sm leading-relaxed sm:text-base">
+                <p className="font-lab-body text-lab-on-surface mt-5 text-left text-sm leading-relaxed sm:text-base">
                   {chanceLine}
                 </p>
               </div>
             </motion.div>
           </motion.div>
 
-          {onShareResults ? (
-            <div className="mt-8 flex flex-col items-center gap-2">
-              <button
-                type="button"
-                disabled={shareResultsBusy}
-                onClick={onShareResults}
-                className="puffy-btn puffy-btn-lg flex w-full max-w-sm items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-70"
-              >
-                <span className="material-symbols-outlined text-base">share</span>
-                {shareResultsBusy ? shareResultsWorkingLabel : shareResultsLabel}
-              </button>
-              <p className="font-lab-body text-lab-on-surface-variant max-w-sm text-center text-xs leading-relaxed">
-                {shareResultsHint}
-              </p>
+          {onDownloadResults && onShareResults ? (
+            <div className="mt-8 flex justify-center">
+              <ShareExportButtonPair
+                onDownload={onDownloadResults}
+                onShare={onShareResults}
+                downloadLabel={downloadLabel}
+                shareLabel={shareLabel}
+                workingLabel={exportWorkingLabel}
+                busy={exportBusy}
+              />
             </div>
           ) : null}
 

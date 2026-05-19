@@ -16,10 +16,11 @@ import { ResultHeroShowcase } from "@/components/result/ResultHeroShowcase";
 import { PoolRealityFunnelBlock } from "@/components/result/PoolRealityFunnelBlock";
 import { ResultDiagnosisExportCard } from "@/components/result/ResultDiagnosisExportCard";
 import { ResultStoryExportCard } from "@/components/result/ResultStoryExportCard";
-import { shareExportImage } from "@/lib/share-export-image";
+import { ShareExportButtonPair } from "@/components/result/ShareExportButtonPair";
+import { downloadExportImage, shareExportImage } from "@/lib/share-export-image";
 import { formatFiltrationSelection } from "@/lib/quiz-filtration-selection";
 import { buildPoolRealityFunnel } from "@/lib/pool-reality-funnel";
-import { basePoolForSeeker, buildFiltrationDebt } from "@/lib/result-filtration";
+import { buildFiltrationDebt } from "@/lib/result-filtration";
 
 type Snapshot = { calc: CalculationResult; seeker: Seeker };
 
@@ -49,8 +50,8 @@ export default function ResultClient({
   const historySaved = useRef(false);
   const footerRef = useRef<HTMLElement>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
-  const [shareResultsBusy, setShareResultsBusy] = useState(false);
-  const [shareDiagnosisBusy, setShareDiagnosisBusy] = useState(false);
+  const [resultsExportBusy, setResultsExportBusy] = useState(false);
+  const [diagnosisExportBusy, setDiagnosisExportBusy] = useState(false);
   const confettiLaunched = useRef(false);
   const storyExportRef = useRef<HTMLDivElement>(null);
   const diagnosisExportRef = useRef<HTMLDivElement>(null);
@@ -152,26 +153,48 @@ export default function ResultClient({
     return () => observer.disconnect();
   }, []);
 
+  async function downloadResultsImage() {
+    if (!snap || !storyExportRef.current) return;
+    setResultsExportBusy(true);
+    const outcome = await downloadExportImage(storyExportRef.current, "delulu-results.png");
+    void trackEvent("result_share_clicked", {
+      channel: `results_download_${outcome}`,
+      locale,
+    });
+    setResultsExportBusy(false);
+  }
+
   async function shareResultsImage() {
     if (!snap || !storyExportRef.current) return;
-    setShareResultsBusy(true);
+    setResultsExportBusy(true);
     const outcome = await shareExportImage(storyExportRef.current, "delulu-results.png");
     void trackEvent("result_share_clicked", {
       channel: `results_${outcome}`,
       locale,
     });
-    setShareResultsBusy(false);
+    setResultsExportBusy(false);
+  }
+
+  async function downloadDiagnosisImage() {
+    if (!snap || !diagnosisExportRef.current) return;
+    setDiagnosisExportBusy(true);
+    const outcome = await downloadExportImage(diagnosisExportRef.current, "delulu-diagnosis.png");
+    void trackEvent("result_share_clicked", {
+      channel: `diagnosis_download_${outcome}`,
+      locale,
+    });
+    setDiagnosisExportBusy(false);
   }
 
   async function shareDiagnosisImage() {
     if (!snap || !diagnosisExportRef.current) return;
-    setShareDiagnosisBusy(true);
+    setDiagnosisExportBusy(true);
     const outcome = await shareExportImage(diagnosisExportRef.current, "delulu-diagnosis.png");
     void trackEvent("result_share_clicked", {
       channel: `diagnosis_${outcome}`,
       locale,
     });
-    setShareDiagnosisBusy(false);
+    setDiagnosisExportBusy(false);
   }
 
   if (!snap) {
@@ -194,17 +217,17 @@ export default function ResultClient({
     1 / calc.probability > MAX_ONE_IN_DISPLAY;
 
   const debtRows = buildFiltrationDebt(seeker, calc.breakdown);
-  const basePool = basePoolForSeeker(seeker);
   const funnelSteps = buildPoolRealityFunnel(seeker);
   const sev = severityPercent(calc.tier);
   const alarming = sev >= 74;
 
   const answers = loadQuiz();
-  const plainHeadline = t(`labPlainHeadline_${calc.tier}` as "labPlainHeadline_realistic");
   const plainExplain = t(`labPlainExplain_${calc.tier}` as "labPlainExplain_realistic");
   const stageTitle = t(`labStageTitle_${calc.tier}` as "labStageTitle_realistic");
-  const stageBody = t(`labStageBody_${calc.tier}` as "labStageBody_realistic");
   const tagsRaw = t(`labTags_${calc.tier}` as "labTags_realistic");
+  const poolPre = t("heroPoolKicker");
+  const poolPost =
+    seeker === "woman_seeking_man" ? t("heroPoolPost_male") : t("heroPoolPost_female");
   const tags = tagsRaw.split("|").map((s) => s.trim());
 
   const tightest = [...calc.breakdown]
@@ -234,12 +257,12 @@ export default function ResultClient({
         n={n}
         oddsPastUiCeil={oddsPastUiCeil}
         pctLabel={pctLabel}
-        poolTotal={basePool}
+        onDownloadResults={() => void downloadResultsImage()}
         onShareResults={() => void shareResultsImage()}
-        shareResultsBusy={shareResultsBusy}
-        shareResultsLabel={ts("shareResults")}
-        shareResultsHint={ts("shareResultsHint")}
-        shareResultsWorkingLabel={ts("storyImageWorking")}
+        exportBusy={resultsExportBusy}
+        downloadLabel={ts("downloadImage")}
+        shareLabel={ts("shareImage")}
+        exportWorkingLabel={ts("storyImageWorking")}
       />
 
       <section className="grid min-h-[600px] w-full grid-cols-1 border-lab-outline-variant bg-lab-surface/80 px-4 md:grid-cols-12 md:items-start md:px-16">
@@ -255,13 +278,10 @@ export default function ResultClient({
                 <p className="font-lab-mono text-lab-on-surface-variant mb-1 text-xs font-semibold uppercase">
                   {tierLabel}
                 </p>
-                <h3 className="font-lab-display text-lab-on-surface mb-2 text-3xl font-bold leading-tight md:text-4xl">
-                  {plainHeadline}
-                </h3>
-                <p className="font-lab-body text-lab-on-surface mb-3 text-sm leading-relaxed">{plainExplain}</p>
-                <p className="font-lab-mono text-lab-on-surface-variant/80 mb-4 text-[11px] font-medium italic">
+                <h3 className="font-lab-display text-lab-on-surface mb-3 text-2xl font-bold leading-tight md:text-3xl">
                   {stageTitle}
-                </p>
+                </h3>
+                <p className="font-lab-body text-lab-on-surface mb-4 text-sm leading-relaxed">{plainExplain}</p>
                 <div className="mb-6 flex flex-wrap gap-2">
                   {tags.map((tag) => (
                     <span
@@ -272,7 +292,17 @@ export default function ResultClient({
                     </span>
                   ))}
                 </div>
-                <p className="font-lab-body text-lab-on-surface-variant mb-8 text-sm leading-relaxed">{stageBody}</p>
+                <div className="mb-8 rounded-2xl border-2 border-lab-on-surface/12 bg-lab-surface-container-lowest/80 px-4 py-4 text-center">
+                  <p className="font-lab-mono text-lab-on-surface-variant text-[10px] font-semibold tracking-[0.18em] uppercase">
+                    {poolPre}
+                  </p>
+                  <p className="font-lab-display mt-1 text-3xl font-bold tabular-nums text-lab-primary">
+                    {calc.estimatedMatches.toLocaleString(locale === "zh" ? "zh-HK" : "en-US")}
+                  </p>
+                  <p className="font-lab-display text-lab-on-surface mt-1 text-sm font-bold uppercase">
+                    {poolPost}
+                  </p>
+                </div>
                 <p className="font-lab-mono text-lab-on-surface-variant mb-2 text-xs font-semibold uppercase tracking-wide">
                   {t("labSeverityLabel")}
                 </p>
@@ -314,18 +344,16 @@ export default function ResultClient({
             <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
               {t("labTransmit")}
             </p>
-            <button
-              type="button"
-              disabled={shareDiagnosisBusy}
-              onClick={() => void shareDiagnosisImage()}
-              className="puffy-btn puffy-btn-lg puffy-btn-soft flex w-full items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-70"
-            >
-              <span className="material-symbols-outlined text-base">medical_services</span>
-              {shareDiagnosisBusy ? ts("storyImageWorking") : ts("shareDiagnosis")}
-            </button>
-            <p className="text-lab-on-surface-variant text-center font-lab-body text-[11px] leading-relaxed opacity-90">
-              {ts("shareDiagnosisHint")}
-            </p>
+            <ShareExportButtonPair
+              onDownload={() => void downloadDiagnosisImage()}
+              onShare={() => void shareDiagnosisImage()}
+              downloadLabel={ts("downloadImage")}
+              shareLabel={ts("shareImage")}
+              workingLabel={ts("storyImageWorking")}
+              busy={diagnosisExportBusy}
+              soft
+              fullWidth
+            />
           </div>
         </aside>
 
@@ -338,7 +366,7 @@ export default function ResultClient({
               {t("labDebtTitle")}
             </h2>
             <p className="text-lab-on-surface-variant font-lab-body text-base leading-relaxed">
-              {t("labDebtSub", { base: basePool })}
+              {t("labDebtSub")}
             </p>
           </div>
 
@@ -539,10 +567,11 @@ export default function ResultClient({
           locale={locale}
           clinicalLabel={t("labClinicalLabel")}
           tierLabel={tierLabel}
-          headline={plainHeadline}
+          headline={stageTitle}
           explain={plainExplain}
-          stageTitle={stageTitle}
-          stageBody={stageBody}
+          poolPre={poolPre}
+          poolCount={calc.estimatedMatches}
+          poolPost={poolPost}
           tags={tags}
           severityLabel={t("labSeverityLabel")}
           severityPct={sev}

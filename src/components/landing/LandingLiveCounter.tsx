@@ -108,9 +108,6 @@ export function LandingLiveCounter() {
         {t("liveCounterLabel")}
       </p>
       <AnalogCounter value={display} locale={loc} size="hero" darkSeparators />
-      <p className="font-lab-body text-lab-on-surface-variant mt-3 text-sm leading-relaxed">
-        {t("liveCounterSub")}
-      </p>
     </div>
   );
 }
