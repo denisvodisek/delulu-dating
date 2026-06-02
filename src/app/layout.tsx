@@ -45,6 +45,11 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
           rel="stylesheet"
         />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4524750683541633"
+          crossOrigin="anonymous"
+        ></script>
       </head>
       <body className={`${dmSans.className} flex min-h-full flex-col antialiased`}>{children}</body>
     </html>
