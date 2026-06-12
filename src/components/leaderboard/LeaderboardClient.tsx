@@ -6,8 +6,15 @@ import { motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { TIER_ORDER, type LeaderboardStats } from "@/lib/runs-leaderboard";
+import { TIER_ORDER, type CrowdSliceStats, type LeaderboardStats, type SeekerKey } from "@/lib/runs-leaderboard";
 import type { DeluluTier } from "@/lib/supabase/database.types";
+
+type SeekerFilter = "all" | SeekerKey;
+
+function viewForFilter(stats: LeaderboardStats, filter: SeekerFilter): CrowdSliceStats {
+  if (filter === "all") return stats;
+  return stats.bySeeker[filter];
+}
 
 type ApiResponse = {
   ok: boolean;
@@ -139,6 +146,7 @@ export function LeaderboardClient() {
   const [stats, setStats] = useState<LeaderboardStats | null>(null);
   const [activeTier, setActiveTier] = useState<DeluluTier | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterKey | null>(null);
+  const [activeSeeker, setActiveSeeker] = useState<SeekerFilter>("all");
 
   useEffect(() => {
     let cancelled = false;
@@ -175,11 +183,13 @@ export function LeaderboardClient() {
         transformOrigin: "left center",
       },
     );
-  }, [stats?.hasData, reduced]);
+  }, [stats?.hasData, reduced, activeSeeker]);
 
-  const topMarital = stats ? topKey(stats.marital) : null;
-  const topEducation = stats ? topKey(stats.educationMin) : null;
-  const topExpat = stats ? topKey(stats.expatPreference) : null;
+  const view = stats ? viewForFilter(stats, activeSeeker) : null;
+
+  const topMarital = view ? topKey(view.marital) : null;
+  const topEducation = view ? topKey(view.educationMin) : null;
+  const topExpat = view ? topKey(view.expatPreference) : null;
 
   const filterLabel: Record<FilterKey, string> = {
     noSmoking: t("filterNoSmoking"),
@@ -189,9 +199,17 @@ export function LeaderboardClient() {
   };
 
   const filterPct = (key: FilterKey) => {
-    if (!stats) return 0;
-    return stats.filterRates[key];
+    if (!view) return 0;
+    return view.filterRates[key];
   };
+
+  function pickSeeker(next: SeekerFilter) {
+    setActiveSeeker(next);
+    if (!stats) return;
+    const slice = viewForFilter(stats, next);
+    if (slice.topTier) setActiveTier(slice.topTier);
+    setActiveFilter(null);
+  }
 
   return (
     <main className="relative mx-auto w-full max-w-4xl px-4 pt-32 pb-24 md:px-8 md:pt-36">
@@ -284,12 +302,74 @@ export function LeaderboardClient() {
         </motion.div>
       )}
 
-      {!loading && stats?.hasData && activeTier && (
+      {!loading && stats?.hasData && (
         <motion.div
           className="space-y-10"
           initial={reduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
         >
+          {/* Who ran the quiz — participation split */}
+          <section className="rounded-3xl border-4 border-lab-on-surface/15 bg-white/95 p-6 shadow-[0_10px_0_rgba(10,31,45,0.07)] md:p-8">
+            <h2 className="font-lab-display flex items-center gap-2 text-2xl font-black tracking-tight uppercase">
+              <span className="material-symbols-outlined text-lab-primary">pie_chart</span>
+              {t("seekerSplitTitle")}
+            </h2>
+            <p className="text-lab-on-surface-variant font-lab-body mt-2 text-sm">{t("seekerTap")}</p>
+
+            <div className="mt-6 h-4 overflow-hidden rounded-full bg-lab-surface-container-high">
+              <div className="flex h-full w-full">
+                <div
+                  className="h-full bg-gradient-to-r from-[#ff8add] to-[#e879f9] transition-[width] duration-500"
+                  style={{ width: `${stats.seekerPercents.woman_seeking_man}%` }}
+                />
+                <div
+                  className="h-full bg-gradient-to-r from-[#30c7ff] to-[#38bdf8] transition-[width] duration-500"
+                  style={{ width: `${stats.seekerPercents.man_seeking_woman}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <SeekerSplitCard
+                active={activeSeeker === "woman_seeking_man"}
+                pct={stats.seekerPercents.woman_seeking_man}
+                label={t("seekerWomenPct", { pct: stats.seekerPercents.woman_seeking_man })}
+                sub={t("seekerWomenSub")}
+                detail={t("seekerWomenDetail", { n: stats.seekerCounts.woman_seeking_man })}
+                accent="from-[#ff8add]/25 to-[#e879f9]/15"
+                reduced={reduced}
+                onClick={() => pickSeeker(activeSeeker === "woman_seeking_man" ? "all" : "woman_seeking_man")}
+              />
+              <SeekerSplitCard
+                active={activeSeeker === "man_seeking_woman"}
+                pct={stats.seekerPercents.man_seeking_woman}
+                label={t("seekerMenPct", { pct: stats.seekerPercents.man_seeking_woman })}
+                sub={t("seekerMenSub")}
+                detail={t("seekerMenDetail", { n: stats.seekerCounts.man_seeking_woman })}
+                accent="from-[#30c7ff]/25 to-[#38bdf8]/15"
+                reduced={reduced}
+                onClick={() => pickSeeker(activeSeeker === "man_seeking_woman" ? "all" : "man_seeking_woman")}
+              />
+            </div>
+
+            {activeSeeker !== "all" ? (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                <span className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
+                  {activeSeeker === "woman_seeking_man" ? t("filteredHint_woman") : t("filteredHint_man")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => pickSeeker("all")}
+                  className="font-lab-mono rounded-full border-2 border-lab-on-surface bg-lab-surface-container-lowest px-3 py-1 text-[10px] font-semibold uppercase tracking-wide transition-colors hover:bg-lab-primary/15"
+                >
+                  {t("seekerAll")}
+                </button>
+              </div>
+            ) : null}
+          </section>
+
+          {view?.hasData && activeTier ? (
+            <>
           {/* Hall of delulu — hero stat */}
           <motion.section
             layout
@@ -301,20 +381,22 @@ export function LeaderboardClient() {
               transition={{ duration: 3.5, repeat: Infinity }}
               aria-hidden
             >
-              {TIER_ICON[stats.topTier ?? activeTier]}
+              {TIER_ICON[view.topTier ?? activeTier]}
             </motion.span>
             <p className="font-lab-mono text-xs font-semibold tracking-[0.2em] text-white/70 uppercase">
               {t("hallLabel")}
             </p>
             <motion.p
-              key={stats.topTier}
+              key={`${activeSeeker}-${view.topTier}`}
               initial={reduced ? false : { opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               className="font-lab-display mt-4 text-2xl font-extrabold tracking-tight uppercase md:text-4xl"
             >
-              {t("topTierLine", { tier: tResult(`tier_${stats.topTier}`) })}
+              {view.topTier
+                ? t("topTierLine", { tier: tResult(`tier_${view.topTier}`) })
+                : t("topTierLine", { tier: tResult(`tier_${activeTier}`) })}
               <span className="text-lab-primary ml-2 text-lg md:text-xl">
-                ({stats.tierPercents[stats.topTier!]}%)
+                ({view.topTier ? view.tierPercents[view.topTier] : stats.tierPercents[activeTier]}%)
               </span>
             </motion.p>
           </motion.section>
@@ -328,8 +410,8 @@ export function LeaderboardClient() {
             <ul ref={tierListRef} className="mt-8 space-y-3">
               {TIER_ORDER.map((tier, index) => {
                 const active = activeTier === tier;
-                const pct = stats.tierPercents[tier];
-                const hasTier = stats.tierCounts[tier] > 0;
+                const pct = view.tierPercents[tier];
+                const hasTier = view.tierCounts[tier] > 0;
                 return (
                   <li key={tier}>
                     <motion.button
@@ -393,29 +475,33 @@ export function LeaderboardClient() {
           {/* Averages — hover lift cards */}
           <section>
             <h2 className="font-lab-display mb-5 text-2xl font-black tracking-tight uppercase">
-              {t("averagesTitle")}
+              {activeSeeker === "woman_seeking_man"
+                ? t("averagesTitle_woman")
+                : activeSeeker === "man_seeking_woman"
+                  ? t("averagesTitle_man")
+                  : t("averagesTitle")}
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <StatCard
                 icon="height"
                 title={t("avgHeight")}
                 value={
-                  stats.averages.minHeightCm != null ? `${stats.averages.minHeightCm} cm` : "—"
+                  view.averages.minHeightCm != null ? `${view.averages.minHeightCm} cm` : "—"
                 }
                 reduced={reduced}
               />
               <StatCard
                 icon="payments"
                 title={t("avgIncome")}
-                value={formatHkd(stats.averages.minMonthlyIncomeHKD, locale)}
+                value={formatHkd(view.averages.minMonthlyIncomeHKD, locale)}
                 reduced={reduced}
               />
               <StatCard
                 icon="cake"
                 title={t("avgAge")}
                 value={
-                  stats.averages.ageMin != null && stats.averages.ageMax != null
-                    ? t("ageRange", { min: stats.averages.ageMin, max: stats.averages.ageMax })
+                  view.averages.ageMin != null && view.averages.ageMax != null
+                    ? t("ageRange", { min: view.averages.ageMin, max: view.averages.ageMax })
                     : "—"
                 }
                 reduced={reduced}
@@ -530,10 +616,54 @@ export function LeaderboardClient() {
               </Link>
             </span>
           </motion.div>
+            </>
+          ) : activeSeeker !== "all" ? (
+            <div className="rounded-3xl border-4 border-dashed border-lab-on-surface/20 bg-white/90 p-10 text-center">
+              <p className="font-lab-body text-lg text-lab-on-surface-variant">{t("seekerSliceEmpty")}</p>
+            </div>
+          ) : null}
         </motion.div>
       )}
       </div>
     </main>
+  );
+}
+
+function SeekerSplitCard({
+  active,
+  label,
+  sub,
+  detail,
+  accent,
+  reduced,
+  onClick,
+}: {
+  active: boolean;
+  pct: number;
+  label: string;
+  sub: string;
+  detail: string;
+  accent: string;
+  reduced: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileHover={reduced ? undefined : { y: -2 }}
+      whileTap={reduced ? undefined : { scale: 0.98 }}
+      className={cn(
+        "rounded-2xl border-2 p-5 text-left transition-shadow",
+        active
+          ? "border-lab-on-surface bg-lab-primary/15 shadow-[0_8px_0_rgba(10,31,45,0.08)] ring-2 ring-lab-primary/30"
+          : cn("border-lab-on-surface/12 bg-gradient-to-br hover:border-lab-primary/35", accent),
+      )}
+    >
+      <p className="font-lab-display text-3xl font-black tabular-nums">{label}</p>
+      <p className="font-lab-body mt-1 text-sm font-semibold text-lab-on-surface">{sub}</p>
+      <p className="text-lab-on-surface-variant mt-2 text-xs">{detail}</p>
+    </motion.button>
   );
 }
 

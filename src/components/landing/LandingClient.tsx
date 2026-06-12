@@ -81,33 +81,17 @@ export default function LandingClient() {
                 <span className="inline-block animate-pump-cta">
                   <Link
                     href="/quiz"
-                    onClick={() =>
-                      void trackEvent("landing_hero_cta_clicked", { locale, mode: "bf" })
-                    }
+                    onClick={() => void trackEvent("landing_hero_cta_clicked", { locale })}
                     className="puffy-btn puffy-btn-lg group inline-flex w-full items-center justify-center gap-2 sm:w-auto"
                   >
                     <span className="flex items-center gap-2">
-                      {t("heroCtaBf")}
+                      {t("ctaEnterLab")}
                       <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
                         arrow_forward
                       </span>
                     </span>
                   </Link>
                 </span>
-                <Link
-                  href={{ pathname: "/quiz", query: { mode: "gf" } }}
-                  onClick={() =>
-                    void trackEvent("landing_hero_cta_clicked", { locale, mode: "gf" })
-                  }
-                  className="puffy-btn puffy-btn-lg puffy-btn-soft group inline-flex w-full items-center justify-center gap-2 sm:w-auto"
-                >
-                  <span className="flex items-center gap-2">
-                    {t("heroCtaGf")}
-                    <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
-                      arrow_forward
-                    </span>
-                  </span>
-                </Link>
               </div>
             </div>
           </div>
