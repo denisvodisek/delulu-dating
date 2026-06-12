@@ -216,9 +216,17 @@ export default function ResultClient({
   }
 
   const { calc, seeker } = snap;
+  const girlfriendMode = seeker === "man_seeking_woman";
+  /** result.* keys with a `_m` girlfriend-mode variant */
+  const genderedResultKeys = new Set([
+    "tier_realistic",
+    "labPlainExplain_realistic",
+    "labPlainExplain_delulu",
+  ]);
+  const rk = (key: string) =>
+    (girlfriendMode && genderedResultKeys.has(key) ? `${key}_m` : key) as Parameters<typeof t>[0];
   const pctLabel = formatMatchPercent(calc.probability);
-  const tierKey = `tier_${calc.tier}` as const;
-  const tierLabel = t(tierKey);
+  const tierLabel = t(rk(`tier_${calc.tier}`));
   const n = oneInN(calc.probability);
   const oddsPastUiCeil =
     Number.isFinite(calc.probability) &&
@@ -232,7 +240,7 @@ export default function ResultClient({
   const alarming = sev >= 74;
 
   const answers = loadQuiz();
-  const plainExplain = t(`labPlainExplain_${calc.tier}` as "labPlainExplain_realistic");
+  const plainExplain = t(rk(`labPlainExplain_${calc.tier}`));
   const stageTitle = t(`labStageTitle_${calc.tier}` as "labStageTitle_realistic");
   const tagsRaw = t(`labTags_${calc.tier}` as "labTags_realistic");
   const poolPre = t("heroPoolKicker");

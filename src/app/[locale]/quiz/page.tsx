@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import QuizFlow from "@/components/quiz/QuizFlow";
@@ -19,5 +20,9 @@ export default async function QuizPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <QuizFlow />;
+  return (
+    <Suspense>
+      <QuizFlow />
+    </Suspense>
+  );
 }

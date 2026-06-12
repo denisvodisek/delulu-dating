@@ -1,5 +1,4 @@
-import { FEMALE_BASE_POOL } from "@/lib/calc/probability";
-import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
+import { BASE_FEMALE_POOL, BASE_MALE_POOL } from "@/lib/data/hk-demographics";
 import type { Seeker } from "@/lib/types/quiz";
 
 /** Mid-2020s Hong Kong resident population (order-of-magnitude for the funnel). */
@@ -28,11 +27,11 @@ export function buildPoolRealityFunnel(seeker: Seeker): PoolFunnelStep[] {
     ];
   }
 
-  const typicalBand = Math.round(FEMALE_BASE_POOL * TYPICAL_DATING_AGE_SHARE);
+  const typicalBand = Math.round(BASE_FEMALE_POOL * TYPICAL_DATING_AGE_SHARE);
   return [
     { key: "hk", labelKey: "funnelHkTotal", count: HK_TOTAL_POPULATION },
     { key: "sex", labelKey: "funnelWomenOppositeSex", count: oppositeSex },
-    { key: "dating", labelKey: "funnelWomenDatingAge", count: FEMALE_BASE_POOL },
+    { key: "dating", labelKey: "funnelWomenDatingAge", count: BASE_FEMALE_POOL },
     { key: "band", labelKey: "funnelWomenTypicalAges", count: typicalBand },
   ];
 }

@@ -7,9 +7,14 @@ import {
   FEMALE_BASE_POOL,
   tierFromProbability,
 } from "@/lib/calc/probability";
-import { DEFAULT_QUIZ, type QuizAnswersV1 } from "@/lib/types/quiz";
+import {
+  DEFAULT_QUIZ,
+  DEFAULT_QUIZ_MAN_SEEKING_WOMAN,
+  type QuizAnswersV1,
+} from "@/lib/types/quiz";
 
 const base: QuizAnswersV1 = { ...DEFAULT_QUIZ };
+const gfBase: QuizAnswersV1 = { ...DEFAULT_QUIZ_MAN_SEEKING_WOMAN };
 
 describe("calculateDelulu", () => {
   it("returns probability between 0 and 1", () => {
@@ -92,5 +97,56 @@ describe("calculateDelulu", () => {
     expect(tierFromProbability(0.005)).toBe("very_picky");
     expect(tierFromProbability(0.001)).toBe("delulu");
     expect(tierFromProbability(0.0001)).toBe("god");
+  });
+});
+
+describe("man_seeking_woman model", () => {
+  it("girlfriend-mode tap-through defaults land in picky (Stage 2) too", () => {
+    const r = calculateForSeeker(gfBase);
+    expect(r.tier).toBe("picky");
+    expect(r.probability).toBeGreaterThanOrEqual(0.02);
+    expect(r.probability).toBeLessThan(0.08);
+  });
+
+  it("gets stricter when female height bar increases", () => {
+    const low = calculateForSeeker({ ...gfBase, minHeightCm: 158 }).probability;
+    const high = calculateForSeeker({ ...gfBase, minHeightCm: 170 }).probability;
+    expect(high).toBeLessThan(low);
+  });
+
+  it("gets stricter when female income bar increases", () => {
+    const low = calculateForSeeker({ ...gfBase, minMonthlyIncomeHKD: 15000 }).probability;
+    const high = calculateForSeeker({ ...gfBase, minMonthlyIncomeHKD: 80000 }).probability;
+    expect(high).toBeLessThan(low);
+  });
+
+  it("non-smoker requirement cuts the women pool less than the men pool", () => {
+    const womenCut =
+      calculateForSeeker({ ...gfBase, noSmoking: true }).probability /
+      calculateForSeeker(gfBase).probability;
+    const menCut =
+      calculateDelulu({ ...base, noSmoking: true }).probability /
+      calculateDelulu(base).probability;
+    expect(womenCut).toBeGreaterThan(menCut);
+  });
+
+  it("car requirement cuts the women pool harder than the men pool", () => {
+    const womenCut =
+      calculateForSeeker({ ...gfBase, requiresCar: true }).probability /
+      calculateForSeeker(gfBase).probability;
+    const menCut =
+      calculateDelulu({ ...base, requiresCar: true }).probability /
+      calculateDelulu(base).probability;
+    expect(womenCut).toBeLessThan(menCut);
+  });
+
+  it("uses female factors end-to-end (education softer for women pool)", () => {
+    const womenDegree =
+      calculateForSeeker({ ...gfBase, educationMin: "degree" }).probability /
+      calculateForSeeker(gfBase).probability;
+    const menDegree =
+      calculateDelulu({ ...base, educationMin: "degree" }).probability /
+      calculateDelulu(base).probability;
+    expect(womenDegree).toBeGreaterThan(menDegree);
   });
 });

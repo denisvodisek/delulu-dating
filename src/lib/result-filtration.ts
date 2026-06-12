@@ -1,5 +1,4 @@
-import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
-import { FEMALE_BASE_POOL } from "@/lib/calc/probability";
+import { BASE_FEMALE_POOL, BASE_MALE_POOL } from "@/lib/data/hk-demographics";
 import type { BreakdownRow, Seeker } from "@/lib/types/quiz";
 
 export type FiltrationRow = {
@@ -13,7 +12,7 @@ export type FiltrationRow = {
 };
 
 export function basePoolForSeeker(seeker: Seeker): number {
-  return seeker === "man_seeking_woman" ? FEMALE_BASE_POOL : BASE_MALE_POOL;
+  return seeker === "man_seeking_woman" ? BASE_FEMALE_POOL : BASE_MALE_POOL;
 }
 
 /**

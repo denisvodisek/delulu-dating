@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { CircleNotch } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import { Slider } from "@/components/ui/slider";
 import { calculateDelulu } from "@/lib/calc/probability";
-import { BASE_MALE_POOL } from "@/lib/data/hk-demographics";
-import { DEFAULT_QUIZ, type CalculationResult, type QuizAnswersV1 } from "@/lib/types/quiz";
+import { basePoolForSeeker } from "@/lib/result-filtration";
+import {
+  defaultQuizFor,
+  type CalculationResult,
+  type QuizAnswersV1,
+  type Seeker,
+} from "@/lib/types/quiz";
 import { saveQuiz } from "@/lib/quiz-storage";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics/events";
@@ -107,14 +113,31 @@ function SegmentedTwo({
   );
 }
 
+/** Per-seeker slider calibration — each pool gets ranges anchored to its own curves */
+const HEIGHT_SLIDER: Record<Seeker, { min: number; max: number }> = {
+  woman_seeking_man: { min: 160, max: 195 },
+  man_seeking_woman: { min: 145, max: 182 },
+};
+
+const INCOME_SLIDER_MIN: Record<Seeker, number> = {
+  woman_seeking_man: 15000,
+  man_seeking_woman: 10000,
+};
+
+/** quiz.* keys that have a `_m` girlfriend-mode variant */
+const GENDERED_QUIZ_KEYS = new Set(["labStepFlat_line2", "labStepCar_line2", "flatHint"]);
+
 export default function QuizFlow() {
   const t = useTranslations("quiz");
   const tb = useTranslations("bd");
   const tr = useTranslations("reveal");
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialSeeker: Seeker =
+    searchParams.get("mode") === "gf" ? "man_seeking_woman" : "woman_seeking_man";
   const [step, setStep] = useState(0);
-  const [q, setQ] = useState<QuizAnswersV1>(DEFAULT_QUIZ);
+  const [q, setQ] = useState<QuizAnswersV1>(() => defaultQuizFor(initialSeeker));
   const [isRevealing, setIsRevealing] = useState(false);
   const [revealLines, setRevealLines] = useState<string[]>([]);
   const [revealIndex, setRevealIndex] = useState(0);
@@ -128,6 +151,20 @@ export default function QuizFlow() {
   const roastText = t(roastKey as Parameters<typeof t>[0]);
   const diffKey = difficultyKey(live.probability);
   const titleKeys = LAB_STEP_TITLE_KEYS[step]!;
+  const girlfriendMode = q.seeker === "man_seeking_woman";
+  const heightSlider = HEIGHT_SLIDER[q.seeker];
+  const incomeSliderMin = INCOME_SLIDER_MIN[q.seeker];
+
+  /** Resolve a quiz copy key to its girlfriend-mode variant when one exists */
+  const gk = (key: string): Parameters<typeof t>[0] =>
+    (girlfriendMode && GENDERED_QUIZ_KEYS.has(key) ? `${key}_m` : key) as Parameters<typeof t>[0];
+
+  function switchSeeker(next: Seeker) {
+    if (next === q.seeker) return;
+    setQ(defaultQuizFor(next));
+    setSliderPulse({ age: true, height: true, income: true });
+    void trackEvent("quiz_seeker_switched", { locale, seeker: next });
+  }
 
   useEffect(() => {
     void trackEvent("quiz_viewed", { locale, seeker: q.seeker });
@@ -167,7 +204,7 @@ export default function QuizFlow() {
 
   function buildRevealLog() {
     const lines = [tr("logIntro")];
-    let pool = BASE_MALE_POOL;
+    let pool = basePoolForSeeker(q.seeker);
     const rows = [...live.breakdown]
       .filter((row) => row.key !== "correlation")
       .sort((a, b) => a.factor - b.factor)
@@ -260,7 +297,7 @@ export default function QuizFlow() {
                 {t(titleKeys[0])}
                 <br />
                 <span className="text-lab-on-surface-variant text-xl normal-case italic md:text-2xl">
-                  {t(titleKeys[1])}
+                  {t(gk(titleKeys[1]))}
                 </span>
               </h1>
             </div>
@@ -304,6 +341,19 @@ export default function QuizFlow() {
           <div className="flex flex-col justify-center gap-10 bg-lab-surface-container-lowest/90 p-8 md:col-span-7 md:p-12">
             {step === 0 && (
               <div className="space-y-8">
+                <div className="space-y-3">
+                  <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
+                    {t("seekerPick")}
+                  </p>
+                  <SegmentedTwo
+                    aActive={!girlfriendMode}
+                    bActive={girlfriendMode}
+                    aLabel={t("seekerWoman")}
+                    bLabel={t("seekerMan")}
+                    onPickA={() => switchSeeker("woman_seeking_man")}
+                    onPickB={() => switchSeeker("man_seeking_woman")}
+                  />
+                </div>
                 <div className="flex items-end justify-between border-b border-lab-on-surface pb-2">
                   <span className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                     {t("labAgeBand")}
@@ -348,8 +398,8 @@ export default function QuizFlow() {
                 <div className={cn("rounded-full px-1 py-2", sliderPulse.height && "quiz-slider-pulse")}>
                   <Slider
                     value={[q.minHeightCm]}
-                    min={160}
-                    max={195}
+                    min={heightSlider.min}
+                    max={heightSlider.max}
                     step={1}
                     onValueChange={(v) => {
                       setSliderPulse((p) => ({ ...p, height: false }));
@@ -360,8 +410,8 @@ export default function QuizFlow() {
                   />
                 </div>
                 <div className="font-lab-mono text-lab-on-surface-variant flex justify-between text-[10px] uppercase tracking-widest">
-                  <span>{t("labHeightTickLo")}</span>
-                  <span>{t("labHeightTickHi")}</span>
+                  <span>{heightSlider.min} cm</span>
+                  <span>{heightSlider.max} cm</span>
                 </div>
               </div>
             )}
@@ -382,7 +432,7 @@ export default function QuizFlow() {
                 <div className={cn("rounded-full px-1 py-2", sliderPulse.income && "quiz-slider-pulse")}>
                   <Slider
                     value={[q.minMonthlyIncomeHKD]}
-                    min={15000}
+                    min={incomeSliderMin}
                     max={200000}
                     step={1000}
                     onValueChange={(v) => {
@@ -394,7 +444,7 @@ export default function QuizFlow() {
                   />
                 </div>
                 <div className="font-lab-mono text-lab-on-surface-variant flex justify-between text-[10px] uppercase tracking-widest">
-                  <span>{t("labIncomeTick15")}</span>
+                  <span>{girlfriendMode ? t("labIncomeTick10") : t("labIncomeTick15")}</span>
                   <span>{t("labIncomeTick100")}</span>
                   <span>{t("labIncomeTick200")}</span>
                 </div>
@@ -526,7 +576,7 @@ export default function QuizFlow() {
                 <p className="font-lab-mono text-lab-on-surface-variant text-xs font-semibold uppercase tracking-wide">
                   {t("labFlatPick")}
                 </p>
-                <p className="text-lab-on-surface-variant font-lab-body mb-2 text-sm">{t("flatHint")}</p>
+                <p className="text-lab-on-surface-variant font-lab-body mb-2 text-sm">{t(gk("flatHint"))}</p>
                 <SegmentedTwo
                   aActive={q.requiresOwnFlat}
                   bActive={!q.requiresOwnFlat}
@@ -582,7 +632,7 @@ export default function QuizFlow() {
           </button>
           <button
             type="button"
-            onClick={() => setQ(DEFAULT_QUIZ)}
+            onClick={() => setQ(defaultQuizFor(q.seeker))}
             disabled={isRevealing}
             className="font-lab-mono text-lab-on-surface-variant hover:text-lab-on-surface text-[10px] font-semibold uppercase tracking-wide underline-offset-4 hover:underline disabled:opacity-40"
           >

@@ -39,8 +39,11 @@ export default async function SharedResultPage({
   if (!data) notFound();
 
   const t = await getTranslations("result");
+  const girlfriendMode = data.s === "m";
   const pctLabel = formatMatchPercent(data.p);
-  const tier = t(`tier_${data.tier}` as const);
+  const tier = t(
+    girlfriendMode && data.tier === "realistic" ? "tier_realistic_m" : (`tier_${data.tier}` as const),
+  );
   const n = oneInN(data.p);
   const oddsPastUiCeil =
     Number.isFinite(data.p) &&
@@ -54,13 +57,15 @@ export default async function SharedResultPage({
         <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">delulu.dating</p>
         <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">{tier}</h1>
         <p className="font-lab-display mt-6 text-5xl font-black tracking-tight text-primary sm:text-6xl">
-          {oddsPastUiCeil ? t("oneInCapped", { n }) : t("oneIn", { n })}
+          {oddsPastUiCeil
+            ? t(girlfriendMode ? "oneInCapped_female" : "oneInCapped", { n })
+            : t(girlfriendMode ? "oneIn_female" : "oneIn", { n })}
         </p>
         <p className="mt-3 text-sm text-muted-foreground">
-          {t("heroChanceLine_male", { pct: pctLabel })}
+          {t(girlfriendMode ? "heroChanceLine_female" : "heroChanceLine_male", { pct: pctLabel })}
         </p>
         <p className="mx-auto mt-5 max-w-md text-pretty text-sm text-muted-foreground">
-          {t("poolExplainer", { count: data.n })}
+          {t(girlfriendMode ? "poolExplainer_female" : "poolExplainer", { count: data.n })}
         </p>
       </Card>
 

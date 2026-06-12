@@ -1,20 +1,28 @@
 /**
- * Hong Kong demographic constants for "woman seeking man" dating pool estimates.
+ * Hong Kong demographic constants for both seeker modes
+ * ("woman seeking man" day-1 model + "man seeking woman" v2 model).
  * Sources (see /methodology):
  * - Census 2021 population / district profiles (censtatd.gov.hk)
- * - AEHS 2024 male wage percentiles (info.gov.hk / censtatd)
- * - Population Health Survey 2014/15 male mean height 169.5 cm (chp.gov.hk) — still the clean published male mean bundle for curve-fitting; replace when CHP issues a newer one
- * - Anthropometric literature: SD ~5.8 cm for HK Chinese adult males (cityu.edu.hk anthropometry chapter)
+ * - AEHS 2024 male/female wage percentiles (info.gov.hk / censtatd)
+ * - Population Health Survey 2014/15 mean heights: male 169.5 cm, female 158.7 cm (chp.gov.hk)
+ * - Anthropometric literature: SD ~5.8 cm (male) / ~5.5 cm (female) for HK Chinese adults
  */
 
-import type { ExpatPreference } from "@/lib/types/quiz";
+import type { EducationMin, ExpatPreference, MaritalPreference } from "@/lib/types/quiz";
 
 /** Rough count of HK-resident males aged 18–65 in the "dating pool" universe */
 export const BASE_MALE_POOL = 1_850_000;
 
+/** Rough count of HK-resident females aged 18–65 (HK skews female, ~840 men per 1,000 women) */
+export const BASE_FEMALE_POOL = 1_950_000;
+
 /** Male height: normal model (cm) */
 export const HEIGHT_MEAN_CM = 169.5;
 export const HEIGHT_SD_CM = 5.8;
+
+/** Female height: normal model (cm) */
+export const FEMALE_HEIGHT_MEAN_CM = 158.7;
+export const FEMALE_HEIGHT_SD_CM = 5.5;
 
 /**
  * District keys → approximate share of BASE_MALE_POOL living in that district.
@@ -73,6 +81,17 @@ const MALE_WAGE_POINTS: { p: number; hk: number }[] = [
   { p: 0.99, hk: 105000 },
 ];
 
+/** AEHS-anchored female monthly wage percentiles (HK$) — slightly lower anchors than male */
+const FEMALE_WAGE_POINTS: { p: number; hk: number }[] = [
+  { p: 0.1, hk: 10300 },
+  { p: 0.25, hk: 14200 },
+  { p: 0.5, hk: 19800 },
+  { p: 0.75, hk: 30000 },
+  { p: 0.9, hk: 45500 },
+  { p: 0.95, hk: 62000 },
+  { p: 0.99, hk: 92000 },
+];
+
 /** Age window: rough share of male 18–65 population in inclusive [min,max] */
 export function maleAgeWindowFactor(ageMin: number, ageMax: number): number {
   const min = Math.max(18, Math.min(65, ageMin));
@@ -83,6 +102,18 @@ export function maleAgeWindowFactor(ageMin: number, ageMax: number): number {
   const uniform = span / full;
   const peakBoost =
     min <= 35 && max >= 28 ? 1.12 : min <= 40 && max >= 24 ? 1.06 : 1;
+  return Math.min(1, uniform * peakBoost);
+}
+
+/** Age window: rough share of female 18–65 population in inclusive [min,max] */
+export function femaleAgeWindowFactor(ageMin: number, ageMax: number): number {
+  const min = Math.max(18, Math.min(65, ageMin));
+  const max = Math.max(18, Math.min(65, ageMax));
+  if (max < min) return 0;
+  const span = max - min + 1;
+  const full = 65 - 18 + 1;
+  const uniform = span / full;
+  const peakBoost = min <= 33 && max >= 24 ? 1.08 : 1.02;
   return Math.min(1, uniform * peakBoost);
 }
 
@@ -111,18 +142,23 @@ export function maleHeightTail(minCm: number): number {
   return Math.max(0, Math.min(1, 1 - normalCdf(z)));
 }
 
-/** Tail probability for monthly wage >= min (male employees, HK$) */
-export function maleIncomeTail(minHkd: number): number {
-  if (minHkd <= MALE_WAGE_POINTS[0].hk) return 1;
-  if (minHkd >= MALE_WAGE_POINTS[MALE_WAGE_POINTS.length - 1].hk) {
-    const last = MALE_WAGE_POINTS[MALE_WAGE_POINTS.length - 1];
+/** P(height >= minCm) for HK females */
+export function femaleHeightTail(minCm: number): number {
+  const z = (minCm - FEMALE_HEIGHT_MEAN_CM) / FEMALE_HEIGHT_SD_CM;
+  return Math.max(0, Math.min(1, 1 - normalCdf(z)));
+}
+
+function wageTail(points: { p: number; hk: number }[], minHkd: number): number {
+  if (minHkd <= points[0].hk) return 1;
+  if (minHkd >= points[points.length - 1].hk) {
+    const last = points[points.length - 1];
     const ratio = minHkd / last.hk;
     const tail = 1 - last.p;
     return Math.max(0.0001, tail * Math.exp(-1.2 * (ratio - 1)));
   }
-  for (let i = 0; i < MALE_WAGE_POINTS.length - 1; i++) {
-    const a = MALE_WAGE_POINTS[i];
-    const b = MALE_WAGE_POINTS[i + 1];
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i];
+    const b = points[i + 1];
     if (minHkd >= a.hk && minHkd <= b.hk) {
       const t = (minHkd - a.hk) / (b.hk - a.hk);
       const pAt = a.p + t * (b.p - a.p);
@@ -130,6 +166,16 @@ export function maleIncomeTail(minHkd: number): number {
     }
   }
   return 0.01;
+}
+
+/** Tail probability for monthly wage >= min (male employees, HK$) */
+export function maleIncomeTail(minHkd: number): number {
+  return wageTail(MALE_WAGE_POINTS, minHkd);
+}
+
+/** Tail probability for monthly wage >= min (female employees, HK$) */
+export function femaleIncomeTail(minHkd: number): number {
+  return wageTail(FEMALE_WAGE_POINTS, minHkd);
 }
 
 /** Never married share blended with age window (simplified) */
@@ -150,7 +196,7 @@ export function notMarriedNowFactor(ageMin: number, ageMax: number): number {
 }
 
 export function maritalFactor(
-  pref: "never" | "not_married_ok" | "any",
+  pref: MaritalPreference,
   ageMin: number,
   ageMax: number,
 ): number {
@@ -159,10 +205,43 @@ export function maritalFactor(
   return notMarriedNowFactor(ageMin, ageMax);
 }
 
-export function educationFactor(min: "any" | "degree" | "postgrad"): number {
+/** Women marry slightly earlier in HK — never-married shares drop faster with age */
+function femaleNeverMarriedFactor(ageMin: number, ageMax: number): number {
+  const mid = (ageMin + ageMax) / 2;
+  if (mid < 26) return 0.6;
+  if (mid < 32) return 0.44;
+  if (mid < 40) return 0.3;
+  return 0.22;
+}
+
+function femaleNotMarriedNowFactor(ageMin: number, ageMax: number): number {
+  const mid = (ageMin + ageMax) / 2;
+  if (mid < 30) return 0.68;
+  if (mid < 40) return 0.52;
+  return 0.45;
+}
+
+export function femaleMaritalFactor(
+  pref: MaritalPreference,
+  ageMin: number,
+  ageMax: number,
+): number {
+  if (pref === "any") return 1;
+  if (pref === "never") return femaleNeverMarriedFactor(ageMin, ageMax);
+  return femaleNotMarriedNowFactor(ageMin, ageMax);
+}
+
+export function educationFactor(min: EducationMin): number {
   if (min === "any") return 1;
   if (min === "degree") return 0.36;
   return 0.14;
+}
+
+/** Younger HK women hold degrees at higher rates than men — softer education cut */
+export function femaleEducationFactor(min: EducationMin): number {
+  if (min === "any") return 1;
+  if (min === "degree") return 0.44;
+  return 0.16;
 }
 
 export function smokingFactor(requireNonSmoker: boolean): number {
@@ -170,9 +249,21 @@ export function smokingFactor(requireNonSmoker: boolean): number {
   return 0.9;
 }
 
+/** HK female daily-smoking prevalence is ~3% — non-smoker requirement barely cuts */
+export function femaleSmokingFactor(requireNonSmoker: boolean): number {
+  if (!requireNonSmoker) return 1;
+  return 0.97;
+}
+
 export function noKidsFactor(requireNoKids: boolean): number {
   if (!requireNoKids) return 1;
   return 0.72;
+}
+
+/** Mothers more often keep custody — “no kids from prev” bites slightly harder on the women pool */
+export function femaleNoKidsFactor(requireNoKids: boolean): number {
+  if (!requireNoKids) return 1;
+  return 0.68;
 }
 
 /**
@@ -184,12 +275,24 @@ export function ownFlatFactor(requireOwnFlat: boolean): number {
   return 0.11;
 }
 
+/** Illustrative prior: women sole-owning private property in the modeled pool */
+export function femaleOwnFlatFactor(requireOwnFlat: boolean): number {
+  if (!requireOwnFlat) return 1;
+  return 0.1;
+}
+
 /**
  * Illustrative: share of men in the modeled pool who keep a private car for regular use.
  */
 export function carFactor(requireCar: boolean): number {
   if (!requireCar) return 1;
   return 0.24;
+}
+
+/** Illustrative: HK driving-licence holding and car keeping skew male — thinner female slice */
+export function femaleCarFactor(requireCar: boolean): number {
+  if (!requireCar) return 1;
+  return 0.12;
 }
 
 export function districtUnionFactor(selectedKeys: string[]): number {

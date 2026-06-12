@@ -1,15 +1,17 @@
 import type { QuizAnswersV1 } from "@/lib/types/quiz";
-import { DEFAULT_QUIZ } from "@/lib/types/quiz";
+import { DEFAULT_QUIZ, defaultQuizFor } from "@/lib/types/quiz";
 
 const STORAGE_KEY = "delulu-dating-quiz-v1";
 
-/** Merge saved payloads with defaults (new filters, shape fixes). */
+/** Merge saved payloads with seeker-appropriate defaults (new filters, shape fixes). */
 export function normalizeQuiz(raw: Partial<QuizAnswersV1> | null | undefined): QuizAnswersV1 {
   if (!raw || typeof raw !== "object") return { ...DEFAULT_QUIZ };
   if ("version" in raw && raw.version !== 1) return { ...DEFAULT_QUIZ };
+  const seeker = raw.seeker === "man_seeking_woman" ? "man_seeking_woman" : "woman_seeking_man";
   return {
-    ...DEFAULT_QUIZ,
+    ...defaultQuizFor(seeker),
     ...raw,
+    seeker,
     version: 1,
   };
 }

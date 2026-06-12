@@ -5,6 +5,8 @@ export type SharedResultPayload = {
   n: number;
   tier: "realistic" | "picky" | "very_picky" | "delulu" | "god";
   ts: number;
+  /** Seeker mode: "w" = woman seeking man (default), "m" = man seeking woman */
+  s?: "w" | "m";
 };
 
 function clampNum(n: number, lo: number, hi: number): number {
@@ -54,6 +56,7 @@ export function decodeSharedResult(token: string): SharedResultPayload | null {
       n: clampNum(Math.round(data.n), 1, MAX_POOL_COUNT_DISPLAY),
       tier: data.tier,
       ts: clampNum(data.ts, 0, 9e15),
+      s: data.s === "m" ? "m" : "w",
     };
   } catch {
     return null;

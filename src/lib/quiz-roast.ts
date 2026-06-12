@@ -2,6 +2,7 @@ import type { QuizAnswersV1 } from "@/lib/types/quiz";
 
 /** next-intl key under `quiz.*` — roast line for the current step + answers */
 export function quizRoastKey(step: number, q: QuizAnswersV1): string {
+  const girlfriendMode = q.seeker === "man_seeking_woman";
   switch (step) {
     case 0: {
       const span = q.ageMax - q.ageMin;
@@ -10,12 +11,27 @@ export function quizRoastKey(step: number, q: QuizAnswersV1): string {
       return "roastAge_mid";
     }
     case 1: {
+      // Bands sit on each pool's own height curve (male mean ~169.5 cm, female mean ~158.7 cm)
+      if (girlfriendMode) {
+        if (q.minHeightCm >= 172) return "roastHeight_skyscraper_m";
+        if (q.minHeightCm >= 166) return "roastHeight_tall_m";
+        if (q.minHeightCm >= 161) return "roastHeight_mid_m";
+        return "roastHeight_chill_m";
+      }
       if (q.minHeightCm >= 182) return "roastHeight_skyscraper";
       if (q.minHeightCm >= 178) return "roastHeight_tall";
       if (q.minHeightCm >= 173) return "roastHeight_mid";
       return "roastHeight_chill";
     }
     case 2: {
+      // Female wage percentiles run lower — same roast lines, recalibrated cutoffs
+      if (girlfriendMode) {
+        if (q.minMonthlyIncomeHKD >= 80_000) return "roastIncome_unicorn";
+        if (q.minMonthlyIncomeHKD >= 55_000) return "roastIncome_elite";
+        if (q.minMonthlyIncomeHKD >= 35_000) return "roastIncome_comfy";
+        if (q.minMonthlyIncomeHKD >= 22_000) return "roastIncome_normal";
+        return "roastIncome_floor";
+      }
       if (q.minMonthlyIncomeHKD >= 100_000) return "roastIncome_unicorn";
       if (q.minMonthlyIncomeHKD >= 70_000) return "roastIncome_elite";
       if (q.minMonthlyIncomeHKD >= 45_000) return "roastIncome_comfy";

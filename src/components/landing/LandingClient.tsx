@@ -77,20 +77,38 @@ export default function LandingClient() {
               <p className="text-lab-on-surface-variant font-lab-body text-xl leading-relaxed md:text-[20px] md:leading-[30px]">
                 {t("heroBody")}
               </p>
-              <span className="inline-block animate-pump-cta">
-              <Link
-                href="/quiz"
-                onClick={() => void trackEvent("landing_hero_cta_clicked", { locale })}
-                className="puffy-btn puffy-btn-lg group inline-flex items-center gap-2"
-              >
-                <span className="flex items-center gap-2">
-                  {t("heroCta")}
-                  <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
-                    arrow_forward
-                  </span>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <span className="inline-block animate-pump-cta">
+                  <Link
+                    href="/quiz"
+                    onClick={() =>
+                      void trackEvent("landing_hero_cta_clicked", { locale, mode: "bf" })
+                    }
+                    className="puffy-btn puffy-btn-lg group inline-flex w-full items-center justify-center gap-2 sm:w-auto"
+                  >
+                    <span className="flex items-center gap-2">
+                      {t("heroCtaBf")}
+                      <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
+                        arrow_forward
+                      </span>
+                    </span>
+                  </Link>
                 </span>
-              </Link>
-              </span>
+                <Link
+                  href={{ pathname: "/quiz", query: { mode: "gf" } }}
+                  onClick={() =>
+                    void trackEvent("landing_hero_cta_clicked", { locale, mode: "gf" })
+                  }
+                  className="puffy-btn puffy-btn-lg puffy-btn-soft group inline-flex w-full items-center justify-center gap-2 sm:w-auto"
+                >
+                  <span className="flex items-center gap-2">
+                    {t("heroCtaGf")}
+                    <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
+                      arrow_forward
+                    </span>
+                  </span>
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -176,7 +194,11 @@ export default function LandingClient() {
                 const levelLabel = t(specimenLevelKey(run.tier));
                 const n = safeOneInInverse(run.probability);
                 const pool = safePoolCountDisplay(run.estimatedMatches);
-                const oneLine = tResult("oneIn", { n });
+                const girlfriendRun = run.answers.seeker === "man_seeking_woman";
+                const oneLine = tResult(girlfriendRun ? "oneIn_female" : "oneIn", { n });
+                const poolLine = tResult(girlfriendRun ? "estimatedPool_female" : "estimatedPool", {
+                  count: pool,
+                });
                 const shortId = run.id.slice(0, 8);
                 return (
                   <button
@@ -200,10 +222,14 @@ export default function LandingClient() {
                           <span className="border-lab-outline px-2 py-0.5">{formatWhen(run.savedAt)}</span>
                         </div>
                         <h4 className="font-lab-body text-lg leading-snug font-bold">
-                          {tResult(`tier_${run.tier}`)}
+                          {tResult(
+                            girlfriendRun && run.tier === "realistic"
+                              ? "tier_realistic_m"
+                              : `tier_${run.tier}`,
+                          )}
                         </h4>
                         <p className="text-lab-on-surface-variant mt-1 text-sm">
-                          {oneLine} · {tResult("estimatedPool", { count: pool })}
+                          {oneLine} · {poolLine}
                         </p>
                       </div>
                       <span className="material-symbols-outlined shrink-0 text-lab-on-surface/35 transition-colors group-hover:text-lab-primary">

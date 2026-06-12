@@ -1,10 +1,27 @@
-import type { CalculationResult, QuizAnswersV1, BreakdownRow, Seeker } from "@/lib/types/quiz";
+import type {
+  CalculationResult,
+  EducationMin,
+  MaritalPreference,
+  QuizAnswersV1,
+  BreakdownRow,
+  Seeker,
+} from "@/lib/types/quiz";
 import {
+  BASE_FEMALE_POOL,
   BASE_MALE_POOL,
   CORRELATION_BOOST,
   carFactor,
   educationFactor,
   expatPreferenceFactor,
+  femaleAgeWindowFactor,
+  femaleCarFactor,
+  femaleEducationFactor,
+  femaleHeightTail,
+  femaleIncomeTail,
+  femaleMaritalFactor,
+  femaleNoKidsFactor,
+  femaleOwnFlatFactor,
+  femaleSmokingFactor,
   maleAgeWindowFactor,
   maleHeightTail,
   maleIncomeTail,
@@ -15,96 +32,50 @@ import {
 } from "@/lib/data/hk-demographics";
 import { MAX_ONE_IN_DISPLAY, MAX_POOL_COUNT_DISPLAY } from "@/lib/format-one-in";
 
+/** Back-compat alias — the canonical constant lives in hk-demographics */
+export const FEMALE_BASE_POOL = BASE_FEMALE_POOL;
+
 type ModelConfig = {
   basePool: number;
   ageFactor: (ageMin: number, ageMax: number) => number;
   heightTail: (minCm: number) => number;
   incomeTail: (minHkd: number) => number;
+  maritalFactor: (pref: MaritalPreference, ageMin: number, ageMax: number) => number;
+  educationFactor: (min: EducationMin) => number;
+  smokingFactor: (requireNonSmoker: boolean) => number;
+  noKidsFactor: (requireNoKids: boolean) => number;
+  ownFlatFactor: (requireOwnFlat: boolean) => number;
+  carFactor: (requireCar: boolean) => number;
 };
 
-/** Exported for result “filtration debt” walkthrough */
-export const FEMALE_BASE_POOL = 1_950_000;
+const MALE_POOL_MODEL: ModelConfig = {
+  basePool: BASE_MALE_POOL,
+  ageFactor: maleAgeWindowFactor,
+  heightTail: maleHeightTail,
+  incomeTail: maleIncomeTail,
+  maritalFactor,
+  educationFactor,
+  smokingFactor,
+  noKidsFactor,
+  ownFlatFactor,
+  carFactor,
+};
 
-function femaleAgeWindowFactor(ageMin: number, ageMax: number): number {
-  const min = Math.max(18, Math.min(65, ageMin));
-  const max = Math.max(18, Math.min(65, ageMax));
-  if (max < min) return 0;
-  const span = max - min + 1;
-  const full = 65 - 18 + 1;
-  const uniform = span / full;
-  const peakBoost = min <= 33 && max >= 24 ? 1.08 : 1.02;
-  return Math.min(1, uniform * peakBoost);
-}
-
-function femaleHeightTail(minCm: number): number {
-  // Rough HK female distribution proxy for v2 architecture.
-  const mean = 158.7;
-  const sd = 5.5;
-  const z = (minCm - mean) / sd;
-  const cdf = 0.5 * (1 + erf(z / Math.SQRT2));
-  return Math.max(0, Math.min(1, 1 - cdf));
-}
-
-function femaleIncomeTail(minHkd: number): number {
-  // Approximate female wage tail using slightly lower percentile anchors than male.
-  const points = [
-    { p: 0.1, hk: 10300 },
-    { p: 0.25, hk: 14200 },
-    { p: 0.5, hk: 19800 },
-    { p: 0.75, hk: 30000 },
-    { p: 0.9, hk: 45500 },
-    { p: 0.95, hk: 62000 },
-    { p: 0.99, hk: 92000 },
-  ];
-  if (minHkd <= points[0].hk) return 1;
-  if (minHkd >= points[points.length - 1].hk) {
-    const last = points[points.length - 1];
-    const ratio = minHkd / last.hk;
-    const tail = 1 - last.p;
-    return Math.max(0.0001, tail * Math.exp(-1.2 * (ratio - 1)));
-  }
-  for (let i = 0; i < points.length - 1; i++) {
-    const a = points[i];
-    const b = points[i + 1];
-    if (minHkd >= a.hk && minHkd <= b.hk) {
-      const t = (minHkd - a.hk) / (b.hk - a.hk);
-      const pAt = a.p + t * (b.p - a.p);
-      return Math.max(0.0005, 1 - pAt);
-    }
-  }
-  return 0.01;
-}
-
-function erf(x: number): number {
-  const sign = x < 0 ? -1 : 1;
-  const ax = Math.abs(x);
-  const a1 = 0.254829592;
-  const a2 = -0.284496736;
-  const a3 = 1.421413741;
-  const a4 = -1.453152027;
-  const a5 = 1.061405429;
-  const p = 0.3275911;
-  const t = 1 / (1 + p * ax);
-  const y = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax));
-  return sign * y;
-}
+const FEMALE_POOL_MODEL: ModelConfig = {
+  basePool: BASE_FEMALE_POOL,
+  ageFactor: femaleAgeWindowFactor,
+  heightTail: femaleHeightTail,
+  incomeTail: femaleIncomeTail,
+  maritalFactor: femaleMaritalFactor,
+  educationFactor: femaleEducationFactor,
+  smokingFactor: femaleSmokingFactor,
+  noKidsFactor: femaleNoKidsFactor,
+  ownFlatFactor: femaleOwnFlatFactor,
+  carFactor: femaleCarFactor,
+};
 
 function getModel(seeker: Seeker): ModelConfig {
-  if (seeker === "man_seeking_woman") {
-    return {
-      basePool: FEMALE_BASE_POOL,
-      ageFactor: femaleAgeWindowFactor,
-      heightTail: femaleHeightTail,
-      incomeTail: femaleIncomeTail,
-    };
-  }
-
-  return {
-    basePool: BASE_MALE_POOL,
-    ageFactor: maleAgeWindowFactor,
-    heightTail: maleHeightTail,
-    incomeTail: maleIncomeTail,
-  };
+  return seeker === "man_seeking_woman" ? FEMALE_POOL_MODEL : MALE_POOL_MODEL;
 }
 
 export function calculateDelulu(answers: QuizAnswersV1): CalculationResult {
@@ -122,13 +93,13 @@ export function calculateForSeeker(answers: QuizAnswersV1): CalculationResult {
   const fAge = model.ageFactor(answers.ageMin, answers.ageMax);
   const fHeight = model.heightTail(answers.minHeightCm);
   const fIncome = model.incomeTail(answers.minMonthlyIncomeHKD);
-  const fMarital = maritalFactor(answers.marital, answers.ageMin, answers.ageMax);
+  const fMarital = model.maritalFactor(answers.marital, answers.ageMin, answers.ageMax);
   const fExpat = expatPreferenceFactor(answers.expatPreference);
-  const fEdu = educationFactor(answers.educationMin);
-  const fSmoke = smokingFactor(answers.noSmoking);
-  const fKids = noKidsFactor(answers.noKidsFromPrev);
-  const fFlat = ownFlatFactor(answers.requiresOwnFlat);
-  const fCar = carFactor(answers.requiresCar);
+  const fEdu = model.educationFactor(answers.educationMin);
+  const fSmoke = model.smokingFactor(answers.noSmoking);
+  const fKids = model.noKidsFactor(answers.noKidsFromPrev);
+  const fFlat = model.ownFlatFactor(answers.requiresOwnFlat);
+  const fCar = model.carFactor(answers.requiresCar);
 
   const raw =
     fAge *
